@@ -9,15 +9,15 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/ADC14.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/Clock.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/CortexM.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/IRDistance.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/LPF.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/ADC14.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/IRDistance.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LPF.c \
 ../Lab4_ADCmain.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/LaunchPad.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/TimerA1.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/UART0.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TimerA1.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -74,15 +74,15 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/ADC14.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/Clock.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/CortexM.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/IRDistance.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/LPF.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/ADC14.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/IRDistance.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LPF.c" \
 "../Lab4_ADCmain.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/LaunchPad.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/TimerA1.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/UART0.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TimerA1.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 

@@ -4,8 +4,6 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS
-
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
@@ -150,16 +148,10 @@ endif
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXE_OUTPUTS += \
-inc.out \
+inc.out 
 
 EXE_OUTPUTS__QUOTED += \
-"inc.out" \
-
-BIN_OUTPUTS += \
-inc.hex \
-
-BIN_OUTPUTS__QUOTED += \
-"inc.hex" \
+"inc.out" 
 
 
 # All Target
@@ -170,20 +162,13 @@ all: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 inc.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: MSP432 Linker'
-	"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --advice:power=all --define=__MSP432P401R__ --define=ccs -g --c99 --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"inc.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccsv7/ccs_base/arm/include" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/lib" -i"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="inc_linkInfo.xml" --rom_model -o "inc.out" $(ORDERED_OBJS)
+	"" -z -m"inc.map" --heap_size=1024 --stack_size=512 -i"C:/ti/ccs2020/ccs/ccs_base/arm/include" -i"/lib" -i"/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="inc_linkInfo.xml" --rom_model -o "inc.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
-	@echo ' '
-
-inc.hex: $(EXE_OUTPUTS)
-	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
-	@echo 'Invoking: MSP432 Hex Utility'
-	"C:/ti/ccsv7/tools/compiler/ti-cgt-arm_16.9.6.LTS/bin/armhex" --memwidth=8 --romwidth=8 -o "inc.hex" $(EXE_OUTPUTS__QUOTED)
-	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
+	-$(RM) $(EXE_OUTPUTS__QUOTED)
 	-$(RM) "ADC14.obj" "AP.obj" "Bump.obj" "BumpInt.obj" "Clock.obj" "CortexM.obj" "EUSCIA0.obj" "FIFO0.obj" "FlashProgram.obj" "GPIO.obj" "IRDistance.obj" "LPF.obj" "LaunchPad.obj" "Motor.obj" "MotorSimple.obj" "Nokia5110.obj" "PWM.obj" "Reflectance.obj" "SysTick.obj" "TA3InputCapture.obj" "TExaS.obj" "Tachometer.obj" "TimerA0.obj" "TimerA1.obj" "TimerA2.obj" "UART0.obj" "UART1.obj" "Ultrasound.obj" "incmain.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
 	-$(RM) "ADC14.d" "AP.d" "Bump.d" "BumpInt.d" "Clock.d" "CortexM.d" "EUSCIA0.d" "FIFO0.d" "FlashProgram.d" "GPIO.d" "IRDistance.d" "LPF.d" "LaunchPad.d" "Motor.d" "MotorSimple.d" "Nokia5110.d" "PWM.d" "Reflectance.d" "SysTick.d" "TA3InputCapture.d" "TExaS.d" "Tachometer.d" "TimerA0.d" "TimerA1.d" "TimerA2.d" "UART0.d" "UART1.d" "Ultrasound.d" "incmain.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'

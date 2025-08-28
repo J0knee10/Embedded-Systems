@@ -50,7 +50,7 @@
 
 ;------------Convert------------
 ; Calculate the distance in mm given the 14-bit ADC value
-; D = 1195172/(n – 1058)
+; D = 1195172/(n ï¿½ 1058)
 ; Input: R0 is n, ADC value, 14-bit unsigned number 2552 to 16383
 ; Output: R0 is distance in mm
 ; If the ADC input is less than 2552, return 800 mm
@@ -58,8 +58,25 @@
 Convert:   .asmfunc
 
 ; Write this as part of Lab1
+       LDR    R1, =IRMax ;load address of IRMax which is the constant declared by .field using psuedo instruction "="
+       LDR    R1, [R1]
+       CMP    R0, R1
+       BLT    ReturnAns
 
+       ; Calculate n - 1058
+       LDR    R2, =IROffset
+       LDR    R2, [R2]
+       ADD    R0, R0, R2    ; R0 = n -1058
+       ; Calculate 1195172/R0
+       LDR    R3, =IRSlope
+       LDR    R3, [R3]
+       MOV    R4, #0        ; R4 = quotient
 
+DivLoop CMP   R3, R0
+       BLT    DivDone
+       SUB    R3, R3, R0       
+       ADD    R4, R4, #1
+       B      DivLoop
 
         BX LR
       .endasmfunc

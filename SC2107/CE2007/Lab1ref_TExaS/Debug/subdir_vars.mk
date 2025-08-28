@@ -9,10 +9,10 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/Clock.c \
-C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/LaunchPad.c \
-C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/SysTick.c \
-C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/TExaS.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTick.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c \
 ../TExaSmain.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
@@ -54,10 +54,10 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/Clock.c" \
-"C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/LaunchPad.c" \
-"C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/SysTick.c" \
-"C:/CE2007/CE2007Labs-Instructor-17072019/CE2007/inc/TExaS.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTick.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c" \
 "../TExaSmain.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 

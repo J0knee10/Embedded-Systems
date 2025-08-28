@@ -9,10 +9,10 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/Clock.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/CortexM.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c \
 ../EdgeInterrupt.c \
-C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/TExaS.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -49,10 +49,10 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/Clock.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/CortexM.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c" \
 "../EdgeInterrupt.c" \
-"C:/CE2007/RSLK-Max-CE2007Labs-students-23112021/CE2007/inc/TExaS.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 

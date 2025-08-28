@@ -9,24 +9,24 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-C:/temp/CE2007/inc/ADC14.c \
-C:/temp/CE2007/inc/Bump.c \
-C:/temp/CE2007/inc/Clock.c \
-C:/temp/CE2007/inc/CortexM.c \
-C:/temp/CE2007/inc/IRDistance.c \
-C:/temp/CE2007/inc/LPF.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/ADC14.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/IRDistance.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LPF.c \
 ../Lab17_Control.c \
-C:/temp/CE2007/inc/LaunchPad.c \
-C:/temp/CE2007/inc/Motor.c \
-C:/temp/CE2007/inc/Nokia5110.c \
-C:/temp/CE2007/inc/PWM.c \
-C:/temp/CE2007/inc/Reflectance.c \
-C:/temp/CE2007/inc/SysTickInts.c \
-C:/temp/CE2007/inc/TA3InputCapture.c \
-C:/temp/CE2007/inc/TExaS.c \
-C:/temp/CE2007/inc/Tachometer.c \
-C:/temp/CE2007/inc/TimerA1.c \
-C:/temp/CE2007/inc/UART0.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Motor.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Nokia5110.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/PWM.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Reflectance.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTickInts.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TA3InputCapture.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Tachometer.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TimerA1.c \
+D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -119,24 +119,24 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"C:/temp/CE2007/inc/ADC14.c" \
-"C:/temp/CE2007/inc/Bump.c" \
-"C:/temp/CE2007/inc/Clock.c" \
-"C:/temp/CE2007/inc/CortexM.c" \
-"C:/temp/CE2007/inc/IRDistance.c" \
-"C:/temp/CE2007/inc/LPF.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/ADC14.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/IRDistance.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LPF.c" \
 "../Lab17_Control.c" \
-"C:/temp/CE2007/inc/LaunchPad.c" \
-"C:/temp/CE2007/inc/Motor.c" \
-"C:/temp/CE2007/inc/Nokia5110.c" \
-"C:/temp/CE2007/inc/PWM.c" \
-"C:/temp/CE2007/inc/Reflectance.c" \
-"C:/temp/CE2007/inc/SysTickInts.c" \
-"C:/temp/CE2007/inc/TA3InputCapture.c" \
-"C:/temp/CE2007/inc/TExaS.c" \
-"C:/temp/CE2007/inc/Tachometer.c" \
-"C:/temp/CE2007/inc/TimerA1.c" \
-"C:/temp/CE2007/inc/UART0.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Motor.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Nokia5110.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/PWM.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Reflectance.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTickInts.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TA3InputCapture.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Tachometer.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TimerA1.c" \
+"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 
