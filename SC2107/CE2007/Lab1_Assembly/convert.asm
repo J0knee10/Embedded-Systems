@@ -78,6 +78,7 @@ DivLoop CMP   R3, R0
        ADD    R4, R4, #1
        B      DivLoop
 
+DivDone MOV   R0, R4
         BX LR
       .endasmfunc
       .align 4
