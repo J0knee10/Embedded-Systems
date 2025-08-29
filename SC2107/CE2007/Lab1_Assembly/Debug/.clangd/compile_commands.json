@@ -1,0 +1,22 @@
+[
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/Lab1_Assemblymain.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/convert.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/startup_msp432p401r_ccs.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_Assembly/system_msp432p401r.c"
+   }
+]

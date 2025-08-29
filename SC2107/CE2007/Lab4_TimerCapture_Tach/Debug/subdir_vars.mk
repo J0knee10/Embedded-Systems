@@ -9,17 +9,17 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c \
 ../Lab4_Tachmain.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Motor.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/PWM.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTick.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TA3InputCapture.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Motor.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/PWM.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTick.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TA3InputCapture.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/UART0.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -84,17 +84,17 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c" \
 "../Lab4_Tachmain.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Motor.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/PWM.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTick.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TA3InputCapture.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/UART0.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Motor.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/PWM.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTick.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TA3InputCapture.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/UART0.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 

@@ -1,0 +1,47 @@
+[
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug/InputOutput.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/main.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/startup_msp432p401r_ccs.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/system_msp432p401r.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug/Clock.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug/main.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug/startup_msp432p401r_ccs.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -DTARGET_IS_MSP432P4XX -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1_C_Programming/Debug/system_msp432p401r.asm"
+   }
+]

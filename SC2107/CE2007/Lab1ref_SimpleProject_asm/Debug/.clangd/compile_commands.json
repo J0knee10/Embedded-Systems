@@ -1,0 +1,17 @@
+[
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/main.asm"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/startup_msp432p401r_ccs.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_SimpleProject_asm/system_msp432p401r.c"
+   }
+]

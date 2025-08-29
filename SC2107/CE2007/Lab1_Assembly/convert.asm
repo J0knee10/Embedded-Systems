@@ -58,28 +58,22 @@
 Convert:   .asmfunc
 
 ; Write this as part of Lab1
-       LDR    R1, =IRMax ;load address of IRMax which is the constant declared by .field using psuedo instruction "="
-       LDR    R1, [R1]
+       LDR    R1, IRMax ;load value of IRMax which is the constant
        CMP    R0, R1
        BLT    ReturnAns
 
        ; Calculate n - 1058
-       LDR    R2, =IROffset
-       LDR    R2, [R2]
+       LDR    R2, IROffset
        ADD    R0, R0, R2    ; R0 = n -1058
        ; Calculate 1195172/R0
-       LDR    R3, =IRSlope
-       LDR    R3, [R3]
-       MOV    R4, #0        ; R4 = quotient
+       LDR    R3, IRSlope
+       ; Signed divide: quotient = R3 / R0
+       SDIV    R0, R3, R0
+       BX      LR
 
-DivLoop CMP   R3, R0
-       BLT    DivDone
-       SUB    R3, R3, R0       
-       ADD    R4, R4, #1
-       B      DivLoop
-
-DivDone MOV   R0, R4
-        BX LR
+ReturnAns:
+        MOV     R0, #800
+        BX      LR
       .endasmfunc
       .align 4
 IRSlope  .field 1195172,32

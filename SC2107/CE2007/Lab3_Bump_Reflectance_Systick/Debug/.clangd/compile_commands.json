@@ -1,0 +1,52 @@
+[
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Lab3_Sensorsmain.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTickInts.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/startup_msp432p401r_ccs.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab3_Bump_Reflectance_Systick/system_msp432p401r.c"
+   }
+]

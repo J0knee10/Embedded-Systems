@@ -1,0 +1,37 @@
+[
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTick.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/TExaSmain.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/startup_msp432p401r_ccs.c"
+   },
+   {
+      "directory" : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/Debug",
+      "command"   : "clang++ -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include\" -I\"C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS\" -I\"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS\" -I\"C:/ti/ccs2020/ccs/tools/compiler/include\" -D__MSP432P401R__ -Dccs -xc",
+      "file"      : "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/Lab1ref_TExaS/system_msp432p401r.c"
+   }
+]

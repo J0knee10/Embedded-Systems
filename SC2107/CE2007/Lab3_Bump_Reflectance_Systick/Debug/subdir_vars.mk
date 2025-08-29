@@ -9,14 +9,14 @@ CMD_SRCS += \
 ../msp432p401r.cmd 
 
 C_SRCS += \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c \
 ../Lab3_Sensorsmain.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Reflectance.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTickInts.c \
-D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTickInts.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c \
 ../startup_msp432p401r_ccs.c \
 ../system_msp432p401r.c 
 
@@ -69,14 +69,14 @@ C_DEPS__QUOTED += \
 "system_msp432p401r.d" 
 
 C_SRCS__QUOTED += \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Bump.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Clock.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/CortexM.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c" \
 "../Lab3_Sensorsmain.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/LaunchPad.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/Reflectance.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/SysTickInts.c" \
-"D:/Jon/Uni/SYproject/embeddedSys/SC2107/CE2007/inc/TExaS.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTickInts.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c" \
 "../startup_msp432p401r_ccs.c" \
 "../system_msp432p401r.c" 
 

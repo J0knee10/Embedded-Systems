@@ -226,10 +226,10 @@ void Bit_ShiftExtract(void)
 
 void Volatile_KeyWord(void)
 {
-    //volatile int x;
-    int x;
-    //volatile int y, z;
-    int y, z;
+    volatile int x;
+    // int x;
+    volatile int y, z;
+    // int y, z;
 
     x=1;
     y=2;

@@ -53,7 +53,7 @@ main:  .asmfunc
      MOV R5, #0          ; R5 = 0 = OffByOne   (1 <= error < 2) or (-2 < error <= -1)
      MOV R6, #0          ; R6 = 0 = Errors     (2 <= error    ) or (     error <= -2)
      MOV R7, #16         ; counter
-     LDR R10, InputsAddr ; R10 = &Inputs (pointer
+     LDR R10, InputsAddr ; R10 = &Inputs (pointer)
      LDR R11, ExpectAddr ; R11 = &Expect (pointer)
 Test LDR R0, [R10],#4    ; input value.  R10+=4 after ops - OHL
      BL  Convert         ; R0 = Convert()
