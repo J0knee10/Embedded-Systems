@@ -91,14 +91,21 @@ void Reflectance_Init(void){
 void Port5_Init(void){
     // write this as part of Lab 2
     // Code to initialise GPIO related registers
-
-
+    // initialize P4.3-P4.0 and make them outputs
+    // P4->SEL0 &= ~0x0F;
+    // P4->SEL1 &= ~0x0F;            // configure stepper motor/LED pins as GPIO
+    // P4->DIR |= 0x0F;             // make stepper motor/LED pins out
+    P5->DIR |= 0x08;                // Set P5.3 as output
+    P5->SEL0 &= ~0x08;              // Set P5.3 as standard GPIO
+    P5->SEL1 &= ~0x08; 
 }
 
 void Port9_Init(void){
     // write this as part of Lab 2
     // Code to initialise GPIO related registers
-
+    P9->DIR |= 0x04;                // Set P9.2 as output
+    P9->SEL0 &= ~0x04;              // Set P9.2 as GPIO
+    P9->SEl1 &= ~0x04;
 
 }
 
@@ -108,8 +115,11 @@ void Port9_Init(void){
 void Port7_Init(void){
     // write this as part of Lab 2
     // Code to initialise GPIO related registers
-
-
+    P7->DIR |= 0xFF;                // Set all of Port 7 as output as capacitor needs to charge??
+    P7->SEL0 &= ~0xFF;              // Set all of Port 7 as GPIO
+    P7->SEL1 &= ~0xFF;
+    // Can I skip REN and OUT? should I not clear them, as capacitor need to discharge thus need to make sure no pullup/down???
+    // P7->REN &= 0x00;
 }
 
 // Reflectance Reading Step 2.
@@ -117,7 +127,8 @@ void Port7_Init(void){
 // Registers: DIR, OUT.
 void Port7_Output_ChargeCap(void){
     // write this as part of Lab 2
-
+    P7->DIR |= 0xFF;
+    P7->OUT |= 0xFF;
 
 }
 
@@ -126,6 +137,7 @@ void Port7_Output_ChargeCap(void){
 // Registers: DIR.
 void Port7_InitToInput(void){
     // write this as part of Lab 2
+    P7->DIR &= 0x00;
 
 
 }
