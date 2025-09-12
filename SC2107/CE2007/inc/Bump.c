@@ -76,7 +76,6 @@ uint8_t Bump_Read(void){
     // register to occupy 6 lower order bits of the result variable.
     uint8_t result;
 
-
     return (result);
 }
 

@@ -98,6 +98,7 @@ void Port5_Init(void){
     P5->DIR |= 0x08;                // Set P5.3 as output
     P5->SEL0 &= ~0x08;              // Set P5.3 as standard GPIO
     P5->SEL1 &= ~0x08; 
+    P5->OUT &= ~0x08;
 }
 
 void Port9_Init(void){
@@ -105,7 +106,8 @@ void Port9_Init(void){
     // Code to initialise GPIO related registers
     P9->DIR |= 0x04;                // Set P9.2 as output
     P9->SEL0 &= ~0x04;              // Set P9.2 as GPIO
-    P9->SEl1 &= ~0x04;
+    P9->SEL1 &= ~0x04;
+    P9->OUT &= ~0x04;
 
 }
 
@@ -115,7 +117,7 @@ void Port9_Init(void){
 void Port7_Init(void){
     // write this as part of Lab 2
     // Code to initialise GPIO related registers
-    P7->DIR |= 0xFF;                // Set all of Port 7 as output as capacitor needs to charge??
+    P7->DIR |= 0x00;                // Set all of Port 7 as input
     P7->SEL0 &= ~0xFF;              // Set all of Port 7 as GPIO
     P7->SEL1 &= ~0xFF;
     // Can I skip REN and OUT? should I not clear them, as capacitor need to discharge thus need to make sure no pullup/down???
@@ -167,11 +169,15 @@ uint8_t Reflectance_Read(uint32_t time){
   P9->OUT |= 0x04;
 #endif
   Port7_Output_ChargeCap();     // Step2
-
-
-  // ....
-
+  Clock_Delay1us(10);
+  Port7_InitToInput();
+  Clock_Delay1us(time);
+  result = P7->IN;
+  Clock_Delay1us(1000);
+  P5->OUT &= ~0x08;
+  P9->OUT &= ~0x04;
   return result;
+  // ....
 }
 
 // ------------Reflectance_Center------------
@@ -191,11 +197,12 @@ uint8_t Reflectance_Read(uint32_t time){
 // 0,0          neither        lost
 // Assumes: Reflectance_Init() has been called
 uint8_t Reflectance_Center(uint32_t time){
-    uint8_t result;
+    uint8_t result, data;
     // write this as part of Lab 2
     // Use bit shifting and extraction to shift the center two bits to the
     // right to occupy the last two bits of the result variable
-
+    data = Reflectance_Read(time);
+    result = (data >> 3) & 0x03;
     return result;
 }
 
@@ -205,15 +212,28 @@ uint8_t Reflectance_Center(uint32_t time){
 // Output: position in 0.1mm relative to center of line
 int32_t Reflectance_Position(uint8_t data){
     uint32_t position;
+    int32_t nume = 0;
+    int32_t denom = 0;
 
     // write this as part of Lab 2
     // Extract the appropriate bits from the reflectance read data
     // to multiply to the corresponding weights in W[].
     // Bit shifting and extraction.
     int32_t W[8] = {332, 237, 142, 47, -47, -142, -237, -332};
+    for (int i = 0; i < 8; i++){
+        if (data & (1U << i)){
+            nume += W[i];
+            denom +=1;
+        }
+    }
 
-
-    return position;
+    if (denom == 0){
+        return 0;
+    } else{
+        position = nume/denom;
+        return position;
+    }
+    
 }
 
 

@@ -10,7 +10,7 @@ CMD_SRCS += \
 
 C_SRCS += \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c \
-../Lab2_FSMmain-3states.c \
+../Lab2-FSMmain-11states.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c \
@@ -19,7 +19,7 @@ C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c \
 
 C_DEPS += \
 ./Clock.d \
-./Lab2_FSMmain-3states.d \
+./Lab2-FSMmain-11states.d \
 ./LaunchPad.d \
 ./Reflectance.d \
 ./TExaS.d \
@@ -28,7 +28,7 @@ C_DEPS += \
 
 OBJS += \
 ./Clock.obj \
-./Lab2_FSMmain-3states.obj \
+./Lab2-FSMmain-11states.obj \
 ./LaunchPad.obj \
 ./Reflectance.obj \
 ./TExaS.obj \
@@ -37,7 +37,7 @@ OBJS += \
 
 OBJS__QUOTED += \
 "Clock.obj" \
-"Lab2_FSMmain-3states.obj" \
+"Lab2-FSMmain-11states.obj" \
 "LaunchPad.obj" \
 "Reflectance.obj" \
 "TExaS.obj" \
@@ -46,7 +46,7 @@ OBJS__QUOTED += \
 
 C_DEPS__QUOTED += \
 "Clock.d" \
-"Lab2_FSMmain-3states.d" \
+"Lab2-FSMmain-11states.d" \
 "LaunchPad.d" \
 "Reflectance.d" \
 "TExaS.d" \
@@ -55,7 +55,7 @@ C_DEPS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c" \
-"../Lab2_FSMmain-3states.c" \
+"../Lab2-FSMmain-11states.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TExaS.c" \

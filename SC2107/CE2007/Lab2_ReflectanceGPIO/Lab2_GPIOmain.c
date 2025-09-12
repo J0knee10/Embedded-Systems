@@ -60,17 +60,26 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include "..\inc\Clock.h"
 #include "..\inc\TExaS.h"
 
-uint8_t Data; // QTR-8RC
+volatile uint8_t Data; // QTR-8RC
 int32_t Position; // 332 is right, and -332 is left of center
 int main(void){
   Clock_Init48MHz();
   Reflectance_Init();
   TExaS_Init(LOGICANALYZER_P7);
+  // P2->SEL0 = 0x00;
+  // P2->SEL1 = 0x00;                        // configure P2.2-P2.0 as GPIO
+  // P2->DS = 0x07;                          // make P2.2-P2.0 high drive strength
+  // P2->DIR = 0x07;                         // make P2.2-P2.0 out
+  // P2->OUT = 0x00;
   while(1){
+    // P2->OUT |= 0x04;
     Data = Reflectance_Read(1000);
-    //Data = Reflectance_Center(1000);
-    //Position = Reflectance_Position(Data);
+    
+    Data = Reflectance_Center(1000);
+    Position = Reflectance_Position(Data);
+    // P2->OUT &= 0x00;
     Clock_Delay1ms(10);
+    
   }
 }
 

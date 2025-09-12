@@ -27,6 +27,33 @@
                 "name": "Lab1_Assembly",
                 "resourceId": "/Lab1_Assembly"
             }
+        },
+        {
+            "name": "inc",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "inc",
+                "resourceId": "/inc"
+            }
+        },
+        {
+            "name": "Lab2_ReflectanceGPIO",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Lab2_ReflectanceGPIO",
+                "resourceId": "/Lab2_ReflectanceGPIO"
+            }
+        },
+        {
+            "name": "Lab2_FSM",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Lab2_FSM",
+                "resourceId": "/Lab2_FSM"
+            }
         }
     ]
 }

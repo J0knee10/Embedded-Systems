@@ -11,7 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./Clock.obj" \
-"./Lab2_FSMmain-3states.obj" \
+"./Lab2-FSMmain-11states.obj" \
 "./LaunchPad.obj" \
 "./Reflectance.obj" \
 "./TExaS.obj" \
@@ -147,8 +147,8 @@ Lab2_FSM.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "Clock.obj" "Lab2_FSMmain-3states.obj" "LaunchPad.obj" "Reflectance.obj" "TExaS.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "Clock.d" "Lab2_FSMmain-3states.d" "LaunchPad.d" "Reflectance.d" "TExaS.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "Clock.obj" "Lab2-FSMmain-11states.obj" "LaunchPad.obj" "Reflectance.obj" "TExaS.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "Clock.d" "Lab2-FSMmain-11states.d" "LaunchPad.d" "Reflectance.d" "TExaS.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -101,6 +101,7 @@ State_t fsm[11]={
 State_t *Spt;  // pointer to the current state
 uint32_t Input;
 uint32_t Output;
+uint8_t Data;
 /*Run FSM continuously
 1) Output depends on State (LaunchPad LED)
 2) Wait depends on State
@@ -119,6 +120,7 @@ int main(void){ uint32_t heart=0;
     TExaS_Set(Input<<2|Output);   // optional, send data to logic analyzer
     Clock_Delay1ms(Spt->delay);   // wait
     //Input = LaunchPad_Input();    // read sensors
+    // Data = Reflectance_Read(1000);
     Input = Reflectance_Center(1000);
     Spt = Spt->next[Input];       // next depends on input and state
     heart = heart^1;
