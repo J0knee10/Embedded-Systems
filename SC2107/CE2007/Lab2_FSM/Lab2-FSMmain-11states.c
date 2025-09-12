@@ -87,14 +87,14 @@ State_t fsm[11]={
   {0x03,  500, { Right1,         Left1,      Right1,     Center    }},   // Center
   {0x02,  500, { Left_off1,      Left2,      Right1,     Center    }},   // Left1
   {0x03,  500, { Left_off1,      Left1,      Right1,     Center    }},   // Left2
-  {0x02, 1000, { Left_off2,      Left_off2,  Left_off2,  Left_off2 }},   // Left_off1
-  {0x03, 1000, { Left_stop,      Left1,      Right1,     Center    }},   // Left_off2
-  {0x00,  500, { Left_stop,      Left_stop,  Left_stop,  Center }},   // Left_stop
+  {0x02, 5000, { Left_off2,      Left_off2,  Left_off2,  Left_off2 }},   // Left_off1
+  {0x03, 5000, { Left_stop,      Left1,      Right1,     Center    }},   // Left_off2
+  {0x00,  500, { Left_stop,      Left_stop,  Left_stop,  Left_stop }},   // Left_stop
   {0x01,  500, { Right_off1,     Left1,      Right2,     Center    }},   // Right1
-  {0x03, 1000, { Right_off1,     Left1,      Right1,     Center    }},   // Right2
-  {0x01, 1000, { Right_off2,     Right_off2, Right_off2, Right_off2}},   // Right_off1
-  {0x03,  500, { Right_stop,     Left1,      Right1,     Center    }},   // Right_off2
-  {0x00,  500, { Right_stop,     Right_stop, Right_stop, Center}}    // Right_stop
+  {0x03, 500, { Right_off1,     Left1,      Right1,     Center    }},   // Right2
+  {0x01, 5000, { Right_off2,     Right_off2, Right_off2, Right_off2}},   // Right_off1
+  {0x03,  5000, { Right_stop,     Left1,      Right1,     Center    }},   // Right_off2
+  {0x00,  500, { Right_stop,     Right_stop, Right_stop, Right_stop}}    // Right_stop
 };
 
 
