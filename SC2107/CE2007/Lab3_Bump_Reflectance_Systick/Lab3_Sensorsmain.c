@@ -72,10 +72,15 @@ void SysTick_Handler(void){ // every 1ms
     }
     else if (count==1) {
         reflectance_data =  Reflectance_End();
-        bump_data = Bump_Read();
+        // bump_data = Bump_Read();
     }
     count++;
     if(count==10)count=0;
+}
+
+void MyBumpHandler(uint8_t data){
+    // data = bump state (0-63)
+    bump_data = data;
 }
 
 int main(void){
@@ -84,7 +89,7 @@ volatile uint8_t data_pins;
 
     Clock_Init48MHz();
     LaunchPad_Init();
-    Bump_Init();
+    Bump_Init(&MyBumpHandler);
     Reflectance_Init();
     TExaS_Init(LOGICANALYZER_P7);
     SysTick_Init(48000,1);  // set up SysTick for 1000 Hz interrupts

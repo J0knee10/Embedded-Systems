@@ -249,6 +249,15 @@ void Reflectance_Start(void){
     // write this as part of Lab 3
     // Step 1-4 of the Reflectance Read in Lab2.
 
+    // Step1.  RSLK-MAX. P5.3 = HIGH and P9.2 = HIGH => IR LED ON
+    P5->OUT |= 0x08;
+    #if(RSLK_MAX)
+    P9->OUT |= 0x04;
+    #endif
+    Port7_Output_ChargeCap();     // Step2
+    Clock_Delay1us(10);         // Step 3
+    Port7_InitToInput();          // Step 4
+
 }
 
 
@@ -264,7 +273,9 @@ uint8_t Reflectance_End(void){
     uint8_t result;
     // write this as part of Lab 3
     // Step 6-7 of Reflectance Read in Lab2.
-
+    result = P7->IN;
+    P5->OUT &= ~0x08;
+    P9->OUT &= ~0x04;
     return result;
 }
 
