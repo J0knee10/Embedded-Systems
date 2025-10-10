@@ -2,3 +2,6 @@
 *.exe
 .vscode
 *.log
+*.elf
+*.map
+*.list
