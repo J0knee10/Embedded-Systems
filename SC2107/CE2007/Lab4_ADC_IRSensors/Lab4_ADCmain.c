@@ -86,6 +86,7 @@ void SensorRead_ISR(void){  // runs at 2000 Hz
 int main(void){
   uint32_t raw17,raw12,raw16;
   int32_t n; uint32_t s;
+  float A, B;
   Clock_Init48MHz();  //SMCLK=12Mhz
   ADCflag = 0;
   s = 256; // replace with your choice
@@ -99,14 +100,15 @@ int main(void){
   TimerA1_Init(&SensorRead_ISR,250);    // 2000 Hz sampling
   UART0_OutString("GP2Y0A21YK0F test\nValvano Oct 2017\nConnect analog signals to P9.0,P4.1,P9.1\n");
   EnableInterrupts();
+  estimateHyperbolicCoefficients(&A,&B);
   while(1){
     for(n=0; n<2000; n++){
       while(ADCflag == 0){};
       ADCflag = 0; // show every 2000th point
     }
-    UART0_OutUDec5(LeftConvert(nl));UART0_OutString(" mm,");
-    UART0_OutUDec5(CenterConvert(nc));UART0_OutString(" mm,");
-    UART0_OutUDec5(RightConvert(nr));UART0_OutString(" mm\r\n");
+    UART0_OutUDec5(LeftConvert(nl));UART0_OutString(",");
+    UART0_OutUDec5(CenterConvert(nc));UART0_OutString(",");
+    UART0_OutUDec5(RightConvert(nr));UART0_OutString(",\r\n");
   }
 }
 

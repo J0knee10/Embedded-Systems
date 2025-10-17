@@ -72,6 +72,24 @@
                 "name": "Lab3_TimerCompare_Motor",
                 "resourceId": "/Lab3_TimerCompare_Motor"
             }
+        },
+        {
+            "name": "Lab4_ADC_IRSensors",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Lab4_ADC_IRSensors",
+                "resourceId": "/Lab4_ADC_IRSensors"
+            }
+        },
+        {
+            "name": "Lab4_TimerCapture_Tach",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Lab4_TimerCapture_Tach",
+                "resourceId": "/Lab4_TimerCapture_Tach"
+            }
         }
     ]
 }

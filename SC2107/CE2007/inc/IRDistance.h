@@ -93,4 +93,6 @@ int32_t CenterConvert(int32_t nc);
  */
 int32_t RightConvert(int32_t nr);      // returns right distance in mm
 
+void estimateHyperbolicCoefficients(float *A_out, float *B_out);
+
 #endif /* IRDISTANCE_H_ */

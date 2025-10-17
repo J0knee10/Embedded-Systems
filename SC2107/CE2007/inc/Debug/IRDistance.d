@@ -20,6 +20,9 @@ IRDistance.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/core_cm4.h
 IRDistance.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 IRDistance.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 IRDistance.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/system_msp432p401r.h
+IRDistance.obj: C:/ti/ccs2020/ccs/tools/compiler/include/math.h
+IRDistance.obj: C:/ti/ccs2020/ccs/tools/compiler/include/_defs.h
+IRDistance.obj: C:/ti/ccs2020/ccs/tools/compiler/include/machine/_limits.h
 
 ../IRDistance.c:
 
@@ -60,4 +63,10 @@ C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h:
 C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h:
 
 C:/ti/ccs2020/ccs/ccs_base/arm/include/system_msp432p401r.h:
+
+C:/ti/ccs2020/ccs/tools/compiler/include/math.h:
+
+C:/ti/ccs2020/ccs/tools/compiler/include/_defs.h:
+
+C:/ti/ccs2020/ccs/tools/compiler/include/machine/_limits.h:
 
