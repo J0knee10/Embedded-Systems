@@ -95,6 +95,8 @@ int main(void) {
   //Bumper_Init();
   //IRSensor_Init();
   //Tachometer_Init();
+  Reflectance_Init(); // Initialize reflectance sensors
+  ADC0_InitSWTriggerCh17_12_16(); // Initialize ADC for IR sensors
   EUSCIA0_Init();     // initialize UART
   EnableInterrupts();
 
@@ -108,6 +110,9 @@ int main(void) {
       EUSCIA0_OutString("[3] Bumper Test"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
       EUSCIA0_OutString("[4] Reflectance Sensor Test"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
       EUSCIA0_OutString("[5] Tachometer Test"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
+      EUSCIA0_OutString("[6] Reflectance Sensor 1 LED Blink Test"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
+      EUSCIA0_OutString("[7] Move and Turn Right on Black Line"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
+      EUSCIA0_OutString("[8] Move and Turn Right on IR Object"); EUSCIA0_OutChar(CR); EUSCIA0_OutChar(LF);
 
       EUSCIA0_OutString("CMD: ");
       cmd=EUSCIA0_InUDec();
@@ -120,8 +125,71 @@ int main(void) {
               cmd=0xDEAD;
               break;
 
-              // ....
-              // ....
+          case 6: // Reflectance Sensor 1 LED Blink Test
+              EUSCIA0_OutString("Starting Reflectance Sensor 1 LED Blink Test. Press any key to exit.\r\n");
+              while(EUSCIA0_InStatus() == 0) { // Loop until a character is received
+                  uint8_t sensor_data = Reflectance_Read(1000);
+                  if (sensor_data & 0x01) { // Check if sensor 1 (bit 0) detects black
+                      LaunchPad_LED(1); // Turn RED LED on
+                      Clock_Delay1ms(100); // Blink delay
+                      LaunchPad_LED(0); // Turn RED LED off
+                      Clock_Delay1ms(100); // Blink delay
+                  } else {
+                      LaunchPad_LED(0); // Ensure RED LED is off
+                  }
+                  Clock_Delay1ms(10); // Small delay to prevent busy-waiting too much
+              }
+              while(EUSCIA0_InStatus()) { EUSCIA0_InChar(); } // Clear UART buffer
+              menu = 1;
+              cmd = 0xDEAD;
+              break;
+
+          case 7: // Move and Turn Right on Black Line
+              EUSCIA0_OutString("Starting Move and Turn Right on Black Line Test. Press any key to exit.\r\n");
+              Motor_Forward(3000, 3000); // Start moving forward
+              while(EUSCIA0_InStatus() == 0) { // Loop until a character is received
+                  uint8_t sensor_data = Reflectance_Read(1000);
+                  if (sensor_data & 0x01) { // Check if sensor 1 (bit 0) detects black
+                      Motor_Stop(); // Stop moving forward
+                      Clock_Delay1ms(100); // Small delay for stability
+                      Motor_Right(3000, 3000); // Turn right (adjust speed and duration as needed)
+                      Clock_Delay1ms(500); // Calibrated delay for 90-degree turn (needs adjustment)
+                      Motor_Stop(); // Stop turning
+                      EUSCIA0_OutString("Black line detected, turned right.\r\n");
+                      break; // Exit after turning
+                  }
+                  Clock_Delay1ms(10); // Small delay to prevent busy-waiting too much
+              }
+              Motor_Stop(); // Ensure motors are stopped if loop exits
+              while(EUSCIA0_InStatus()) { EUSCIA0_InChar(); } // Clear UART buffer
+              menu = 1;
+              cmd = 0xDEAD;
+              break;
+
+          case 8: // Move and Turn Right on IR Object
+              EUSCIA0_OutString("Starting Move and Turn Right on IR Object Test. Press any key to exit.\r\n");
+              Motor_Forward(3000, 3000); // Start moving forward
+              while(EUSCIA0_InStatus() == 0) { // Loop until a character is received
+                  uint32_t ch17, ch12, ch16;
+                  ADC_In17_12_16(&ch17, &ch12, &ch16); // Read all three IR sensors
+                  int32_t center_distance_mm = CenterConvert(ch12); // Convert center sensor ADC to distance
+
+                  if (center_distance_mm <= 200 && center_distance_mm > 0) { // Check if object within 20 cm (200 mm) and valid reading
+                      Motor_Stop(); // Stop moving forward
+                      Clock_Delay1ms(100); // Small delay for stability
+                      Motor_Right(3000, 3000); // Turn right (adjust speed and duration as needed)
+                      Clock_Delay1ms(500); // Calibrated delay for 90-degree turn (needs adjustment)
+                      Motor_Stop(); // Stop turning
+                      EUSCIA0_OutString("Object detected within 20cm, turned right.\r\n");
+                      break; // Exit after turning
+                  }
+                  Clock_Delay1ms(10); // Small delay to prevent busy-waiting too much
+              }
+              Motor_Stop(); // Ensure motors are stopped if loop exits
+              while(EUSCIA0_InStatus()) { EUSCIA0_InChar(); } // Clear UART buffer
+              menu = 1;
+              cmd = 0xDEAD;
+              break;
 
           default:
               menu=1;
