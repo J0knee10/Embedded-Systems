@@ -1,6 +1,6 @@
 ;******************************************************************************
 ;* TI ARM G3 C/C++ Codegen                                              PC v20.2.7.LTS *
-;* Date/Time created: Fri Aug 29 14:33:07 2025                                *
+;* Date/Time created: Thu Oct 30 17:34:04 2025                                *
 ;******************************************************************************
 	.compiler_opts --abi=eabi --arm_vmrs_si_workaround=off --code_state=16 --diag_wrap=off --embedded_constants=on --endian=little --float_support=FPv4SPD16 --hll_source=on --object_format=elf --silicon_version=7M4 --symdebug:dwarf --symdebug:dwarf_version=3 --unaligned_access=on 
 	.thumb
@@ -118,7 +118,7 @@ $C$DW$6	.dwtag  DW_TAG_variable
 	.dwattr $C$DW$6, DW_AT_decl_line(0x3e)
 	.dwattr $C$DW$6, DW_AT_decl_column(0x0a)
 
-;	C:\ti\ccs2020\ccs\tools\compiler\bin\armacpia.exe -@C:\\Users\\jonat\\AppData\\Local\\Temp\\{E46B256A-9C3D-4C2F-8E1B-B46BEC3BF944} 
+;	C:\ti\ccs2020\ccs\tools\compiler\bin\armacpia.exe -@C:\\Users\\jonat\\AppData\\Local\\Temp\\{C8B2552C-9785-4D9E-8634-C6719E2C2A77} 
 	.sect	".text"
 	.clink
 	.thumbfunc Clock_Init48MHz

@@ -57,7 +57,7 @@ policies, either expressed or implied, of the FreeBSD Project.
 // Right motor enable connected to P3.6 (J2.11)
 
 #include "msp.h"
-#include "..\inc\bump.h"
+#include "..\inc\Bump.h"
 #include "..\inc\Clock.h"
 #include "..\inc\SysTick.h"
 #include "..\inc\CortexM.h"
@@ -128,12 +128,12 @@ int main(void){
     while(1){
       Motor_Forward(3000,3000);  // your function
       TimedPause(1000);
-      Motor_Backward(3000,3000); // your function
-      TimedPause(1000);
-      Motor_Left(3000,3000);     // your function
-      TimedPause(1000);
-      Motor_Right(3000,3000);    // your function
-      TimedPause(1000);
+      // Motor_Backward(3000,3000); // your function
+      // TimedPause(1000);
+      // Motor_Left(3000,3000);     // your function
+      // TimedPause(1000);
+      // Motor_Right(3000,3000);    // your function
+      // TimedPause(1000);
     }
 }
 

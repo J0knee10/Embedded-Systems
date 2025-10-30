@@ -85,13 +85,13 @@ void BumpInt_Init(void(*task)(uint8_t)){
 // bit 2 Bump2
 // bit 1 Bump1
 // bit 0 Bump0
-// uint8_t Bump_Read(void){
-//     // write this as part of Lab 14
-//     uint8_t result, temp;
-//     temp = P4->IN;
-//     result = (temp&0x1)|((temp>>1)&0x6)|((temp>>2)&0x38);
-//     return (result);
-// }
+uint8_t Bump_Read(void){
+    // write this as part of Lab 14
+    uint8_t result, temp;
+    temp = P4->IN;
+    result = (temp&0x1)|((temp>>1)&0x6)|((temp>>2)&0x38);
+    return (result);
+}
 // we do not care about critical section/race conditions
 // triggered on touch, falling edge
 void PORT4_IRQHandler(void){

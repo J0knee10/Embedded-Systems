@@ -1,5 +1,5 @@
-// Bump.c
-// Runs on MSP432
+// BumpInt.c
+// Runs on MSP432, interrupt version
 // Provide low-level functions that interface bump switches the robot.
 // Daniel Valvano and Jonathan Valvano
 // July 2, 2017
@@ -53,32 +53,28 @@ policies, either expressed or implied, of the FreeBSD Project.
 #include <stdint.h>
 #include "msp.h"
 
+void (*Port4Task)(uint8_t);   // user function
 
-void (*Port4Task)(uint8_t); // pointer to user task
 // Initialize Bump sensors
 // Make six Port 4 pins inputs
 // Activate interface pullup
 // pins 7,6,5,3,2,0
+// Interrupt on falling edge (on touch)
 void Bump_Init(void(*task)(uint8_t)){
-    // write this as part of Lab 3
-    // Initialise GPIO related registers.
-    // Registers: SEL0, SEL1, DIR, REN, OUT.
-    // Code to initialise GPIO related registers
-    // P9->DIR |= 0x04;                // Set P9.2 as output
-    // P9->SEL0 &= ~0x04;              // Set P9.2 as GPIO
-    // P9->SEL1 &= ~0x04;
-    // P9->OUT &= ~0x04;
+    // write this as part of Lab 14
+
     Port4Task = task;
-    P4 -> DIR &= ~0xED;
-    P4 -> SEL0 &= ~0xED;
-    P4 -> SEL1 &= ~0xED;
-    P4->REN  |=  0xED;
-    P4->OUT  |=  0xED;
+
+    P4->SEL0 &= ~0xED;
+    P4->SEL1 &= ~0xED;    // 1) configure P4.0, 4.2, 4.3, 4.5, 4.6, 4.7 as GPIO
+    P4->DIR &= ~0xED;     // 2) make P4.0, 4.2, 4.3, 4.5, 4.6, 4.7 input
+    P4->REN |= 0xED;      // 3) enable pullup/down resistors on P4.0, 4.2, 4.3, 4.5, 4.6, 4.7
+    P4->OUT |= 0xED;      //4) configure for pull-up mode for P4.0, 4.2, 4.3, 4.5, 4.6, 4.7
     P4->IES |= 0xED;                   // P1.4 and P1.1 are falling edge event
     P4->IFG &= ~0xED;                  // clear flag4 and flag1 (reduce possibility of extra interrupt)
     P4->IE |= 0xED;                    // arm interrupt on P1.4 and P1.1
-    NVIC->IP[9] = (NVIC->IP[9]&0xFF00FFFF)|0x00400000;        // (NVIC->IP[9]&0x00FFFFFF)|0x40000000; // priority 2
-    NVIC->ISER[1] |= 0x00000040;        // enable interrupt 38 in NVIC, bit 6 of ISER1
+    NVIC->IP[9] = (NVIC->IP[9]&0xFF00FFFF)|0x00400000; // priority 2. Pg 125 slau356.
+    NVIC->ISER[1] |= 0x00000040;        // enable interrupt 38 in NVIC. Pg118 MSP432 datasheets.
 
 }
 // Read current state of 6 switches
@@ -90,32 +86,16 @@ void Bump_Init(void(*task)(uint8_t)){
 // bit 1 Bump1
 // bit 0 Bump0
 uint8_t Bump_Read(void){
-    // write this as part of Lab 3
-    // Pack the 6 valid bits in the value read from the input data
-    // register to occupy 6 lower order bits of the result variable.
-    uint8_t result = 0, raw = 0;
-    raw = ~P4->IN & 0xED;
-    // Map raw port bits → result bits
-    // bump5 = P4.7 -> result[5]
-    result |= (raw & (1<<7)) >> 2;  // shift 7→5
-    // bump4 = P4.6 -> result[4]
-    result |= (raw & (1<<6)) >> 2;  // shift 6→4
-    // bump3 = P4.5 -> result[3]
-    result |= (raw & (1<<5)) >> 2;  // shift 5→3
-    // bump2 = P4.3 -> result[2]
-    result |= (raw & (1<<3)) >> 1;  // shift 3→2
-    // bump1 = P4.2 -> result[1]
-    result |= (raw & (1<<2)) >> 1;  // shift 2→1
-    // bump0 = P4.0 -> result[0]
-    result |= (raw & (1<<0)) >> 0;  // already aligned
-    return (~result); // return active low result ie "0" when bump pressed
+    // write this as part of Lab 14
+    uint8_t result, temp;
+    temp = P4->IN;
+    result = (temp&0x1)|((temp>>1)&0x6)|((temp>>2)&0x38);
+    return (result);
+}
+// we do not care about critical section/race conditions
+// triggered on touch, falling edge
+void PORT4_IRQHandler(void){
+    // write this as part of Lab 14
+    (*Port4Task)(Bump_Read());             // execute user task
 }
 
-void PORT4_IRQHandler(void){
-    // write this as part of Lab 3
-    uint8_t bumpData = Bump_Read();
-    if(Port4Task){ // execute user task
-        Port4Task(bumpData);
-    }
-    P4->IFG &= ~0xED;   // clear flag  
-}            
