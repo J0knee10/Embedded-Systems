@@ -85,14 +85,10 @@ void Motor_Init(void){
     P1->DIR |= 0xC0;      // 2) make P1.6, 1.7 output
     P1->OUT &= ~0xC0;     // 3) output LOW
 #else
-    // P5->SEL0 &= ~0x30;
-    // P5->SEL1 &= ~0x30;    // 1) configure P5.5, 5.4 as GPIO
-    // P5->DIR |= 0x30;      // 2) make P5.5, 5.4 output
-    // P5->OUT &= ~0x30;     // 3) output LOW
-    P1->SEL0 &= ~0xC0;
-    P1->SEL1 &= ~0xC0;    // 1) configure P1.6, 1.7 as GPIO
-    P1->DIR |= 0xC0;      // 2) make P1.6, 1.7 output
-    P1->OUT &= ~0xC0;     // 3) output LOW
+    P5->SEL0 &= ~0x30;
+    P5->SEL1 &= ~0x30;    // 1) configure P5.5, 5.4 as GPIO
+    P5->DIR |= 0x30;      // 2) make P5.5, 5.4 output
+    P5->OUT &= ~0x30;     // 3) output LOW
 #endif
     P2->SEL0 &= ~0xC0;
     P2->SEL1 &= ~0xC0;    // 1) configure P1.6, 1.7 as GPIO
@@ -131,8 +127,7 @@ void Motor_Forward(uint16_t leftDuty, uint16_t rightDuty){
 #if (RSLK_MAX==0)
     P1->OUT &= ~0xC0;
 #else
-    // P5->OUT &= ~0x30;
-    P1->OUT &= ~0xC0;
+    P5->OUT &= ~0x30;
 #endif
 
     PWM_Duty3(leftDuty);
@@ -158,10 +153,8 @@ void Motor_Right(uint16_t leftDuty, uint16_t rightDuty){
     P1->OUT &= ~0x80;
     P1->OUT |= 0x40;
 #else
-    // P5->OUT &= ~0x10;
-    // P5->OUT |= 0x20;
-    P1->OUT &= ~0x80;
-    P1->OUT |= 0x40;
+    P5->OUT &= ~0x10;
+    P5->OUT |= 0x20;
 #endif
 
     PWM_Duty3(leftDuty);
@@ -187,10 +180,8 @@ void Motor_Left(uint16_t leftDuty, uint16_t rightDuty){
     P1->OUT &= ~0x40;
     P1->OUT |= 0x80;
 #else
-    // P5->OUT &= ~0x20;
-    // P5->OUT |= 0x10;
-    P1->OUT &= ~0x40;
-    P1->OUT |= 0x80;
+    P5->OUT &= ~0x20;
+    P5->OUT |= 0x10;
 #endif
     PWM_Duty3(leftDuty);
     PWM_Duty4(rightDuty);
@@ -214,8 +205,7 @@ void Motor_Backward(uint16_t leftDuty, uint16_t rightDuty){
 #if (RSLK_MAX==0)
     P1->OUT |= 0xC0;
 #else
-    // P5->OUT |= 0x30;
-    P1->OUT |= 0xC0;
+    P5->OUT |= 0x30;
 #endif
     PWM_Duty3(leftDuty);
     PWM_Duty4(rightDuty);

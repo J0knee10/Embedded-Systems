@@ -1,7 +1,7 @@
 ******************************************************************************
                   TI ARM Linker PC v20.2.7                     
 ******************************************************************************
->> Linked Fri Sep 26 16:28:44 2025
+>> Linked Thu Oct 30 15:26:37 2025
 
 OUTPUT FILE NAME:   <Lab3_TimerCompare_Motor.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs"  address: 0000141d

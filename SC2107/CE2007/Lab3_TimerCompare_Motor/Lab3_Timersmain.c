@@ -69,7 +69,6 @@ policies, either expressed or implied, of the FreeBSD Project.
 
 
 volatile uint8_t reflectance_data, bump_data;
-// uint8_t leftDutyCycle = 1000, rightDutyCycle = 1000;
 
 // Driver test
 void TimedPause(uint32_t time){
@@ -106,6 +105,7 @@ void Task(void){
 
 #endif
 }
+
 void MyBumpHandler(uint8_t data){
     // data = bump state (0-63)
     bump_data = data;
@@ -118,7 +118,7 @@ int main(void){
 
     Clock_Init48MHz();
     LaunchPad_Init(); // built-in switches and LEDs
-    Bump_Init(&MyBumpHandler);  // bump switches
+    Bump_Init(&MyBumpHandler);      // bump switches
     Motor_Init();     // your function
     TExaS_Init(LOGICANALYZER_P2);
     TimerA1_Init(&Task,50000);  // 10 Hz
@@ -134,15 +134,6 @@ int main(void){
       TimedPause(1000);
       Motor_Right(3000,3000);    // your function
       TimedPause(1000);
-
-      // Motor_Forward(leftDutyCycle,rightDutyCycle);  // your function
-      // TimedPause(1000);
-      // Motor_Backward(leftDutyCycle,rightDutyCycle); // your function
-      // TimedPause(1000);
-      // Motor_Left(leftDutyCycle,rightDutyCycle);     // your function
-      // TimedPause(1000);
-      // Motor_Right(leftDutyCycle,rightDutyCycle);    // your function
-      // TimedPause(1000);
     }
 }
 
