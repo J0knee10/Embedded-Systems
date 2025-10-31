@@ -115,7 +115,7 @@ int32_t LeftConvert(int32_t nl){        // returns left distance in mm
   // write this for Lab 4
     uint32_t length=0;
     // nl = 1000.010/(length+0.8514);
-    length = 1000000/(-669.68+nl);
+    length = 25+(1000000/(-669.68+nl));
 
     return length;
 }
@@ -131,7 +131,7 @@ int32_t CenterConvert(int32_t nc){   // returns center distance in mm
 int32_t RightConvert(int32_t nr){      // returns right distance in mm
   // write this for Lab 4
     uint32_t length=0;
-    length = 1000000/(-669.68+nr);
+    length = (1000000/(-669.68+nr));
 
 
     return length;

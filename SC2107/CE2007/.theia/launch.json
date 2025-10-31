@@ -90,6 +90,15 @@
                 "name": "Lab4_TimerCapture_Tach",
                 "resourceId": "/Lab4_TimerCapture_Tach"
             }
+        },
+        {
+            "name": "Lab5_UARTComms",
+            "type": "ccs-debug",
+            "request": "launch",
+            "projectInfo": {
+                "name": "Lab5_UARTComms",
+                "resourceId": "/Lab5_UARTComms"
+            }
         }
     ]
 }

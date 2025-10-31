@@ -128,12 +128,12 @@ int main(void){
     while(1){
       Motor_Forward(3000,3000);  // your function
       TimedPause(1000);
-      // Motor_Backward(3000,3000); // your function
-      // TimedPause(1000);
-      // Motor_Left(3000,3000);     // your function
-      // TimedPause(1000);
-      // Motor_Right(3000,3000);    // your function
-      // TimedPause(1000);
+      Motor_Backward(3000,3000); // your function
+      TimedPause(1000);
+      Motor_Left(3000,3000);     // your function
+      TimedPause(1000);
+      Motor_Right(3000,3000);    // your function
+      TimedPause(1000);
     }
 }
 

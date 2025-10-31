@@ -1,6 +1,6 @@
 # FIXED
 
-BumpInt.obj: C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/BumpInt.c
+BumpInt.obj: ../BumpInt.c
 BumpInt.obj: C:/ti/ccs2020/ccs/tools/compiler/include/stdint.h
 BumpInt.obj: C:/ti/ccs2020/ccs/tools/compiler/include/_ti_config.h
 BumpInt.obj: C:/ti/ccs2020/ccs/tools/compiler/include/linkage.h
@@ -20,7 +20,7 @@ BumpInt.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_compiler.h
 BumpInt.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/CMSIS/cmsis_ccs.h
 BumpInt.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/system_msp432p401r.h
 
-C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/BumpInt.c:
+../BumpInt.c:
 
 C:/ti/ccs2020/ccs/tools/compiler/include/stdint.h:
 

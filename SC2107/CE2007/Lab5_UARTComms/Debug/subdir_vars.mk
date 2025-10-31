@@ -10,7 +10,7 @@ CMD_SRCS += \
 
 C_SRCS += \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/ADC14.c \
-C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/BumpInt.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/EUSCIA0.c \
@@ -22,7 +22,7 @@ C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/LaunchPad.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Motor.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/PWM.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c \
-C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTickInts.c \
+C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTick.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TA3InputCapture.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TimerA1.c \
 C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/UART0.c \
@@ -31,7 +31,7 @@ C:/Jon/Uni\ stuff/CE/Embedded-Systems/SC2107/CE2007/inc/UART0.c \
 
 C_DEPS += \
 ./ADC14.d \
-./BumpInt.d \
+./Bump.d \
 ./Clock.d \
 ./CortexM.d \
 ./EUSCIA0.d \
@@ -43,7 +43,7 @@ C_DEPS += \
 ./Motor.d \
 ./PWM.d \
 ./Reflectance.d \
-./SysTickInts.d \
+./SysTick.d \
 ./TA3InputCapture.d \
 ./TimerA1.d \
 ./UART0.d \
@@ -52,7 +52,7 @@ C_DEPS += \
 
 OBJS += \
 ./ADC14.obj \
-./BumpInt.obj \
+./Bump.obj \
 ./Clock.obj \
 ./CortexM.obj \
 ./EUSCIA0.obj \
@@ -64,7 +64,7 @@ OBJS += \
 ./Motor.obj \
 ./PWM.obj \
 ./Reflectance.obj \
-./SysTickInts.obj \
+./SysTick.obj \
 ./TA3InputCapture.obj \
 ./TimerA1.obj \
 ./UART0.obj \
@@ -73,7 +73,7 @@ OBJS += \
 
 OBJS__QUOTED += \
 "ADC14.obj" \
-"BumpInt.obj" \
+"Bump.obj" \
 "Clock.obj" \
 "CortexM.obj" \
 "EUSCIA0.obj" \
@@ -85,7 +85,7 @@ OBJS__QUOTED += \
 "Motor.obj" \
 "PWM.obj" \
 "Reflectance.obj" \
-"SysTickInts.obj" \
+"SysTick.obj" \
 "TA3InputCapture.obj" \
 "TimerA1.obj" \
 "UART0.obj" \
@@ -94,7 +94,7 @@ OBJS__QUOTED += \
 
 C_DEPS__QUOTED += \
 "ADC14.d" \
-"BumpInt.d" \
+"Bump.d" \
 "Clock.d" \
 "CortexM.d" \
 "EUSCIA0.d" \
@@ -106,7 +106,7 @@ C_DEPS__QUOTED += \
 "Motor.d" \
 "PWM.d" \
 "Reflectance.d" \
-"SysTickInts.d" \
+"SysTick.d" \
 "TA3InputCapture.d" \
 "TimerA1.d" \
 "UART0.d" \
@@ -115,7 +115,7 @@ C_DEPS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/ADC14.c" \
-"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/BumpInt.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Bump.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Clock.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/CortexM.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/EUSCIA0.c" \
@@ -127,7 +127,7 @@ C_SRCS__QUOTED += \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Motor.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/PWM.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/Reflectance.c" \
-"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTickInts.c" \
+"C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/SysTick.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TA3InputCapture.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/TimerA1.c" \
 "C:/Jon/Uni stuff/CE/Embedded-Systems/SC2107/CE2007/inc/UART0.c" \
