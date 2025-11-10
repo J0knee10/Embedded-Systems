@@ -75,7 +75,7 @@ int main(void){
     // P2->OUT |= 0x04;
     Data = Reflectance_Read(1000);
     
-    Data = Reflectance_Center(1000);
+    //Data = Reflectance_Center(1000);
     Position = Reflectance_Position(Data);
     // P2->OUT &= 0x00;
     Clock_Delay1ms(10);

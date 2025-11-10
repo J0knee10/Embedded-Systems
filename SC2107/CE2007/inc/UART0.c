@@ -407,9 +407,18 @@ int uart_close( int dev_fd){
 int uart_read(int dev_fd, char *buf, unsigned count){char ch;
   ch = UART0_InChar();    // receive from keyboard
   ch = *buf;         // return by reference
-  UART0_OutChar(ch);  // echo
-  return 1;
-}
+    return 1;
+  }
+  
+  //------------UART0_InStatus------------
+  // Check if a character is available in the receive buffer
+  // Input: none
+  // Output: 0 if no character, 1 if character is available
+  uint8_t UART0_InStatus(void){
+    return (EUSCI_A0->IFG&0x01); // Check RXIFG flag
+  }
+  
+  
 int uart_write(int dev_fd, const char *buf, unsigned count){ unsigned int num=count;
     while(num){
         if(*buf == 10){

@@ -22,13 +22,12 @@ Lab5_UARTmain.obj: C:/ti/ccs2020/ccs/ccs_base/arm/include/system_msp432p401r.h
 Lab5_UARTmain.obj: C:/ti/ccs2020/ccs/tools/compiler/include/string.h
 Lab5_UARTmain.obj: C:/ti/ccs2020/ccs/tools/compiler/include/xlocale/_string.h
 Lab5_UARTmain.obj: ../../inc/UART0.h
-Lab5_UARTmain.obj: ../../inc/EUSCIA0.h
-Lab5_UARTmain.obj: ../../inc/FIFO0.h
 Lab5_UARTmain.obj: ../../inc/Clock.h
-Lab5_UARTmain.obj: ../../inc/SysTickInts.h
+Lab5_UARTmain.obj: ../../inc/SysTick.h
 Lab5_UARTmain.obj: ../../inc/CortexM.h
 Lab5_UARTmain.obj: ../../inc/TimerA1.h
-Lab5_UARTmain.obj: ../../inc/BumpInt.h
+Lab5_UARTmain.obj: ../../inc/TimerA2.h
+Lab5_UARTmain.obj: ../../inc/Bump.h
 Lab5_UARTmain.obj: ../../inc/LaunchPad.h
 Lab5_UARTmain.obj: ../../inc/Motor.h
 Lab5_UARTmain.obj: ../../inc/IRDistance.h
@@ -82,19 +81,17 @@ C:/ti/ccs2020/ccs/tools/compiler/include/xlocale/_string.h:
 
 ../../inc/UART0.h:
 
-../../inc/EUSCIA0.h:
-
-../../inc/FIFO0.h:
-
 ../../inc/Clock.h:
 
-../../inc/SysTickInts.h:
+../../inc/SysTick.h:
 
 ../../inc/CortexM.h:
 
 ../../inc/TimerA1.h:
 
-../../inc/BumpInt.h:
+../../inc/TimerA2.h:
+
+../../inc/Bump.h:
 
 ../../inc/LaunchPad.h:
 

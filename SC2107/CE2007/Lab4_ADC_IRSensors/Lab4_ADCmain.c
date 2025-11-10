@@ -108,7 +108,8 @@ int main(void){
     }
     UART0_OutUDec5(LeftConvert(nl));UART0_OutString(",");
     UART0_OutUDec5(CenterConvert(nc));UART0_OutString(",");
-    UART0_OutUDec5(RightConvert(nr));UART0_OutString(",\r\n");
+    UART0_OutUDec5(RightConvert(nr));UART0_OutString(",");
+    UART0_OutString("\r\n");
   }
 }
 

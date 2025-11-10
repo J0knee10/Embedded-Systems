@@ -96,6 +96,8 @@ uint8_t Bump_Read(void){
 // triggered on touch, falling edge
 void PORT4_IRQHandler(void){
     // write this as part of Lab 14
-    (*Port4Task)(Bump_Read());             // execute user task
+    // uint8_t bumpData = Bump_Read();
+        (*Port4Task)(Bump_Read());
+    P4->IFG &= ~0xED;   // clear flag          // execute user task
 }
 

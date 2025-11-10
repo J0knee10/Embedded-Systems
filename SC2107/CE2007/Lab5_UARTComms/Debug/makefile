@@ -11,7 +11,7 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./ADC14.obj" \
-"./BumpInt.obj" \
+"./Bump.obj" \
 "./Clock.obj" \
 "./CortexM.obj" \
 "./EUSCIA0.obj" \
@@ -23,7 +23,7 @@ ORDERED_OBJS += \
 "./Motor.obj" \
 "./PWM.obj" \
 "./Reflectance.obj" \
-"./SysTickInts.obj" \
+"./SysTick.obj" \
 "./TA3InputCapture.obj" \
 "./TimerA1.obj" \
 "./UART0.obj" \
@@ -159,8 +159,8 @@ Lab5_UARTComms.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 # Other Targets
 clean:
 	-$(RM) $(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADC14.obj" "BumpInt.obj" "Clock.obj" "CortexM.obj" "EUSCIA0.obj" "FIFO0.obj" "IRDistance.obj" "LPF.obj" "Lab5_UARTmain.obj" "LaunchPad.obj" "Motor.obj" "PWM.obj" "Reflectance.obj" "SysTickInts.obj" "TA3InputCapture.obj" "TimerA1.obj" "UART0.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
-	-$(RM) "ADC14.d" "BumpInt.d" "Clock.d" "CortexM.d" "EUSCIA0.d" "FIFO0.d" "IRDistance.d" "LPF.d" "Lab5_UARTmain.d" "LaunchPad.d" "Motor.d" "PWM.d" "Reflectance.d" "SysTickInts.d" "TA3InputCapture.d" "TimerA1.d" "UART0.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
+	-$(RM) "ADC14.obj" "Bump.obj" "Clock.obj" "CortexM.obj" "EUSCIA0.obj" "FIFO0.obj" "IRDistance.obj" "LPF.obj" "Lab5_UARTmain.obj" "LaunchPad.obj" "Motor.obj" "PWM.obj" "Reflectance.obj" "SysTick.obj" "TA3InputCapture.obj" "TimerA1.obj" "UART0.obj" "startup_msp432p401r_ccs.obj" "system_msp432p401r.obj" 
+	-$(RM) "ADC14.d" "Bump.d" "Clock.d" "CortexM.d" "EUSCIA0.d" "FIFO0.d" "IRDistance.d" "LPF.d" "Lab5_UARTmain.d" "LaunchPad.d" "Motor.d" "PWM.d" "Reflectance.d" "SysTick.d" "TA3InputCapture.d" "TimerA1.d" "UART0.d" "startup_msp432p401r_ccs.d" "system_msp432p401r.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
