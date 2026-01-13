@@ -7,3 +7,4 @@
 *.list
 *.mp4
 *.obj
+.venv
