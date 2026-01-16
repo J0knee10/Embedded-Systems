@@ -42,23 +42,12 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-I2C_HandleTypeDef hi2c2;
+ I2C_HandleTypeDef hi2c2;
 IMU_Data imu1;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-// Complementary filter variables
-float compRoll = 0, compPitch = 0;
-float alpha_comp = 0.98f;
 
-// Kalman filter variables for Roll
-float kalmanRoll = 0; // This will be x_est_gyro
-float kalmanUncertaintyRoll = 4; // Initial σ_est_gyro^2
-// Kalman filter variables for Pitch
-float kalmanPitch = 0; // This will be x_est_gyro for pitch
-float kalmanUncertaintyPitch = 4; // Initial σ_est_gyro^2
-
-const float var_acc = 9; // σ_acc^2
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -125,7 +114,18 @@ int main(void)
   static float accY_filtered = 0;
   static float accZ_filtered = 0;
   float alpha = 0.1f;  // filter coefficient (0 < alpha < 1)
+  // Complementary filter variables
+  float compRoll = 0, compPitch = 0;
+  float alpha_comp = 0.95f;
 
+  // Kalman filter variables for Roll
+  float kalmanRoll = 0; // This will be x_est_gyro
+  // Kalman filter variables for Pitch
+  float kalmanPitch = 0; // This will be x_est_gyro for pitch
+  float kalmanGain = 0;
+
+  float var_gyro = 4; // initial var of gyro
+  const float var_acc = 9; // σ_acc^2
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -139,36 +139,35 @@ int main(void)
 	  IMU_GyroRead(&imu1);
 	  char newline[] = "\r\n";
 
-	  // Accelerometer XYZ
-	  for (int i = 0; i < 3; i++){
-		  sprintf(sbuf, "%5.2f, ", imu1.acc[i]);
-		  HAL_UART_Transmit(&huart3, sbuf, strlen(sbuf), HAL_MAX_DELAY);
-	  }
+//	  // Accelerometer XYZ
+//	  for (int i = 0; i < 3; i++){
+//		  sprintf(sbuf, "%5.2f, ", imu1.acc[i]);
+//		  HAL_UART_Transmit(&huart3, sbuf, strlen(sbuf), HAL_MAX_DELAY);
+//	  }
 
+	  // Acce Roll and pitch w/o filter
+	  float accRoll  = atan2f(imu1.acc[1], imu1.acc[2]) * (180.0f / M_PI);
+	  float accPitch = atan2f(-imu1.acc[0], sqrtf(imu1.acc[1]*imu1.acc[1] + imu1.acc[2]*imu1.acc[2])) * (180.0f / M_PI);
 
-	  // Apply low-pass filter
-	  accX_filtered = alpha * imu1.acc[0] + (1 - alpha) * accX_filtered;
-	  accY_filtered = alpha * imu1.acc[1] + (1 - alpha) * accY_filtered;
-	  accZ_filtered = alpha * imu1.acc[2] + (1 - alpha) * accZ_filtered;
+//	  // Apply low-pass filter
+//	  accX_filtered = alpha * imu1.acc[0] + (1 - alpha) * accX_filtered;
+//	  accY_filtered = alpha * imu1.acc[1] + (1 - alpha) * accY_filtered;
+//	  accZ_filtered = alpha * imu1.acc[2] + (1 - alpha) * accZ_filtered;
 
-//	  // Acce Roll and pitch w/o filter
-//	  float roll  = atan2f(imu1.acc[1], imu1.acc[2]) * (180.0f / M_PI);
-//	  float pitch = atan2f(-imu1.acc[0], sqrtf(imu1.acc[1]*imu1.acc[1] + imu1.acc[2]*imu1.acc[2])) * (180.0f / M_PI);
+//	  // Acce Roll and pitch with filter
+//	  float pitch = atan2f(-accX_filtered, sqrtf(accY_filtered*accY_filtered + accZ_filtered*accZ_filtered)) * (180.0f / M_PI);
+//	  float roll  = atan2f(accY_filtered, accZ_filtered) * (180.0f / M_PI);
 
-	  // Acce Roll and pitch with filter
-	  float pitch = atan2f(-accX_filtered, sqrtf(accY_filtered*accY_filtered + accZ_filtered*accZ_filtered)) * (180.0f / M_PI);
-	  float roll  = atan2f(accY_filtered, accZ_filtered) * (180.0f / M_PI);
-
-	  sprintf(sbuf, "%5.2f, %5.2f, ", roll, pitch);
+	  sprintf(sbuf, "%5.2f, %5.2f, ", accRoll, accPitch);
 	  HAL_UART_Transmit(&huart3, sbuf, strlen(sbuf), HAL_MAX_DELAY);
 
 
 
-	  // Gyro XYZ
-	  for (int i = 0; i < 3; i++){
-		  sprintf(sbuf, "%5.2f, ", imu1.gyro[i]);
-		  HAL_UART_Transmit(&huart3, sbuf, strlen(sbuf), HAL_MAX_DELAY);
-	  }
+//	  // Gyro XYZ
+//	  for (int i = 0; i < 3; i++){
+//		  sprintf(sbuf, "%5.2f, ", imu1.gyro[i]);
+//		  HAL_UART_Transmit(&huart3, sbuf, strlen(sbuf), HAL_MAX_DELAY);
+//	  }
 
 	  // Time elapsed for gyro integration
 	  uint32_t millisNow = HAL_GetTick();
@@ -180,7 +179,8 @@ int main(void)
 	  gyroRoll  += imu1.gyro[0] * dt;
 	  gyroPitch += imu1.gyro[1] * dt;
 	  gyroYaw   += imu1.gyro[2] * dt;
-	  sprintf(sbuf, "%5.2f, %5.2f, %5.2f, ", gyroRoll, gyroPitch, gyroYaw);
+	  // sprintf(sbuf, "%5.2f, %5.2f, %5.2f, ", gyroRoll, gyroPitch, gyroYaw);
+	  sprintf(sbuf, "%5.2f, %5.2f, ", gyroRoll, gyroPitch);
 	  HAL_UART_Transmit(&huart3, (uint8_t*)sbuf, strlen(sbuf), HAL_MAX_DELAY);
 
 
@@ -188,30 +188,51 @@ int main(void)
 	  // compRoll and compPitch are Θ[n-1]
 	  // imu1.gyro[0] is ωG[n] for roll
 	  // roll is ΘA[n] for roll
-	  compPitch = alpha_comp * (compPitch + imu1.gyro[0] * dt) + (1 - alpha_comp) * imu1.acc[0];
-	  compRoll = alpha_comp * (compRoll + imu1.gyro[1] * dt) + (1 - alpha_comp) * imu1.acc[1];
+	  compRoll = alpha_comp * (compRoll + imu1.gyro[0] * dt) + (1 - alpha_comp) * accRoll;
+	  compPitch = alpha_comp * (compPitch + imu1.gyro[1]) + (1 - alpha_comp) * accPitch;
+//	  compRoll = alpha_comp * (compRoll + gyroRoll) + (1 - alpha_comp) * accRoll;
+//	  compPitch = alpha_comp * (compPitch + gyroPitch) + (1 - alpha_comp) * accPitch;
 	  sprintf(sbuf, "%5.2f, %5.2f, ", compRoll, compPitch);
 	  HAL_UART_Transmit(&huart3, (uint8_t*)sbuf, strlen(sbuf), HAL_MAX_DELAY);
 
 
 	  /* --- Kalman Filter Implementation --- */ //KALMAN FILTER HAS ERRORS
 	  // --- Roll ---
-	  // Prediction step (based on gyro)
-	  kalmanRoll += imu1.gyro[1] * dt; // x_est_gyro at n based on n-1
+//	  // Prediction step (based on gyro)
+//	  kalmanRoll += imu1.gyro[1] * dt; // x_est_gyro at n based on n-1
+//
+//	  // Update step (correction based on accelerometer)
+//	  float KG_roll = kalmanUncertaintyRoll / (kalmanUncertaintyRoll + var_acc);
+//	  kalmanRoll = kalmanRoll + KG_roll * (roll - kalmanRoll);
+//	  kalmanUncertaintyRoll = (1 - KG_roll) * kalmanUncertaintyRoll;
+//
+//	  // --- Pitch ---
+//	  // Prediction step (based on gyro)
+//	  kalmanPitch += imu1.gyro[0] * dt; // x_est_gyro at n based on n-1
+//
+//	  // Update step (correction based on accelerometer)
+//	  float KG_pitch = kalmanUncertaintyPitch / (kalmanUncertaintyPitch + var_acc);
+//	  kalmanPitch = kalmanPitch + KG_pitch * (pitch - kalmanPitch);
+//	  kalmanUncertaintyPitch = (1 - KG_pitch) * kalmanUncertaintyPitch;
 
-	  // Update step (correction based on accelerometer)
-	  float KG_roll = kalmanUncertaintyRoll / (kalmanUncertaintyRoll + var_acc);
-	  kalmanRoll = kalmanRoll + KG_roll * (roll - kalmanRoll);
-	  kalmanUncertaintyRoll = (1 - KG_roll) * kalmanUncertaintyRoll;
+//	  // Kalman filter variables for Roll
+//	  float kalmanRoll = 0; // This will be x_est_gyro
+//	  // Kalman filter variables for Pitch
+//	  float kalmanPitch = 0; // This will be x_est_gyro for pitch
+//
+//	  float var_gyro = 4; // initial var of gyro
+//	  const float var_acc = 9; // σ_acc^2
 
-	  // --- Pitch ---
-	  // Prediction step (based on gyro)
-	  kalmanPitch += imu1.gyro[0] * dt; // x_est_gyro at n based on n-1
+	  /* --- Kalman Filter Implementation --- */
+	  kalmanRoll += imu1.gyro[0] * dt; // predict new gyro Roll
+	  kalmanPitch += imu1.gyro[1] * dt; // predict new gyro Pitch
 
-	  // Update step (correction based on accelerometer)
-	  float KG_pitch = kalmanUncertaintyPitch / (kalmanUncertaintyPitch + var_acc);
-	  kalmanPitch = kalmanPitch + KG_pitch * (pitch - kalmanPitch);
-	  kalmanUncertaintyPitch = (1 - KG_pitch) * kalmanUncertaintyPitch;
+	  var_gyro = var_gyro + 16 * (dt*dt); // calculate new var_gyro from new readings
+	  kalmanGain = var_gyro/(var_gyro+var_acc); // calculate KG
+
+	  kalmanRoll = kalmanRoll + kalmanGain*(accRoll - kalmanRoll); //update Roll
+	  kalmanPitch = kalmanPitch + kalmanGain*(accPitch - kalmanPitch); // update Pitch
+	  var_gyro = (1-kalmanGain) * var_gyro; // correct uncertainty of gyro
 	  sprintf(sbuf, "%5.2f, %5.2f, ", kalmanRoll, kalmanPitch);
 	  HAL_UART_Transmit(&huart3, (uint8_t*)sbuf, strlen(sbuf), HAL_MAX_DELAY);
 
