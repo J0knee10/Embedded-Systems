@@ -38,11 +38,12 @@
 // Our model
 #include "cosine_model.h"
 
-#define DEBUG 1 //Figure out what's going on in our model. Check the DEBUG IF defines.
-//#define DEBUG 0 //Run the sine program 
+// #define DEBUG 1 //Figure out what's going on in our model. Check the DEBUG IF defines.
+#define DEBUG 0 //Run the sine program 
 
 // Some settings
-constexpr int led_pin = LED_BUILTIN;			  // output port pin for the LED, replace 'x' with pin connecting to led
+// constexpr int led_pin = LED_BUILTIN;			  // output port pin for the LED, replace 'x' with pin connecting to led
+constexpr int led_pin = 23;
 constexpr float pi = 3.14159265;                  // pi
 constexpr float freq = 0.5;                       // Frequency (Hz) of sinewave
 constexpr float period = (1 / freq) * (1000000);  // Period (microseconds)
@@ -121,7 +122,7 @@ void loop() {
   unsigned long start_timestamp = micros();
 
   //**for testing
-  float x_val = 1.2;  // sin(1.2) = 0.9,  sin(0.7) = 0.64, sin(pi) = 0
+  float x_val = 0.7;  // sin(1.2) = 0.9,  sin(0.7) = 0.64, sin(pi) = 0
   //if (Serial.available())>0 // if value available
   //    x_val = Serial.parseFloat();
   model_input->data.f[0] = x_val; //Copy value to input buffer (tensor)
@@ -132,7 +133,7 @@ void loop() {
   }
   // Read predicted y value from output buffer (tensor)
   float y_val = model_output->data.f[0];
-  Serial.print("sin(");
+  Serial.print("cos(");
   Serial.print(x_val);
   Serial.print(") = ");
   Serial.println(y_val);
@@ -153,6 +154,8 @@ void loop() {
 
   // Copy value to input buffer (tensor)
   model_input->data.f[0] = x_val;
+  // Serial.println(model_input->type);   // 1 = float, 9 = int8
+
 
   // Run inference
   TfLiteStatus invoke_status = interpreter->Invoke();

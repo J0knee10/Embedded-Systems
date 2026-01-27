@@ -5,9 +5,7 @@ import os
 # This is the function from your hex_to_c_array.txt file
 # -----------------------------------------------------------------------------
 def hex_to_c_array(hex_data, var_name):
-  """
-  Converts a byte array into a C-style char array for embedding in source code.
-  """
+
   c_str = ''
 
   # Create header guard
@@ -15,10 +13,10 @@ def hex_to_c_array(hex_data, var_name):
   c_str += '#define ' + var_name.upper() + '_H\n\n'
 
   # Add array length at top of file
-  c_str += 'unsigned int ' + var_name + '_len = ' + str(len(hex_data)) + ';\n\n'
+  c_str += '\nunsigned int ' + var_name + '_len = ' + str(len(hex_data)) + ';\n'
 
-  # Declare C variable with alignment for performance on embedded devices
-  c_str += 'alignas(8) const unsigned char ' + var_name + '[] = {'
+  # Declare C variable
+  c_str += 'unsigned char ' + var_name + '[] = {'
   hex_array = []
   for i, val in enumerate(hex_data) :
 
@@ -33,7 +31,7 @@ def hex_to_c_array(hex_data, var_name):
     hex_array.append(hex_str)
 
   # Add closing brace
-  c_str += '\n ' + ' '.join(hex_array) + '\n};\n'
+  c_str += '\n ' + format(' '.join(hex_array)) + '\n};\n\n'
 
   # Close out header guard
   c_str += '#endif //' + var_name.upper() + '_H'
@@ -65,6 +63,7 @@ def main():
         # Read the binary content of the TFLite model
         with open(tflite_file_path, 'rb') as f:
             tflite_binary = f.read()
+            # tflite_hex = tflite_binary.hex()
 
         # Call the function to convert the binary data to a C array string
         c_array_str = hex_to_c_array(tflite_binary, variable_name)
