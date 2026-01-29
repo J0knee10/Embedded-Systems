@@ -7,4 +7,10 @@
 *.list
 *.mp4
 *.obj
+*.o
+*.d
+*.hex
+*.axf
+*.crf
+*.htm
 .venv
