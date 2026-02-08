@@ -78,7 +78,7 @@ void setup() {
 
   Serial.println();
 
-  // get the TFL representation of the model byte array
+  // get the TFL representation of the model byte array!1/OK/MOTOR_CONTROL_SUCCESS;!0/OK/FWD_COMPLETE;
   //tflModel = tflite::GetModel(model);
   //tflModel = tflite::GetModel(IMU_model);
   tflModel = tflite::GetModel(gesture_model);
