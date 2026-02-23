@@ -23,3 +23,6 @@
 
 # Python
 .venv/
+
+#data sets
+TinyML_SC4172/Lab/data/
