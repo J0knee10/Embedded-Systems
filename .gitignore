@@ -20,6 +20,7 @@
 
 # IDE / editor
 .vscode/
+.gemini
 
 # Python
 .venv/
