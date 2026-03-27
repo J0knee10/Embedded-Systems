@@ -28,7 +28,7 @@ To optimize battery life and reduce false positives, the project uses a "Sensory
 *   **Optional:** I2C OLED Display for real-time confidence scores.
 
 ## Data & Model (TinyML Workflow)
-1.  **IMU Data:** Collected using `IMU_Capture.ino` to distinguish between "Fall," "Sitting," and "Walking."
+1.  **IMU Data:** Collected using `IMU_Fall_Capture.ino` (which uses a circular buffer to capture the pre-impact descent) to distinguish between "Fall," "Sitting," and "Walking."
 2.  **Audio Data:** MFCC features extracted from 1-second snippets of "Help," "Emergency," "Cancel," and "Background Noise."
 3.  **Inference:** TensorFlow Lite Micro (TFLM) running on-device for real-time classification.
 
@@ -38,7 +38,7 @@ To build this project, follow the steps below to capture your own data:
 ### 1. IMU (Fall) Data
 *   Upload `IMU_Fall_Capture.ino` to the Arduino.
 *   Run `python serial_data_collector.py --port YOUR_PORT --file fall.csv --mode imu`.
-*   Perform 50-100 "fall" actions and "normal" movements.
+*   Perform 50-100 "fall" actions (the board will automatically capture 1s of data including 0.25s of pre-impact flight).
 *   The data is stored in CSV format: `ax, ay, az, gx, gy, gz`.
 
 ### 2. Audio (Keyword) Data
@@ -47,9 +47,50 @@ To build this project, follow the steps below to capture your own data:
 *   The script will wait for you to press ENTER to start a 1-second recording.
 *   The raw PDM numbers will be stored in text format.
 
+#### Audio Collection Strategy (65/35 Split)
+To ensure the model works in real-world conditions, use this variety:
+*   **65% Clean Base:** Record in a quiet, enclosed room. Speak clearly at various volumes (normal, shouting, out-of-breath).
+*   **35% Real-World Variety:** Record with background noise (TV playing, fans/AC running, or music).
+*   **Distance Variety:** Record some samples with the sensor close to your mouth and others at "waistband height" (arm's length) to simulate a real fall.
+*   **The "Background" Class (CRITICAL):** Fill `background.txt` with ONLY noise (no speaking). Include 1-2 minutes of silence, TV chatter, and mechanical hums (fans). This teaches the model to ignore non-voice sounds.
+
+## Step-by-Step Workflow
+
+### Phase 1: IMU Fall Detection (Stage 1)
+1. **Upload Collector:** Upload `IMU_Fall_Capture.ino` to your Arduino Nano 33 BLE Sense.
+2. **Collect Fall Data:** Run the following and perform **~50 varied falls** (onto a soft surface!):
+   ```bash
+   python serial_data_collector.py --port COM3 --file fall_data.csv --mode imu
+   ```
+3. **Collect Normal Data:** Run the following and perform **~50 "Negative" actions** (sitting down, jumping, flat drops, walking):
+   ```bash
+   python serial_data_collector.py --port COM3 --file normal_data.csv --mode imu
+   ```
+4. **Train Model:** Open `train_fall_model.ipynb` and run all cells to generate `fall_model.tflite`.
+
+### Phase 2: Audio Keyword Spotting (Stage 2)
+1. **Upload Collector:** Upload `Audio_Keyword_Capture.ino` to your Arduino.
+2. **Collect Audio Data:** Run the following for each keyword (**Aim for ~50 audio clips per class**):
+   ```bash
+   # For "HELP"
+   python serial_data_collector.py --port COM3 --file help.txt --mode audio
+   # For "EMERGENCY"
+   python serial_data_collector.py --port COM3 --file emergency.txt --mode audio
+   # For "CANCEL"
+   python serial_data_collector.py --port COM3 --file cancel.txt --mode audio
+   # For "BACKGROUND" (silence, TV noise, etc.)
+   python serial_data_collector.py --port COM3 --file background.txt --mode audio
+   ```
+3. **Train Model:** Open `train_emergency_model.ipynb` to train your CNN and export `emergency_model.tflite`.
+
+### Phase 3: Integrated Deployment
+1. **Convert to C:** Use a tool (like `xxd`) or a Python script to convert `.tflite` files to C-header arrays.
+2. **Final Upload:** Upload `FallAndCall_Inference.ino` with your trained models included.
+
 ## Implementation Status
 - [x] Project Concept & Architecture
-- [ ] IMU Fall Detection Logic (Polling)
+- [x] IMU Data Collector (Circular Buffer)
+- [x] IMU Verification Logic (Tilt + Stillness)
 - [ ] Audio Dataset Collection
 - [ ] CNN Model Training (Jupyter Notebook)
 - [ ] TFLite Deployment & Integration
