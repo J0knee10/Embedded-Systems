@@ -1,12 +1,9 @@
-/*
-  FallAndCall_Inference.ino (v2.0 - Verified Detection)
-  Integrated 2-Stage Emergency System with Multi-Sensor Gating
-*/
-
 #include <Arduino_LSM9DS1.h>
 #include <PDM.h>
+#include <arduinoFFT.h>
 #include "fall_model.h"       // Your exported TFLite model header
 #include "emergency_model.h"  // Your exported TFLite model header
+#include "mel_filter_bank.h"
 #include <TensorFlowLite.h>
 #include <tensorflow/lite/micro/all_ops_resolver.h>
 #include <tensorflow/lite/micro/micro_error_reporter.h>
@@ -14,13 +11,34 @@
 #include <tensorflow/lite/schema/schema_generated.h>
 #include <tensorflow/lite/version.h>
 
+// Audio Parameters (Matching notebook)
+#define SAMPLE_RATE 16000
+#define FRAME_SIZE 512
+#define HOP_LENGTH 256
+#define NUM_FRAMES 61
+#define NUM_MFCC 13
+#define NUM_MEL_FILTERS 26
+#define BUFFER_SIZE (FRAME_SIZE + (HOP_LENGTH * (NUM_FRAMES - 1)))
+
+// Audio Buffer (Circular)
+int16_t audio_buffer[BUFFER_SIZE];
+volatile int bufferIndex = 0;
+volatile uint32_t samplesCapturedTotal = 0;
+uint32_t lastInferenceSampleCount = 0;
+volatile bool isCollectingAudio = false;
+
+// Optimization Tables
+float dct_matrix[NUM_MFCC][NUM_MEL_FILTERS];
+float hanning_window[FRAME_SIZE];
+struct MelBounds { int start; int end; } mel_bounds[NUM_MEL_FILTERS];
+
+// FFT Setup
+ArduinoFFT<float> FFT;
+float fftReal[FRAME_SIZE];
+float fftImag[FRAME_SIZE];
 
 // global variables used for TensorFlow Lite (Micro)
 tflite::MicroErrorReporter tflErrorReporter;
-
-// pull in all the TFLM ops, you can remove this line and
-// only pull in the TFLM ops you need, if would like to reduce
-// the compiled size of the sketch.
 tflite::AllOpsResolver tflOpsResolver;
 
 const tflite::Model* tflFallModel = nullptr;
@@ -33,89 +51,107 @@ tflite::MicroInterpreter* tflEmerInterpreter = nullptr;
 TfLiteTensor* tflEmerInputTensor = nullptr;
 TfLiteTensor* tflEmerOutputTensor = nullptr;
 
-// Create a static memory buffer for TFLM, the size may need to
-// be adjusted based on the model you are using
-constexpr int arenaSize = 32 * 1024;
+constexpr int arenaSize = 80 * 1024; 
+byte tensorArena[arenaSize] __attribute__((aligned(16)));
 
-byte fallArena[arenaSize] __attribute__((aligned(16)));
-byte emerArena[arenaSize] __attribute__((aligned(16)));
-
-// System State Machine
-enum State { IDLE,
-             VERIFYING,
-             LISTENING,
-             ALARM };
+enum State { IDLE, VERIFYING, LISTENING, ALARM };
 State currentState = IDLE;
 
-// variables
+// fall variables
 const float IMPACT_THRESHOLD = 4.5;
-const float TILT_THRESHOLD_ANGLE = 60.0;        // Degrees change required
-const float FALL_CONF_THRESHOLD = 0.7;
-const unsigned long VERIFICATION_DELAY = 1500;  // Wait for person to settle
+const float TILT_THRESHOLD_ANGLE = 60.0;
+const float FALL_CONF_THRESHOLD = 0.6;
+const unsigned long VERIFICATION_DELAY = 1500;
 #define SAMPLES 120
 float imuBuffer[SAMPLES][6];
-int sampleIndex = 0;
+int imuSampleIndex = 0;
+int postImpactSamplesLeft = 0;
 
-// Initial Orientation (Standing)
 float standX, standY, standZ;
 unsigned long stateStartTime = 0;
-// LED pins
+unsigned long voiceListenStartTime = 0;
+
 const int LED_VERIFY = 8;
 const int LED_LOOP = 2;
 const int LED_LISTEN = 10;
 const int LED_ALARM = 12;
 
+void onPDMdata() {
+  int bytesAvailable = PDM.available();
+  if (bytesAvailable > 0) {
+    int16_t pdmBuffer[bytesAvailable / 2];
+    int samplesRead = PDM.read(pdmBuffer, bytesAvailable) / 2;
+
+    if (isCollectingAudio) {
+      for (int i = 0; i < samplesRead; i++) {
+        audio_buffer[bufferIndex] = pdmBuffer[i];
+        bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;
+        samplesCapturedTotal++;
+      }
+    }
+  }
+}
+
 void setup() {
   Serial.begin(115200);
-  while (!Serial)
-    ;
+  while (!Serial);
 
   if (!IMU.begin()) {
     Serial.println("Failed to start IMU!");
-    while (1)
-      ;
-  }
-  PDM.begin(1, 16000);
-  pinMode(LED_VERIFY, OUTPUT);
-  pinMode(LED_LOOP, OUTPUT);
-  pinMode(LED_LISTEN, OUTPUT);
-  pinMode(LED_ALARM, OUTPUT);
-  tflFallModel = tflite::GetModel(fall_model);
-  tflEmerModel = tflite::GetModel(emergency_model);
-  if (tflFallModel->version() != TFLITE_SCHEMA_VERSION) {
-    Serial.println("Model schema mismatch!");
     while (1);
   }
 
-  // Create an interpreter to run the model
-  tflFallInterpreter = new tflite::MicroInterpreter(tflFallModel, tflOpsResolver, fallArena, arenaSize, &tflErrorReporter);
-  tflEmerInterpreter = new tflite::MicroInterpreter(tflEmerModel, tflOpsResolver, emerArena, arenaSize, &tflErrorReporter);
+  PDM.onReceive(onPDMdata);
+  if (!PDM.begin(1, 16000)) {
+    Serial.println("Failed to start PDM!");
+    while (1);
+  }
+  PDM.setGain(20);
 
-  // Allocate memory for the model's input and output tensors
+  // Pre-calculations for speed
+  for (int i = 0; i < NUM_MFCC; i++) {
+    float scale = (i == 0) ? sqrt(1.0f / NUM_MEL_FILTERS) : sqrt(2.0f / NUM_MEL_FILTERS);
+    for (int j = 0; j < NUM_MEL_FILTERS; j++) {
+      dct_matrix[i][j] = scale * cos(M_PI * i * (2 * j + 1) / (2 * NUM_MEL_FILTERS));
+    }
+  }
+  for (int i = 0; i < FRAME_SIZE; i++) {
+    hanning_window[i] = 0.5f * (1 - cos(2 * M_PI * i / (FRAME_SIZE - 1)));
+  }
+  for (int f = 0; f < NUM_MEL_FILTERS; f++) {
+    int start = -1, end = -1;
+    for (int b = 0; b <= FRAME_SIZE / 2; b++) {
+      if (mel_filter_bank[f][b] > 0) {
+        if (start == -1) start = b;
+        end = b;
+      }
+    }
+    mel_bounds[f] = {start, end};
+  }
+
+  pinMode(LED_VERIFY, OUTPUT); pinMode(LED_LOOP, OUTPUT);
+  pinMode(LED_LISTEN, OUTPUT); pinMode(LED_ALARM, OUTPUT);
+
+  tflFallModel = tflite::GetModel(fall_model);
+  tflEmerModel = tflite::GetModel(emergency_model);
+  tflFallInterpreter = new tflite::MicroInterpreter(tflFallModel, tflOpsResolver, tensorArena, arenaSize, &tflErrorReporter);
+  tflEmerInterpreter = new tflite::MicroInterpreter(tflEmerModel, tflOpsResolver, tensorArena, arenaSize, &tflErrorReporter);
   tflFallInterpreter->AllocateTensors();
   tflEmerInterpreter->AllocateTensors();
-
   tflFallInputTensor = tflFallInterpreter->input(0);
   tflFallOutputTensor = tflFallInterpreter->output(0);
   tflEmerInputTensor = tflEmerInterpreter->input(0);
   tflEmerOutputTensor = tflEmerInterpreter->output(0);
 
-  Serial.println("ML model loaded successfully!");
-
-  // Calibration: Capture standing orientation (Assumes device starts vertical)
-  Serial.println("Calibrating standing orientation... Please hold board upright.");
+  Serial.println("ML models loaded. Calibrating...");
   delay(1000);
   if (IMU.accelerationAvailable()) {
     IMU.readAcceleration(standX, standY, standZ);
-    // Normalize standing vector
     float mag = sqrt(standX * standX + standY * standY + standZ * standZ);
-    standX /= mag;
-    standY /= mag;
-    standZ /= mag;
+    standX /= mag; standY /= mag; standZ /= mag;
   }
-
   pinMode(LED_BUILTIN, OUTPUT);
-  Serial.println("System IDLE. Monitoring for impact...");
+  Serial.println("System IDLE. Monitoring...");
 }
 
 void loop() {
@@ -125,183 +161,163 @@ void loop() {
     lastBlink = millis();
   }
   updateLEDs();
+
   switch (currentState) {
     case IDLE:
+      isCollectingAudio = false;
       checkIMU();
       break;
 
     case VERIFYING:
-      if (millis() - stateStartTime > VERIFICATION_DELAY) {
+      if (postImpactSamplesLeft > 0) {
+        if (IMU.accelerationAvailable() && IMU.gyroscopeAvailable()) {
+          IMU.readAcceleration(imuBuffer[imuSampleIndex][0], imuBuffer[imuSampleIndex][1], imuBuffer[imuSampleIndex][2]);
+          IMU.readGyroscope(imuBuffer[imuSampleIndex][3], imuBuffer[imuSampleIndex][4], imuBuffer[imuSampleIndex][5]);
+          imuSampleIndex = (imuSampleIndex + 1) % SAMPLES;
+          postImpactSamplesLeft--;
+        }
+      } else if (millis() - stateStartTime > VERIFICATION_DELAY) {
         verifyFall();
       }
       break;
 
     case LISTENING:
-      runVoiceInference();
+      // Run inference every 500ms (8000 samples)
+      if (samplesCapturedTotal - lastInferenceSampleCount >= 8000) {
+        runVoiceInference();
+        lastInferenceSampleCount = samplesCapturedTotal;
+      }
+      if (millis() - voiceListenStartTime > 10000) {
+        Serial.println("Voice timeout.");
+        currentState = IDLE;
+      }
       break;
 
     case ALARM:
+      isCollectingAudio = false;
       digitalWrite(LED_BUILTIN, HIGH);
       Serial.println("!!! EMERGENCY ALERT SENT !!!");
       delay(5000);
       digitalWrite(LED_BUILTIN, LOW);
       currentState = IDLE;
-      Serial.println("System IDLE. Monitoring for impact...");
       break;
   }
-  //digitalWrite(LED_LOOP, LOW);
-  //delay(1000);
+}
+
+void runVoiceInference() {
+  // 1. Calculate the start point of the oldest sample in the circular buffer
+  // bufferIndex currently points to where the NEXT sample will be written.
+  int startIdx = bufferIndex; 
+
+  // 2. Local Normalization (Scanning circular buffer)
+  int16_t maxVal = 0;
+  for (int i = 0; i < BUFFER_SIZE; i++) {
+    int16_t absV = abs(audio_buffer[i]);
+    if (absV > maxVal) maxVal = absV;
+  }
+
+  // 3. MFCC Extraction (Directly from circular buffer)
+  for (int i = 0; i < NUM_FRAMES; i++) {
+    // Windowing & FFT
+    for (int n = 0; n < FRAME_SIZE; n++) {
+      // Direct Indexing: (Start + FrameOffset + SampleOffset) % BUFFER_SIZE
+      int sampleIdx = (startIdx + (i * HOP_LENGTH) + n) % BUFFER_SIZE;
+      float sample = (float)audio_buffer[sampleIdx];
+      if (maxVal > 0) sample /= (float)maxVal;
+      
+      fftReal[n] = sample * hanning_window[n];
+      fftImag[n] = 0.0f;
+    }
+    FFT.compute(fftReal, fftImag, FRAME_SIZE, FFT_FORWARD);
+
+    // Power Spectrum & Mel
+    float power[FRAME_SIZE / 2 + 1];
+    for (int n = 0; n <= FRAME_SIZE / 2; n++) power[n] = fftReal[n]*fftReal[n] + fftImag[n]*fftImag[n];
+
+    float mel[NUM_MEL_FILTERS];
+    for (int f = 0; f < NUM_MEL_FILTERS; f++) {
+      float sum = 0;
+      for (int b = mel_bounds[f].start; b <= mel_bounds[f].end; b++) sum += mel_filter_bank[f][b] * power[b];
+      mel[f] = (sum > 0) ? 10 * log10(sum) : -100.0f;
+    }
+
+    // DCT
+    for (int k = 0; k < NUM_MFCC; k++) {
+      float val = 0;
+      for (int j = 0; j < NUM_MEL_FILTERS; j++) val += mel[j] * dct_matrix[k][j];
+      tflEmerInputTensor->data.f[k * NUM_FRAMES + i] = val;
+    }
+  }
+
+  if (tflEmerInterpreter->Invoke() == kTfLiteOk) {
+    float help = tflEmerOutputTensor->data.f[2];
+    float cancel = tflEmerOutputTensor->data.f[1];
+    Serial.print("Help: "); Serial.print(help); Serial.print(" Cancel: "); Serial.println(cancel);
+
+    if (help > 0.7) {
+      Serial.println("VOICE: HELP DETECTED!");
+      currentState = ALARM;
+    } else if (cancel > 0.7) {
+      Serial.println("VOICE: CANCEL DETECTED.");
+      currentState = IDLE;
+    }
+  }
 }
 
 void checkIMU() {
-  float ax, ay, az;
-  float gx, gy, gz;
-
   if (IMU.accelerationAvailable() && IMU.gyroscopeAvailable()) {
-
-    IMU.readAcceleration(ax, ay, az);
-    IMU.readGyroscope(gx, gy, gz);
-
-    imuBuffer[sampleIndex][0] = ax;
-    imuBuffer[sampleIndex][1] = ay;
-    imuBuffer[sampleIndex][2] = az;
-
-    imuBuffer[sampleIndex][3] = gx;
-    imuBuffer[sampleIndex][4] = gy;
-    imuBuffer[sampleIndex][5] = gz;
-
-    sampleIndex = (sampleIndex + 1) % SAMPLES;
-    float aSum = sqrt(ax * ax + ay * ay + az * az);
+    IMU.readAcceleration(imuBuffer[imuSampleIndex][0], imuBuffer[imuSampleIndex][1], imuBuffer[imuSampleIndex][2]);
+    IMU.readGyroscope(imuBuffer[imuSampleIndex][3], imuBuffer[imuSampleIndex][4], imuBuffer[imuSampleIndex][5]);
+    float aSum = sqrt(pow(imuBuffer[imuSampleIndex][0],2) + pow(imuBuffer[imuSampleIndex][1],2) + pow(imuBuffer[imuSampleIndex][2],2));
+    imuSampleIndex = (imuSampleIndex + 1) % SAMPLES;
 
     if (aSum > IMPACT_THRESHOLD) {
-      Serial.println("Impact Detected! Verifying orientation...");
+      Serial.println("Impact Detected!");
       currentState = VERIFYING;
       stateStartTime = millis();
+      postImpactSamplesLeft = 80;
     }
   }
 }
 
 void verifyFall() {
   float ax, ay, az;
-  int fallFlag = -1;
   if (IMU.accelerationAvailable()) {
     IMU.readAcceleration(ax, ay, az);
-
-    // 1. Normalize current vector
-    float mag = sqrt(ax * ax + ay * ay + az * az);
-    ax /= mag;
-    ay /= mag;
-    az /= mag;
-
-    // 2. Calculate Dot Product between Standing and Current Vector
+    float mag = sqrt(ax*ax + ay*ay + az*az);
+    ax /= mag; ay /= mag; az /= mag;
     float dot = (ax * standX) + (ay * standY) + (az * standZ);
-
-    // 3. Calculate Angle in Degrees
     float angle = acos(dot) * 180.0 / PI;
+    Serial.print("Tilt: "); Serial.println(angle);
 
-    Serial.print("Tilt Angle: ");
-    Serial.println(angle);
-
-    // 4. Check if Still (mag should be close to 1.0G)
-    bool isStill = (mag > 0.8 && mag < 1.2);
-
-    if (angle > TILT_THRESHOLD_ANGLE && isStill) {
-      Serial.println("Orientation verified! Running ML check...");
-      fallFlag = runFallInference();
-      if (fallFlag == 1){
-        Serial.println("Fall detected! Listening for voice verification...");
+    if (angle > TILT_THRESHOLD_ANGLE && (mag > 0.8 && mag < 1.2)) {
+      if (runFallInference() == 1) {
+        Serial.println("Fall Verified! Listening...");
         currentState = LISTENING;
-      }else if (fallFlag == 0){
-        currentState = IDLE;
-      }else{
-        Serial.println("ML failed");
-        currentState = IDLE;
-      }
-      
-    } else {
-      Serial.println("False Alarm (No tilt/stillness). Resetting.");
-      currentState = IDLE;
-    }
-  }
-}
-
-void runVoiceInference() {
-  // Same logic as before: Record audio, MFCCs, TFLite Invoke
-  // (Assuming Lab 4 logic is implemented here)
-
-  Serial.println("Listening for HELP, EMERGENCY, or CANCEL...");
-  delay(2000);  // Simulate processing time
-
-  float help_score = 0.85;  // Placeholder
-
-  if (help_score > 0.7) {
-    currentState = ALARM;
-  } else {
-    Serial.println("No distress detected. Resetting.");
-    currentState = IDLE;
-  }
-}
-
-void updateLEDs() {
-  digitalWrite(LED_VERIFY, LOW);
-  digitalWrite(LED_LISTEN, LOW);
-  digitalWrite(LED_ALARM, LOW);
-
-  switch (currentState) {
-    case IDLE:
-      break;
-
-    case VERIFYING:
-      digitalWrite(LED_VERIFY, HIGH);
-      break;
-
-    case LISTENING:
-      digitalWrite(LED_LISTEN, HIGH);
-      break;
-
-    case ALARM:
-      digitalWrite(LED_ALARM, HIGH);
-      break;
+        voiceListenStartTime = millis();
+        samplesCapturedTotal = 0; lastInferenceSampleCount = 0;
+        isCollectingAudio = true;
+      } else { currentState = IDLE; }
+    } else { currentState = IDLE; }
   }
 }
 
 int runFallInference() {
-  Serial.print("Input size: ");
-  Serial.println(tflFallInputTensor->bytes / sizeof(float));
-
-  // 1. Copy IMU buffer into model input
   for (int i = 0; i < SAMPLES; i++) {
-    tflFallInputTensor->data.f[i * 6 + 0] = (imuBuffer[i][0]+3.0)/6.0;
-    tflFallInputTensor->data.f[i * 6 + 1] = (imuBuffer[i][1]+3.0)/6.0;
-    tflFallInputTensor->data.f[i * 6 + 2] = (imuBuffer[i][2]+3.0)/6.0;
-    tflFallInputTensor->data.f[i * 6 + 3] = (imuBuffer[i][3]+400.0)/800.0;
-    tflFallInputTensor->data.f[i * 6 + 4] = (imuBuffer[i][4]+400.0)/800.0;
-    tflFallInputTensor->data.f[i * 6 + 5] = (imuBuffer[i][5]+400.0)/800.0;
+    int idx = (imuSampleIndex + i) % SAMPLES;
+    tflFallInputTensor->data.f[i * 6 + 0] = (imuBuffer[idx][0]+3.0)/6.0;
+    tflFallInputTensor->data.f[i * 6 + 1] = (imuBuffer[idx][1]+3.0)/6.0;
+    tflFallInputTensor->data.f[i * 6 + 2] = (imuBuffer[idx][2]+3.0)/6.0;
+    tflFallInputTensor->data.f[i * 6 + 3] = (imuBuffer[idx][3]+400.0)/800.0;
+    tflFallInputTensor->data.f[i * 6 + 4] = (imuBuffer[idx][4]+400.0)/800.0;
+    tflFallInputTensor->data.f[i * 6 + 5] = (imuBuffer[idx][5]+400.0)/800.0;
   }
+  if (tflFallInterpreter->Invoke() != kTfLiteOk) return -1;
+  return (tflFallOutputTensor->data.f[0] > FALL_CONF_THRESHOLD) ? 1 : 0;
+}
 
-  // 2. Run inference
-  if (tflFallInterpreter->Invoke() != kTfLiteOk) {
-    Serial.println("Inference failed!");
-    return -1;
-  }
-
-  // 3. Read output
-  float fall = tflFallOutputTensor->data.f[0];
-  float normal = tflFallOutputTensor->data.f[1];
-
-  Serial.print("Normal: ");
-  Serial.println(normal);
-  Serial.print("Fall: ");
-  Serial.println(fall);
-
-  // 4. Decision
-  if (fall > FALL_CONF_THRESHOLD) {
-    Serial.println("ML: FALL DETECTED");
-    // currentState = LISTENING;
-    return 1;
-  } else {
-    Serial.println("ML: NORMAL");
-    // currentState = IDLE;
-    return 0;
-  }
+void updateLEDs() {
+  digitalWrite(LED_VERIFY, currentState == VERIFYING);
+  digitalWrite(LED_LISTEN, currentState == LISTENING);
+  digitalWrite(LED_ALARM, currentState == ALARM);
 }
