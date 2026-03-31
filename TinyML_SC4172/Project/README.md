@@ -18,7 +18,7 @@ To optimize battery life and reduce false positives, the project uses a "Sensory
 *   **Sensor:** MP34DT05 PDM Microphone.
 *   **Logic:** A CNN-based Keyword Spotting (KWS) model (similar to Lab 4) is activated for a 5-second window.
 *   **Keywords:**
-    *   **"HELP" / "EMERGENCY":** Confirms the distress; triggers the actuator (Red LED + GPIO high).
+    *   **"HELP":** Confirms the distress; triggers the actuator (Red LED + GPIO high).
     *   **"CANCEL":** Discards the event as a false alarm; resets the system to Stage 1.
 *   **Technical Edge:** This ensures the device only "listens" when a physical fall is detected, preserving privacy and power.
 
@@ -29,7 +29,7 @@ To optimize battery life and reduce false positives, the project uses a "Sensory
 
 ## Data & Model (TinyML Workflow)
 1.  **IMU Data:** Collected using `IMU_Fall_Capture.ino` (which uses a circular buffer to capture the pre-impact descent) to distinguish between "Fall," "Sitting," and "Walking."
-2.  **Audio Data:** MFCC features extracted from 1-second snippets of "Help," "Emergency," "Cancel," and "Background Noise."
+2.  **Audio Data:** MFCC features extracted from 1-second snippets of "Help," "Cancel," and "Background Noise."
 3.  **Inference:** TensorFlow Lite Micro (TFLM) running on-device for real-time classification.
 
 ## Getting Started: Data Collection
@@ -43,16 +43,16 @@ To build this project, follow the steps below to capture your own data:
 
 ### 2. Audio (Keyword) Data
 *   Upload `Audio_Keyword_Capture.ino`.
-*   Run `python serial_data_collector.py --port YOUR_PORT --file help.txt --mode audio`.
+*   Run `python serial_data_collector.py --port YOUR_PORT --file help.csv --mode audio`.
 *   The script will wait for you to press ENTER to start a 1-second recording.
-*   The raw PDM numbers will be stored in text format.
+*   The raw PDM numbers will be stored in CSV format (one 16,000-point recording per row).
 
 #### Audio Collection Strategy (65/35 Split)
 To ensure the model works in real-world conditions, use this variety:
 *   **65% Clean Base:** Record in a quiet, enclosed room. Speak clearly at various volumes (normal, shouting, out-of-breath).
 *   **35% Real-World Variety:** Record with background noise (TV playing, fans/AC running, or music).
 *   **Distance Variety:** Record some samples with the sensor close to your mouth and others at "waistband height" (arm's length) to simulate a real fall.
-*   **The "Background" Class (CRITICAL):** Fill `background.txt` with ONLY noise (no speaking). Include 1-2 minutes of silence, TV chatter, and mechanical hums (fans). This teaches the model to ignore non-voice sounds.
+*   **The "Background" Class (CRITICAL):** Fill `background.csv` with ONLY noise (no speaking). Include 1-2 minutes of silence, TV chatter, and mechanical hums (fans). This teaches the model to ignore non-voice sounds.
 
 ## Step-by-Step Workflow
 
@@ -73,13 +73,11 @@ To ensure the model works in real-world conditions, use this variety:
 2. **Collect Audio Data:** Run the following for each keyword (**Aim for ~50 audio clips per class**):
    ```bash
    # For "HELP"
-   python serial_data_collector.py --port COM3 --file help.txt --mode audio
-   # For "EMERGENCY"
-   python serial_data_collector.py --port COM3 --file emergency.txt --mode audio
+   python serial_data_collector.py --port COM3 --file help.csv --mode audio
    # For "CANCEL"
-   python serial_data_collector.py --port COM3 --file cancel.txt --mode audio
+   python serial_data_collector.py --port COM3 --file cancel.csv --mode audio
    # For "BACKGROUND" (silence, TV noise, etc.)
-   python serial_data_collector.py --port COM3 --file background.txt --mode audio
+   python serial_data_collector.py --port COM3 --file background.csv --mode audio
    ```
 3. **Train Model:** Open `train_emergency_model.ipynb` to train your CNN and export `emergency_model.tflite`.
 

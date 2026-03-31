@@ -12,7 +12,7 @@ USAGE STEPS:
    python serial_data_collector.py --port COM3 --file fall_data.csv --mode imu
 
    FOR AUDIO KEYWORD DATA:
-   python serial_data_collector.py --port COM3 --file help_voice.txt --mode audio
+   python serial_data_collector.py --port COM3 --file help_voice.csv --mode audio
 
 5. In 'audio' mode, the script will wait for you to press ENTER before sending 'r' 
    to the Arduino to start a 1-second recording.
@@ -37,22 +37,27 @@ def collect_data(port, baud, filename, mode):
         try:
             while True:
                 if mode == "audio":
+                    # Clear any old "Send 'r'..." messages from the buffer
+                    ser.reset_input_buffer()
                     print("\nPress Enter to trigger a 1-second recording (sending 'r')...")
                     input()
                     ser.write(b'r')
                     
-                    recording = False
+                    samples = []
+                    is_collecting = False
                     while True:
                         line = ser.readline().decode('utf-8').strip()
                         if "--- DATA START ---" in line:
-                            print("Recording detected. Saving...")
-                            recording = True
+                            print("Recording detected. Collecting...")
+                            is_collecting = True
                             continue
                         if "--- DATA END ---" in line:
-                            print("Finished sample.")
+                            if samples:
+                                f.write(",".join(samples) + "\n")
+                                print(f"Finished sample ({len(samples)} points saved to CSV).")
                             break
-                        if recording and line:
-                            f.write(line + "\n")
+                        if is_collecting and line:
+                            samples.append(line)
                 else:
                     # IMU Mode: Just append every line to the CSV
                     line = ser.readline().decode('utf-8').strip()
