@@ -93,7 +93,7 @@ def collect_data(port, baud, filename, mode):
                             if line: # Capture everything including "0"
                                 samples.append(line)
                             # Provide some progress feedback every 500 samples
-                            if len(samples) % 500 == 0 and len(samples) > 0:
+                            if len(samples) % 1000 == 0 and len(samples) > 0:
                                 print(f"Collected {len(samples)} samples...", end="\r", flush=True)
                 else:
                     # IMU Mode: Just append every line to the CSV
