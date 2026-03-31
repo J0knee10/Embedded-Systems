@@ -37,27 +37,64 @@ def collect_data(port, baud, filename, mode):
         try:
             while True:
                 if mode == "audio":
-                    # Clear any old "Send 'r'..." messages from the buffer
+                    print("\nWaiting for board to be ready... (Press Enter to trigger or Ctrl+C to stop)")
+                    # Instead of reset_input_buffer, let's just print what's coming in
+                    # until the user presses Enter.
+                    
+                    print("Board says: ", end="", flush=True)
+                    # This is a bit tricky with input() blocking. 
+                    # Let's just do a simple reset and send 'r' when they press enter.
                     ser.reset_input_buffer()
-                    print("\nPress Enter to trigger a 1-second recording (sending 'r')...")
                     input()
+                    
+                    print("Sending 'r' to trigger recording...")
                     ser.write(b'r')
+                    ser.flush()
                     
                     samples = []
                     is_collecting = False
+                    
+                    # Wait for data. We'll give it some time to start.
                     while True:
-                        line = ser.readline().decode('utf-8').strip()
+                        raw_line = ser.readline()
+                        line = raw_line.decode('utf-8', errors='replace').strip()
+                        
+                        if not raw_line:
+                            if is_collecting:
+                                # We were collecting and it stopped. 
+                                # Maybe the transmission is done or interrupted.
+                                print("\nTimeout while collecting data. Current count:", len(samples))
+                                if len(samples) >= 16000:
+                                    print("Count looks good, saving anyway.")
+                                    break
+                                continue # Keep waiting
+                            continue
+                            
+                        # Print everything so user knows what's happening
+                        if not is_collecting:
+                            if line:
+                                print(f"Board: {line}")
+                        
                         if "--- DATA START ---" in line:
                             print("Recording detected. Collecting...")
                             is_collecting = True
+                            samples = []
                             continue
+                            
                         if "--- DATA END ---" in line:
                             if samples:
                                 f.write(",".join(samples) + "\n")
-                                print(f"Finished sample ({len(samples)} points saved to CSV).")
+                                print(f"\nFinished sample ({len(samples)} points saved to CSV).")
+                            else:
+                                print("\nWarning: Received DATA END but no samples were collected.")
                             break
-                        if is_collecting and line:
-                            samples.append(line)
+                            
+                        if is_collecting:
+                            if line: # Capture everything including "0"
+                                samples.append(line)
+                            # Provide some progress feedback every 500 samples
+                            if len(samples) % 500 == 0 and len(samples) > 0:
+                                print(f"Collected {len(samples)} samples...", end="\r", flush=True)
                 else:
                     # IMU Mode: Just append every line to the CSV
                     line = ser.readline().decode('utf-8').strip()
