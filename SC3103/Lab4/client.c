@@ -1,66 +1,51 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
-#include <arpa/inet.h>
-#include <sys/wait.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <time.h>
 
-#define PORT 8080
-#define SERVER_IP "127.0.0.1" // Change to your RPi IP address
-
-void start_client(int id) {
-    int sock = 0;
+void run_client(char *hostname, int port, int id) {
+    int sockfd, n, send_num, recv_num;
     struct sockaddr_in serv_addr;
-    int number, response;
+    struct hostent *server;
 
-    if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-        printf("\n Socket creation error \n");
-        return;
-    }
-
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(PORT);
-
-    if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
-        printf("\nInvalid address/ Address not supported \n");
-        return;
-    }
-
-    if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        printf("\nConnection Failed \n");
-        return;
-    }
-
-    // Generate random number
-    srand(time(NULL) ^ (getpid() << 16));
-    number = rand() % 100;
-
-    printf("Client [%d]: Sending number %d to server...\n", id, number);
-    send(sock, &number, sizeof(number), 0);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    server = gethostbyname(hostname);
     
-    read(sock, &response, sizeof(response));
-    printf("Client [%d]: Received from server: %d\n", id, response);
+    memset((char *) &serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+    serv_addr.sin_port = htons(port);
 
-    close(sock);
+    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) return;
+
+    // Challenge: Random number generation
+    srand(time(NULL) ^ (getpid() << 16));
+    send_num = rand() % 20; 
+
+    printf("Client Child [%d] (PID %d): Sending %d\n", id, getpid(), send_num);
+    write(sockfd, &send_num, sizeof(int));
+    
+    read(sockfd, &recv_num, sizeof(int));
+    printf("Client Child [%d]: Received from Server: %d\n", id, recv_num);
+
+    close(sockfd);
 }
 
-int main() {
-    for (int i = 0; i < 3; i++) {
-        pid_t pid = fork();
-        if (pid == 0) {
-            // Child process
-            start_client(i + 1);
-            exit(0);
-        } else if (pid < 0) {
-            perror("Fork failed");
+int main(int argc, char *argv[]) {
+    if (argc < 3) { fprintf(stderr,"usage %s hostname port\n", argv[0]); exit(1); }
+
+    for (int i = 1; i <= 3; i++) {
+        if (fork() == 0) { // Child process
+            run_client(argv[1], atoi(argv[2]), i);
+            exit(0); 
         }
     }
-
-    // Parent waits for all children to finish
-    for (int i = 0; i < 3; i++) {
-        wait(NULL);
-    }
-
+    // Parent waits for children
+    for (int i = 0; i < 3; i++) wait(NULL);
     return 0;
 }
