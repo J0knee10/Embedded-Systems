@@ -186,7 +186,7 @@ void loop() {
     // Only run inference if we have collected at least BUFFER_SIZE samples
     // since we started listening.
     if (samplesCapturedTotal >= BUFFER_SIZE && 
-        samplesCapturedTotal - lastInferenceSampleCount >= 8000) {
+        samplesCapturedTotal - lastInferenceSampleCount >= 8000) { //8000 == 500ms sliding window
         runVoiceInference();
         lastInferenceSampleCount = samplesCapturedTotal;
       }
@@ -273,7 +273,7 @@ void checkIMU() {
     IMU.readAcceleration(imuBuffer[imuSampleIndex][0], imuBuffer[imuSampleIndex][1], imuBuffer[imuSampleIndex][2]);
     IMU.readGyroscope(imuBuffer[imuSampleIndex][3], imuBuffer[imuSampleIndex][4], imuBuffer[imuSampleIndex][5]);
     float aSum = sqrt(pow(imuBuffer[imuSampleIndex][0],2) + pow(imuBuffer[imuSampleIndex][1],2) + pow(imuBuffer[imuSampleIndex][2],2));
-    imuSampleIndex = (imuSampleIndex + 1) % SAMPLES;
+    imuSampleIndex = (imuSampleIndex + 1) % SAMPLES; //circular buffer reset
 
     if (aSum > IMPACT_THRESHOLD) {
       Serial.println("Impact Detected!");
@@ -308,7 +308,7 @@ void verifyFall() {
 
 int runFallInference() {
   for (int i = 0; i < SAMPLES; i++) {
-    int idx = (imuSampleIndex + i) % SAMPLES;
+    int idx = (imuSampleIndex + i) % SAMPLES; //Follow chronological order
     tflFallInputTensor->data.f[i * 6 + 0] = (imuBuffer[idx][0]+3.0)/6.0;
     tflFallInputTensor->data.f[i * 6 + 1] = (imuBuffer[idx][1]+3.0)/6.0;
     tflFallInputTensor->data.f[i * 6 + 2] = (imuBuffer[idx][2]+3.0)/6.0;
