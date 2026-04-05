@@ -1,6 +1,6 @@
 /*
   Audio_Keyword_Capture.ino
-  Record 1 second of audio for Keywords: "HELP", "EMERGENCY", "CANCEL"
+  Record 1 second of audio for Keywords: "HELP", "CANCEL"
   
   Updated for robustness: 
   - Fixes hanging bug in collection loop.
