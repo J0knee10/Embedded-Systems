@@ -25,5 +25,8 @@
 # Python
 .venv/
 
-#data sets
+# data set
 TinyML_SC4172/Lab/data/
+
+# Compressed files
+*.zip
