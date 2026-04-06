@@ -84,11 +84,3 @@ To ensure the model works in real-world conditions, use this variety:
 ### Phase 3: Integrated Deployment
 1. **Convert to C:** Use a tool (like `xxd`) or a Python script to convert `.tflite` files to C-header arrays.
 2. **Final Upload:** Upload `FallAndCall_Inference.ino` with your trained models included.
-
-## Implementation Status
-- [x] Project Concept & Architecture
-- [x] IMU Data Collector (Circular Buffer)
-- [x] IMU Verification Logic (Tilt + Stillness)
-- [ ] Audio Dataset Collection
-- [ ] CNN Model Training (Jupyter Notebook)
-- [ ] TFLite Deployment & Integration
