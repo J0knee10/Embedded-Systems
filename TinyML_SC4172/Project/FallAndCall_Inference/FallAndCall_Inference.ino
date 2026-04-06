@@ -59,7 +59,7 @@ enum State { IDLE, VERIFYING, LISTENING, ALARM };
 State currentState = IDLE;
 
 // fall variables
-const float IMPACT_THRESHOLD = 4;
+const float IMPACT_THRESHOLD = 4.5;
 const float TILT_THRESHOLD_ANGLE = 60.0;
 const float FALL_CONF_THRESHOLD = 0.6;
 const unsigned long VERIFICATION_DELAY = 1500;
