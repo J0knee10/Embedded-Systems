@@ -58,11 +58,11 @@ To ensure the model works in real-world conditions, use this variety:
 
 ### Phase 1: IMU Fall Detection (Stage 1)
 1. **Upload Collector:** Upload `IMU_Fall_Capture.ino` to your Arduino Nano 33 BLE Sense.
-2. **Collect Fall Data:** Run the following and perform **~50 varied falls** (onto a soft surface!):
+2. **Collect Fall Data:** Run the following and perform **~150 varied falls** (onto a soft surface!):
    ```bash
    python serial_data_collector.py --port COM3 --file fall_data.csv --mode imu
    ```
-3. **Collect Normal Data:** Run the following and perform **~50 "Negative" actions** (sitting down, jumping, flat drops, walking):
+3. **Collect Normal Data:** Run the following and perform **~150 "Negative" actions** (sitting down, jumping, flat drops, walking):
    ```bash
    python serial_data_collector.py --port COM3 --file normal_data.csv --mode imu
    ```
@@ -70,7 +70,7 @@ To ensure the model works in real-world conditions, use this variety:
 
 ### Phase 2: Audio Keyword Spotting (Stage 2)
 1. **Upload Collector:** Upload `Audio_Keyword_Capture.ino` to your Arduino.
-2. **Collect Audio Data:** Run the following for each keyword (**Aim for ~50 audio clips per class**):
+2. **Collect Audio Data:** Run the following for each keyword (**Aim for ~100 audio clips per class**):
    ```bash
    # For "HELP"
    python serial_data_collector.py --port COM3 --file help.csv --mode audio
