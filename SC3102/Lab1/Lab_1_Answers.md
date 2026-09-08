@@ -209,4 +209,107 @@ $$W^k = 1 \cdot e^{j\left(\frac{2\pi}{N} k n\right)}, \quad N = 16, \quad n = 0,
      - For $k = 2$: Completes exactly $2$ full cycles.
      - For $k = 3$: Completes exactly $3$ full cycles.
 3. **Discrete Fourier Basis:**
-   These functions form the orthogonal basis functions for the 16-point Discrete Fourier Transform (DFT).
+    These functions form the orthogonal basis functions for the 16-point Discrete Fourier Transform (DFT).
+
+---
+
+## 5. Lab Quiz Revision & High-Yield Exam Guide
+
+This section synthesizes the core exam-style questions, theoretical explanations, step-by-step calculation workflows, and a quick revision checklist for the post-lab quiz.
+
+### 5.1. High-Yield Topic 1: Nyquist Theorem & Aliasing
+
+#### What is Aliasing? (Standard Quiz Definition)
+> **Aliasing** is an effect that occurs when a continuous-time signal is sampled below its **Nyquist rate** ($f_s < 2 F_{\max}$). 
+> Frequencies exceeding the **Nyquist folding frequency** ($f_{\text{Nyq}} = f_s / 2$) fold back into the lower frequency band $[0, f_s / 2]$. The sampled discrete-time samples become indistinguishable from a lower-frequency sinusoidal alias. As a result, the original analog waveform cannot be uniquely reconstructed, leading to irreversible loss of information.
+
+#### Calculation Formula:
+- **Nyquist rate condition:** $f_s \ge 2 F_{\max}$
+- **Nyquist / Folding frequency:** $f_{\text{fold}} = \frac{f_s}{2}$
+- **Apparent / Aliased frequency ($f_{\text{alias}}$):**
+  $$f_{\text{alias}} = |F_{\max} - k \cdot f_s| \quad \text{such that } 0 \le f_{\text{alias}} \le \frac{f_s}{2}$$
+  - *Lab example:* Signal frequency $F_m = 100\text{ Hz}$.
+    - Nyquist rate: $2 \times 100 = 200\text{ Hz}$.
+    - Sampled at $f_s = 175\text{ Hz}$ ($< 200\text{ Hz}$):
+      $$f_{\text{alias}} = |100 - 175| = 75\text{ Hz}$$
+
+---
+
+### 5.2. High-Yield Topic 2: Continuous-to-Discrete Sampling & Periodicity
+
+#### 1. Conversion Process:
+Substitute continuous time variable $t$ with $t = \frac{n}{F_s}$:
+$$y(t) = A \cos(2\pi F t + \phi) \implies y[n] = A \cos\left(2\pi \frac{F}{F_s} n + \phi\right) = A \cos(\omega_0 n + \phi)$$
+
+#### 2. Determining Fundamental Discrete Period ($N$):
+A discrete sinusoid is periodic **if and only if** its digital frequency normalized to $2\pi$ is a rational number:
+$$\frac{\omega_0}{2\pi} = \frac{F}{F_s} = \frac{k}{N} \quad (\text{reduced to lowest terms coprime integers } k, N)$$
+Then, the fundamental period is $N$ samples/cycle.
+- For $F_1 = 10\text{ Hz}$, $F_s = 60\text{ Hz}$: $\frac{10}{60} = \frac{1}{6} \implies N_1 = 6\text{ samples}$.
+- For $F_2 = 15\text{ Hz}$, $F_s = 60\text{ Hz}$: $\frac{15}{60} = \frac{1}{4} \implies N_2 = 4\text{ samples}$.
+
+#### 3. Period of the Sum of Two Periodic Signals ($y_3[n] = y_1[n] + y_2[n]$):
+The period of the sum is the **Least Common Multiple (LCM)** of the individual fundamental periods:
+$$N_3 = \text{LCM}(N_1, N_2) = \frac{N_1 \times N_2}{\text{GCD}(N_1, N_2)}$$
+- For $N_1 = 6$ and $N_2 = 4$:
+  $$N_3 = \text{LCM}(6, 4) = \frac{24}{2} = 12\text{ samples}$$
+
+---
+
+### 5.3. High-Yield Topic 3: Energy vs. Power Signals
+
+#### Definitions:
+- **Energy Signal:** $0 < E < \infty$ and $P = 0$ (typically finite-duration pulses, decaying signals).
+- **Power Signal:** $0 < P < \infty$ and $E = \infty$ (typically periodic sinusoids, non-decaying sequences over $\mathbb{Z}$).
+
+#### Why is $y_3[n]$ a Power Signal?
+Since $y_1[n]$ and $y_2[n]$ are non-zero periodic sinusoids spanning infinite time ($-\infty < n < \infty$), their infinite sum of squared magnitudes diverges ($E = \infty$). However, their average energy per sample over one period is finite and non-zero:
+$$P = \frac{1}{N} \sum_{n=0}^{N-1} |y[n]|^2 < \infty \implies \text{Power Signal}$$
+
+#### Average Power Calculation:
+For any discrete sinusoid $x[n] = A \cos(\omega n + \theta)$:
+$$P = \frac{A^2}{2}$$
+For orthogonal / non-identical frequency sinusoids:
+$$P_3 = P_1 + P_2 = \frac{A^2}{2} + \frac{B^2}{2}$$
+- For $A = 0.5$ and $B = 0.3$:
+  $$P_1 = \frac{0.5^2}{2} = 0.125\text{ W}, \quad P_2 = \frac{0.3^2}{2} = 0.045\text{ W} \implies P_3 = 0.125 + 0.045 = 0.170\text{ W}$$
+
+---
+
+### 5.4. High-Yield Topic 4: ADC Quantization & Down-Sampling
+
+#### ADC Resolution & Quantization Levels:
+- Number of quantization levels for $B$-bit ADC: $L = 2^B$
+- Voltage resolution (step size):
+  $$\Delta v = \frac{V_{\max} - V_{\min}}{2^B}$$
+  - *Lab example:* $V \in [-32, 32]\,\mu\text{V}$, $B = 4\text{ bits} \implies \Delta v = \frac{64}{16} = 4\,\mu\text{V}$.
+- **Effect of increasing $\Delta v$:**
+  - Decreases the number of quantization levels.
+  - Increases quantization error ($e[n] = x[n] - x_q[n]$) and noise power ($\sigma_e^2 = \frac{\Delta v^2}{12}$).
+  - Destroys subtle signal features (e.g. low-amplitude brainwave micro-features).
+
+#### EEG Time Domain Quantities:
+- **Sampling Period:** $dt = \frac{1}{f_s} = \frac{1}{1000} = 1\text{ ms} = 0.001\text{ s}$.
+- **Total Duration:** $T_{\text{exp}} = \frac{N_{\text{total}}}{f_s} = \frac{720,000}{1000} = 720\text{ s} = 12\text{ minutes}$.
+- **Down-sampling by factor $M$ ($M = 10$):**
+  - New sampling frequency: $f_s' = \frac{f_s}{M} = \frac{1000}{10} = 100\text{ Hz}$.
+  - New Nyquist cutoff: $f_{\text{nyq}}' = \frac{100}{2} = 50\text{ Hz}$. Any frequency above $50\text{ Hz}$ in the signal will alias.
+
+---
+
+### 5.5. Quick Reference Formula Checklist
+
+| Concept | Formula | Key Notes |
+| :--- | :--- | :--- |
+| **Nyquist Rate** | $f_{s,\min} = 2 F_{\max}$ | Minimum rate to prevent aliasing |
+| **Folding Frequency** | $f_{\text{nyq}} = \frac{f_s}{2}$ | Highest un-aliased frequency |
+| **Aliased Frequency** | $f_{\text{alias}} = \|F_{\max} - f_s\|$ | When $f_s/2 < F_{\max} < f_s$ |
+| **Discrete Time Variable** | $t = \frac{n}{f_s}$ | Substitute to digitize time |
+| **Discrete Period $N$** | $\frac{\omega_0}{2\pi} = \frac{k}{N}$ | Lowest coprime fraction |
+| **Sum Period $N_3$** | $N_3 = \text{LCM}(N_1, N_2)$ | Discrete sum fundamental period |
+| **Sinusoid Power** | $P = \frac{A^2}{2}$ | For cosine/sine waves |
+| **Total Sum Power** | $P_{\text{total}} = P_1 + P_2$ | When frequencies are distinct |
+| **ADC Step Size $\Delta v$** | $\Delta v = \frac{V_{\max} - V_{\min}}{2^B}$ | $B$ is number of ADC bits |
+| **ADC Quantization Levels** | $L = 2^B$ | Inversely related to $\Delta v$ |
+| **Signal Duration** | $T_{\text{exp}} = \frac{N}{f_s} = N \cdot dt$ | Total duration in seconds |
+| **Sampling Period** | $dt = \frac{1}{f_s}$ | Time interval between samples |
