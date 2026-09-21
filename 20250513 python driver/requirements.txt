@@ -1,0 +1,25 @@
+# Raspberry Pi hardware drivers  -  TARGET DEVICE ONLY
+#
+# Do NOT install these into the repo-wide Windows venv. gpiozero, pigpio and
+# smbus2 talk to /dev/i2c and the Pi's GPIO header; they are meaningless off-target.
+# Install on the Pi itself:
+#
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# Python 3.11 matches Raspberry Pi OS (Bookworm).
+
+# --- GPIO / bus access ---
+gpiozero
+pigpio
+smbus2
+
+# --- Sensors / converters ---
+# chandrawi ADS1x15-ADC: matches 'import ADS1x15' / ADS1x15.ADS1115(busId, addr)
+ADS1x15-ADC
+
+# --- Serial ---
+pyserial
+
+# --- UI ---
+PyQt5
