@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-np.random.seed(0)           # remove this line if you want a new random signal each run
+np.random.seed(1)           # remove this line if you want a new random signal each run
 
 # ---------------------------------------------------------------- 3.2 input signal
 n_samples = 100
