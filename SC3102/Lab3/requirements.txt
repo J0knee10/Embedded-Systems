@@ -1,0 +1,9 @@
+# Compatible course environment for Python 3.8 (install before the lab).
+# Use prebuilt packages so students do not need C/Rust compiler toolchains.
+--only-binary=:all:
+numpy==1.24.4
+scipy==1.10.1
+matplotlib==3.7.5
+notebook==7.0.8
+ipython==8.12.3
+ipykernel==6.29.5

@@ -30,3 +30,6 @@ TinyML_SC4172/Lab/data/
 
 # Compressed files
 *.zip
+
+# Custom
+SC3102/Slides/
