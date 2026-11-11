@@ -1,6 +1,6 @@
 # SC3102 Handoff
 
-Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-11.
+Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-12.
 
 ## Where I am
 
@@ -8,7 +8,7 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 - **Part 1 (continuous time):** done and understood. Tutorials 1–4 have worked solutions in `Tut/Part1/`.
 - **Part 2 (discrete time):** working through `notes/Part2_Discrete_Time_Guide.md` one step at a time. Covered in the Q&A so far: Steps 1–9, which are sampling through the DTFS, leakage, circular convolution and the DTFT. I understand these conceptually but am still shaky. **The Z-transform and the ROC (Steps 11–13) don't make sense to me yet; that's next.** On 2026-11-11, Steps 5–13 were rewritten at a beginner level: Steps 5–10 from this Q&A, and Steps 11–13 from scratch using T03 as the worked examples.
 - **Resume here (test-day plan, 2026-11-12):** the Z concept and FIR/IIR are now understood. Do the tutorial questions in this order, attempting each before checking it against the guide section or with Claude:
-  **The question list, in tutorial order T01 → T02 → T03 → T04 Q1–2, is in `Tut/Part2/Question_Tracker.md`.** It has tick boxes, what each question tests, where to check it, and hidden final answers. Within T03 it goes easiest first, finishing with Q4. ⭐ marks the questions for when time is short. The user is working through T01 Q1 now (done so far: N/m, f/fₛ, Tₛ vs N₀, and why x₃+x₄ cancels).
+  **The question list, in tutorial order T01 → T02 → T03 → T04 Q1–2, is in `Tut/Part2/Question_Tracker.md`.** It has tick boxes, what each question tests, where to check it, and hidden final answers. Within T03 it goes easiest first, finishing with Q4. ⭐ marks the questions for when time is short. **Current position: T01 is finished, and the user is now on T02**, starting with Q1 (the DFT matrix: G, G^H and why it uses −j are already explained). Next in the tracker: T02 Q1(a)(d) → Q2(a)(b) → Q4 → Q3(a)(b), then T03.
   Cheat sheet (handwritten, double-sided A4): the content is in the Claude Doc "SC3102 Part 2 Cheat Sheet" (https://claude.ai/artifact/DhJn8mg5wuztEbXWaBpQTi). There's also a print-ready 2-page A4 copy at `notes/Part2_Cheat_Sheet.pdf` (built from `notes/Part2_Cheat_Sheet.html`; to rebuild, open the HTML in a browser and print to A4). Skip T02 Q3(c), T03 Q1(a)(c), T03 Q2(b), T03 Q3(d) and all of Laplace.
 - **Labs 1–4:** done (`Lab1/` … `Lab4/`, each with a `_Answers.md`).
 
