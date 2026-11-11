@@ -4,12 +4,12 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 
 ## Where I am
 
-- **Part 2 term test:** 12 Nov 2026, 16:00–17:00. Closed-book and on paper, with one double-sided A4 sheet of notes allowed. The listed topics are "Discrete Signals, DFT, Z and Laplace Transforms", which is Lectures 0–5 (Tutorials T01–T04). Lecture 6 (differential equations, T05) is probably not included. `Cheatsheet.docx` is the Part 1 sheet only.
+- **Part 2 term test:** 12 Nov 2026, 16:00–17:00. Closed-book and on paper, with one double-sided A4 sheet of notes allowed. **Confirmed scope (2026-11-12): discrete time only.** That's the five discrete decks (`lecture-00` to `lecture(3)`: discrete signals, DFT, DTFT, Z, and LCCDEs with Z), which means T01–T03 plus T04 Q1–2. **Laplace and differential equations are NOT tested** (`lecture(4)`, `lecture(5)`, T04 Q3–4, T05). `Cheatsheet.docx` is the Part 1 sheet only.
 - **Part 1 (continuous time):** done and understood. Tutorials 1–4 have worked solutions in `Tut/Part1/`.
 - **Part 2 (discrete time):** working through `notes/Part2_Discrete_Time_Guide.md` one step at a time. Covered in the Q&A so far: Steps 1–9, which are sampling through the DTFS, leakage, circular convolution and the DTFT. I understand these conceptually but am still shaky. **The Z-transform and the ROC (Steps 11–13) don't make sense to me yet; that's next.** On 2026-11-11, Steps 5–13 were rewritten at a beginner level: Steps 5–10 from this Q&A, and Steps 11–13 from scratch using T03 as the worked examples.
-- **Resume here:** start at guide **Step 11.1**, the fading table. Read through 11.3 and ask about the first line that doesn't make sense. Then go on to Step 12 (ROC on the |z| ruler), Step 13 (partial fractions), and the self-check questions 11–13.
-- **After Z:** Step 14 (difference equations, T04 Q1–2), then Step 15 (Laplace, T04 Q3–4). Both are still in their old, short form.
-- **Laplace and LCCDEs** (Step 15, Part 2 Tutorials 04–05) are the last lecture topic and haven't been taught yet.
+- **Resume here (test-day plan, 2026-11-12):** the Z concept and FIR/IIR are now understood. Do the tutorial questions in this order, attempting each before checking it against the guide section or with Claude:
+  **The question list, in tutorial order T01 → T02 → T03 → T04 Q1–2, is in `Tut/Part2/Question_Tracker.md`.** It has tick boxes, what each question tests, where to check it, and hidden final answers. Within T03 it goes easiest first, finishing with Q4. ⭐ marks the questions for when time is short. The user is working through T01 Q1 now (done so far: N/m, f/fₛ, Tₛ vs N₀, and why x₃+x₄ cancels).
+  Cheat sheet (handwritten, double-sided A4): the content is in the Claude Doc "SC3102 Part 2 Cheat Sheet" (https://claude.ai/artifact/DhJn8mg5wuztEbXWaBpQTi). There's also a print-ready 2-page A4 copy at `notes/Part2_Cheat_Sheet.pdf` (built from `notes/Part2_Cheat_Sheet.html`; to rebuild, open the HTML in a browser and print to A4). Skip T02 Q3(c), T03 Q1(a)(c), T03 Q2(b), T03 Q3(d) and all of Laplace.
 - **Labs 1–4:** done (`Lab1/` … `Lab4/`, each with a `_Answers.md`).
 
 ## What's where
@@ -26,6 +26,8 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 
 ## Already explained in the Q&A (no need to repeat)
 
+**Standing rule (2026-11-12):** log every new concept question in `notes/Part2_QA_Concepts.md` and add a compact version to section 9 of the cheat sheet. Update both the HTML/PDF (keep it at exactly 2 pages; Side 1 is now full, so put new items in a Side 2 Q&A block, which has about 50pt free) and the Claude Doc.
+
 - **FFT:** you don't need the algorithm for this course. Know three things: it gives exactly the same output as the DFT, it costs N log₂N instead of N², and it works by splitting into even and odd samples. What you do need is a fast hand-computed 4-point DFT, using the matrix of 1, −j, −1, j.
 - **What "the DFT handles a finite list" means:** the sum stops at N−1, the frequencies are 2πk/N, and the inversion relies on q^N=1 (whole laps). This is not about energy signals. Finite length is not the same as finite energy. The synthesis formula repeats the block forever, which is what causes leakage.
 - **Harmonics:** whole-number multiples kf₀ of the fundamental. The fundamental itself can be missing (T4 Q1(a)).
@@ -39,6 +41,9 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 - **M and N on the DTFT slides (guide 9.1–9.3):** the block runs from −M to M, so N=2M+1. The gold dots are DTFS samples of the solid curve X_M(Ω), which approaches the true X(Ω). The slide's signal is (½)^|n|.
 - **Ω has one meaning (guide 5.3 box):** radians per sample, = ω/f_s. θ = Ωn is "where you've got to". The slides write ω for Ω in Part 2.
 - **Why u[n] has no DTFT (guide 9.6):** the partial sums never settle (X_M(0)=M+1).
+- **What X(z) is (guide 11.1–11.2):** it's the transform of x, just like X(Ω). The letter in the brackets tells you which transform it is. X(z) is the DTFT of x[n]·r⁻ⁿ, with z=re^{jΩ}: |z| is how hard you fade and the angle of z is the frequency. Each circle |z|=r is one DTFT, and the circle |z|=1 is the plain DTFT. X(Ω)'s axis from −π to π wraps round to form that unit circle: Ω=0→z=1, π/2→j, ±π→−1. It's one dial (Ω) against two (r and Ω), not a line against a plane. The building blocks are spirals zⁿ, not steady walkers, which is why 2ⁿu[n] works (with r=4 the faded signal is 0.5ⁿ). On the quiz, X(z) is a fraction/tag/algebra tool, not a frequency plot.
+- **T01 Q1, N and m in the official solution:** N is the period (a whole number of samples) and m is the number of full 2π laps in those N samples. Ω₀N = 2πm, so look for the smallest m that makes N a whole number. Continuous time always uses m=1; discrete time may need more laps (cos(3.5πn): m=7, N=4). Shortcut: Ω₀/2π = m/N in lowest terms. Ω₀/2π = f/fₛ (cycles per sample), so a sampled sinusoid is periodic ⇔ f/fₛ is rational. Reduce to lowest terms first: the bottom number is N₀ and the top number is the number of cycles. The rule gives when the *walker* returns. For a single sinusoid, the true N₀ is only smaller when every sample is 0 (sin(πn), sin(3πn), …; the rule says 2 but the zero signal has period 1). So simplify first (sin(πn)=0, aliases), then apply the rule.
+- **FIR vs IIR (guide 14.5):** both names describe h[n], the response to a single kick δ[n]. FIR has no feedback: y=½x[n]+½x[n−1] gives h=[½,½] and then stops, the coefficients are h, every pole is at 0, and it's always stable. IIR has feedback: y=0.5y[n−1]+x[n] gives h=0.5ⁿ (1, 0.5, 0.25, …, never 0), H=z/(z−0.5), and it's stable only if the pole is inside the unit circle. Changing 0.5 to 2 makes it blow up. Quick test: is y[n−k] on the right-hand side, or is there a nonzero pole?
 
 ## Conventions
 

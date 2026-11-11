@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SC3102 Part 2 Cheat Sheet</title>
+<style>
+  @page { size: A4; margin: 7mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; font-size: 8.5pt; line-height: 1.3; color: #000; background: #fff; margin: 0; }
+  .side { column-count: 2; column-gap: 5mm; column-rule: 0.4pt solid #999; }
+  .side + .side { break-before: page; page-break-before: always; }
+  h1 { font-size: 11pt; margin: 0 0 1.5mm; column-span: all; border-bottom: 1pt solid #000; padding-bottom: 0.8mm; }
+  h2 { font-size: 9.5pt; margin: 2mm 0 0.8mm; padding: 0.4mm 1mm; background: #e6e6e6; break-after: avoid; }
+  p { margin: 0.6mm 0; }
+  ul, ol { margin: 0.4mm 0 0.6mm; padding-left: 4mm; }
+  li { margin: 0.2mm 0; }
+  table { border-collapse: collapse; width: 100%; margin: 0.8mm 0; break-inside: avoid; }
+  th, td { border: 0.4pt solid #777; padding: 0.3mm 0.8mm; text-align: left; vertical-align: top; }
+  th { background: #f0f0f0; }
+  .f { text-align: center; margin: 0.8mm 0; padding: 0.6mm; border: 0.4pt dashed #999; break-inside: avoid; }
+  .frac { display: inline-block; vertical-align: middle; text-align: center; }
+  .frac > span { display: block; padding: 0 0.4mm; }
+  .frac > span:first-child { border-bottom: 0.5pt solid #000; }
+  .opt { color: #555; font-style: italic; }
+  b { font-weight: 700; }
+  .box { border: 0.6pt solid #000; padding: 0.6mm 1mm; margin: 0.8mm 0; break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ======================= SIDE 1 ======================= -->
+<div class="side">
+<h1>SC3102 Part 2 Cheat Sheet · Side 1: signals, systems, DFT, DTFT</h1>
+
+<h2>1. Toolkit</h2>
+<div class="f">
+  Σ<sub>n=0</sub><sup>∞</sup> q<sup>n</sup> = <span class="frac"><span>1</span><span>1−q</span></span> (|q|&lt;1)
+  &nbsp;&nbsp; Σ<sub>n=1</sub><sup>∞</sup> q<sup>n</sup> = <span class="frac"><span>q</span><span>1−q</span></span>
+  &nbsp;&nbsp; Σ<sub>n=0</sub><sup>N−1</sup> q<sup>n</sup> = <span class="frac"><span>1−q<sup>N</sup></span><span>1−q</span></span> (q≠1)
+</div>
+<ul>
+  <li><b>Euler:</b> cos θ = (e<sup>jθ</sup> + e<sup>−jθ</sup>)/2, sin θ = (e<sup>jθ</sup> − e<sup>−jθ</sup>)/(2j). 1/j = −j, e<sup>jπ/2</sup> = j, e<sup>jπ</sup> = −1.</li>
+  <li><b>Sampling:</b> x[n] = x<sub>c</sub>(nT<sub>s</sub>), T<sub>s</sub> = 1/f<sub>s</sub>. Ω = ωT<sub>s</sub> = 2πf/f<sub>s</sub> (rad/sample).</li>
+  <li><b>Period of cos(Ω<sub>0</sub>n):</b> write Ω<sub>0</sub>/2π = m/N in lowest terms → N<sub>0</sub> = N (the denominator).
+    <ul><li>sin(πn/12): 1/24 → N<sub>0</sub> = 24. cos(3.5πn): 7/4 → N<sub>0</sub> = 4.</li>
+        <li>Ω<sub>0</sub>/2π irrational (e.g. cos(n)) → not periodic.</li></ul></li>
+  <li><b>Sum of periodic signals:</b> N<sub>0</sub> = LCM(N<sub>1</sub>, N<sub>2</sub>).</li>
+  <li><b>Nonzero periodic signal is never absolutely summable</b> (Σ|x| adds the same block forever).</li>
+  <li><b>Aliasing:</b> Ω, Ω + 2πk and (for cos) −Ω give identical samples. In Hz: f, f + k·f<sub>s</sub>, f<sub>s</sub> − f look the same.
+    <ul><li>e.g. cos(3.5πn) = cos(−0.5πn) = cos(0.5πn).</li>
+        <li>Unique only if 0 ≤ Ω ≤ π, i.e. f &lt; f<sub>s</sub>/2. Nyquist: f<sub>s</sub> &gt; 2f<sub>max</sub>.</li></ul></li>
+</ul>
+
+<h2>2. Systems and convolution</h2>
+<table>
+  <tr><th>Property</th><th>Means</th><th>Quick test / red flags</th></tr>
+  <tr><td>Linear</td><td>T(ax+bz) = a·Tx + b·Tz</td><td>Double the input: does the output double? Fails with x², x[n]·x[n−1], + constant</td></tr>
+  <tr><td>Time-inv.</td><td>input shifted by r → output shifted by r</td><td>Fails if n appears outside x[·]: n·x[n], x[2n], x[−n]</td></tr>
+  <tr><td>Causal</td><td>y[n] uses only x[n], x[n−1], …</td><td>Fails with any x[n+1] (future input)</td></tr>
+  <tr><td>BIBO stable</td><td>|x| ≤ M → |y| ≤ C</td><td>Bound term by term: |x[n]+x[n−1]+x[n]x[n−1]| ≤ 2M + M²</td></tr>
+</table>
+<ul>
+  <li><b>LTI:</b> h = T(δ); y = x ∗ h, (x ∗ h)[n] = Σ<sub>m</sub> x[m]·h[n−m].</li>
+  <li><b>LTI causal</b> ⇔ h[n] = 0 for n &lt; 0. <b>LTI stable</b> ⇔ Σ|h[n]| &lt; ∞.</li>
+  <li><b>Convolution facts:</b> x ∗ δ[n−k] = x[n−k]. x ∗ u = running sum Σ<sub>m≤n</sub> x[m]. u ∗ u = (n+1)u[n].</li>
+  <li><b>Step → impulse response:</b> s = T(u) ⇒ h[n] = s[n] − s[n−1] (because δ[n] = u[n] − u[n−1]).</li>
+  <li><b>Length:</b> linear conv of L<sub>x</sub> and L<sub>h</sub> samples has L<sub>x</sub> + L<sub>h</sub> − 1 samples.</li>
+  <li><b>FIR:</b> no y on the right; h = the coefficients; all poles at z = 0; always stable.<br>
+      <b>IIR:</b> feedback (y[n−k] on the right); h never ends; stable only if all poles inside |z| = 1.</li>
+</ul>
+
+<h2>3. DFT and DTFS</h2>
+<div class="f">
+  X[k] = Σ<sub>n=0</sub><sup>N−1</sup> x[n] e<sup>−j2πkn/N</sup>
+  &nbsp;&nbsp;&nbsp; x[n] = <span class="frac"><span>1</span><span>N</span></span> Σ<sub>k=0</sub><sup>N−1</sup> X[k] e<sup>+j2πkn/N</sup>
+</div>
+<ul>
+  <li><b>Bin k</b> ↔ Ω<sub>k</sub> = 2πk/N ↔ f<sub>k</sub> = k·f<sub>s</sub>/N.</li>
+  <li><b>N = 4:</b> X = (matrix)·x. Synthesis x = ¼·(same matrix with j ↔ −j)·X.</li>
+</ul>
+<table>
+  <tr><th>Analysis row</th><th>n=0</th><th>n=1</th><th>n=2</th><th>n=3</th><th>Synthesis row (×¼)</th></tr>
+  <tr><td>k=0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1, 1, 1, 1</td></tr>
+  <tr><td>k=1</td><td>1</td><td>−j</td><td>−1</td><td>j</td><td>1, j, −1, −j</td></tr>
+  <tr><td>k=2</td><td>1</td><td>−1</td><td>1</td><td>−1</td><td>1, −1, 1, −1</td></tr>
+  <tr><td>k=3</td><td>1</td><td>j</td><td>−1</td><td>−j</td><td>1, −j, −1, j</td></tr>
+</table>
+<ul>
+  <li><b>Quick values:</b> X[0] = Σx[n]. x[0] = (1/N)ΣX[k]. N = 4: X[2] = x<sub>0</sub> − x<sub>1</sub> + x<sub>2</sub> − x<sub>3</sub>.</li>
+  <li><b>Real x:</b> X[N−k] = X[k]* (N = 4: X[3] = X[1]*); X[0] and X[N/2] are real. Rows 1 and 3 are conjugates.</li>
+  <li><b>Unknowns in x and X (T02 Q1d style):</b> fill in X[3] = X[1]* first, then use one synthesis row for a known x value.</li>
+  <li><b>DTFS:</b> same formulas, valid for all n only if N is a period (multiple of N<sub>0</sub>); otherwise the repeated block ≠ the signal (leakage).</li>
+  <li><b>N<sub>0</sub> vs N:</b> N<sub>0</sub> = signal's period (calculate). N = DFT size (choose). No leakage ⇔ N is a multiple of N<sub>0</sub>.</li>
+  <li><b>DTFS by Euler (no sum):</b> write x as a sum of e<sup>j2πkn/N</sup>; then X[k] = N × (coefficient of e<sup>j2πkn/N</sup>). Use e<sup>−j2πn/N</sup> = e<sup>j2π(N−1)n/N</sup>.
+    <ul><li>e.g. cos(2πn/8) = ½e<sup>j2πn/8</sup> + ½e<sup>j2π·7n/8</sup> → X[1] = X[7] = 8 × ½ = 4.</li>
+        <li>For sin: 1/(2j) = ½e<sup>−jπ/2</sup>.</li></ul></li>
+</ul>
+
+<h2>4. Circular convolution and the DTFT</h2>
+<ul>
+  <li><b>Multiplying DFTs gives circular convolution:</b> IDFT<sub>N</sub>{X[k]·Y[k]} = x ⊛<sub>N</sub> y, not the linear one.</li>
+  <li><b>Wrap rule:</b> C[n] = L[n] + L[n+N] (+ L[n+2N] …): fold the tail of the linear result L back onto its start.
+    <ul><li>e.g. L = [−2, 1, 3, −6, 2, 8], N = 4 → C = [−2+2, 1+8, 3, −6] = [0, 9, 3, −6].</li></ul></li>
+  <li><b>Circular = linear:</b> zero-pad both to N ≥ L<sub>x</sub> + L<sub>y</sub> − 1.</li>
+</ul>
+<div class="f">
+  X(Ω) = Σ<sub>n=−∞</sub><sup>∞</sup> x[n] e<sup>−jΩn</sup>
+  &nbsp;&nbsp;&nbsp; x[n] = <span class="frac"><span>1</span><span>2π</span></span> ∫<sub>2π</sub> X(Ω) e<sup>jΩn</sup> dΩ
+</div>
+<ul>
+  <li><b>Repeats every 2π</b> in Ω. <b>Exists if Σ|x[n]| &lt; ∞</b>; u[n], 2<sup>n</sup>u[n] and periodic signals fail.</li>
+  <li><b>Pairs (|a| &lt; 1):</b> a<sup>n</sup>u[n] ↔ 1/(1 − a·e<sup>−jΩ</sup>) · a<sup>−n</sup>u[−n−1] ↔ a·e<sup>jΩ</sup>/(1 − a·e<sup>jΩ</sup>) · (n+1)a<sup>n</sup>u[n] ↔ 1/(1 − a·e<sup>−jΩ</sup>)² (= x ∗ x).</li>
+  <li><b>Shift:</b> x[n−k] ↔ e<sup>−jΩk</sup>·X(Ω) (size same, only phase changes).</li>
+  <li><b>Convolution → product:</b> Y(Ω) = H(Ω)·X(Ω). H(Ω) = DTFT of h = H(z) at z = e<sup>jΩ</sup>.</li>
+  <li><b>One frequency in → same frequency out:</b> e<sup>jΩ<sub>0</sub>n</sup> → H(Ω<sub>0</sub>)·e<sup>jΩ<sub>0</sub>n</sup>. |H| = gain, ∠H = phase shift.</li>
+</ul>
+
+<h2>9. Q&amp;A notes (things I asked about)</h2>
+<ul>
+  <li><b>Period rule, step by step:</b> Ω<sub>0</sub>N = 2πm, where N = samples (a whole number) and m = full laps. Find the smallest m that makes N whole. Ω<sub>0</sub>/2π = f/f<sub>s</sub> = cycles per sample; periodic ⇔ rational. Reduce to lowest terms: bottom = N<sub>0</sub>, top = cycles.</li>
+  <li><b>Simplify first:</b> the rule gives when the <i>walker</i> returns. It overcounts only if every sample is 0: sin(πn) = sin(3πn) = 0, which has period 1 (the rule says 2). A sign on Ω or ±2π aliasing doesn't change N<sub>0</sub>. cos(−θ) = cos θ; sin(−θ) = −sin θ.</li>
+  <li><b>T<sub>s</sub> ≠ T<sub>0</sub> ≠ N<sub>0</sub>:</b> T<sub>s</sub> = 1/f<sub>s</sub> (sampler, s); T<sub>0</sub> = 1/f (wave, s); N<sub>0</sub> (samples, whole number). N<sub>0</sub>·T<sub>s</sub> = m·T<sub>0</sub>.</li>
+  <li><b>Causal, formally:</b> if x = z up to time N, then the outputs are equal up to N. In practice: every x[·] index ≤ n for every n. Traps: x[2n], x[−n]. n·x[n] is fine.</li>
+  <li><b>Linearity:</b> T(a·x<sub>1</sub> + b·x<sub>2</sub>) = a·Tx<sub>1</sub> + b·Tx<sub>2</sub>, where a, b scale <i>values</i> (x[an] is time scaling, a different thing). <b>Disprove</b> with 1 counterexample that switches on the suspect term: for x[n]x[n−1], use v = δ[n] + δ[n−1]: T(v)[1] = 3, T(2v)[1] = 8 ≠ 6. <b>Prove</b> with algebra: product terms leave (a²−a)pq + (b²−b)rs + ab(ps + rq), via a²pq = a·pq + (a²−a)pq.</li>
+  <li><b>Convolution means:</b> x = Σ x[m]δ[n−m]; each kick sends out x[m]·h[n−m]; add the copies (LTI only). [2, 1] ∗ [1, 2, 3] = [2, 5, 8, 3].</li>
+  <li><b>Running sum, h = u:</b> y[n] = Σ<sub>m≤n</sub> x[m]; input u → (n+1)u[n]. Bounded in, unbounded out → unstable (pole at z = 1).</li>
+  <li><b>DFT as matrices:</b> ω = e<sup>j2π/N</sup> (N = 4: ω = j). G[n,k] = ω<sup>nk</sup>. G<sup>H</sup> = conjugate transpose (G is symmetric, so this just swaps j ↔ −j). X = G<sup>H</sup>x is the analysis sum (row k · x = X[k]); x = (1/N)·G·X is the synthesis. It works because G·G<sup>H</sup> = N·I. <b>Why −j:</b> multiplying by the opposite spin stops a matching walker (j<sup>n</sup>·(−j)<sup>n</sup> = 1 each time, which sums to N), and any other frequency cancels to 0.</li>
+  <li><b>Signal or system?</b> Transform a signal → X: what it contains. Transform h → H: what the system does to each frequency. Y = H·X. ROC for a signal → which side, whether the DTFT exists; for a system → causal, stable.</li>
+</ul>
+</div>
+
+<!-- ======================= SIDE 2 ======================= -->
+<div class="side">
+<h1>SC3102 Part 2 Cheat Sheet · Side 2: Z-transform and difference equations</h1>
+
+<h2>5. Z-transform and its pairs</h2>
+<div class="f">X(z) = Σ<sub>n=−∞</sub><sup>∞</sup> x[n] z<sup>−n</sup>, &nbsp;&nbsp; z = r·e<sup>jΩ</sup></div>
+<ul>
+  <li><b>Meaning:</b> X(re<sup>jΩ</sup>) = DTFT of the faded signal r<sup>−n</sup>·x[n]. |z| = r = fading, ∠z = Ω = frequency. On |z| = 1: X(e<sup>jΩ</sup>) = DTFT.</li>
+  <li><b>Undo the fading:</b> if W(Ω) = X(re<sup>jΩ</sup>) then w[n] = r<sup>−n</sup>x[n], so x[n] = r<sup>n</sup>·w[n].</li>
+  <li><b>Tags:</b> finite list → X(z) = Σ x[n]z<sup>−n</sup>. Coefficient of z<sup>−k</sup> = x[k] (future); of z<sup>+k</sup> = x[−k] (past).</li>
+  <li><b>Same thing, two forms:</b> z/(z−p) = 1/(1 − p·z<sup>−1</sup>).</li>
+  <li><b>DTFT inside X(z):</b> the Ω axis from −π to π wraps round the unit circle (Ω = 0 → z = 1, π/2 → j, ±π → −1). DTFT = 1 dial (Ω); Z = 2 dials (r, Ω). Building blocks are spirals z<sup>n</sup> = r<sup>n</sup>e<sup>jΩn</sup>; a pole p means the signal contains p<sup>n</sup>. e.g. 2<sup>n</sup>u[n] faded with r = 4 gives 0.5<sup>n</sup> (works for any r &gt; 2, which is the ROC).</li>
+</ul>
+<table>
+  <tr><th>Signal x[n]</th><th>X(z)</th><th>ROC</th></tr>
+  <tr><td>δ[n−k]</td><td>z<sup>−k</sup></td><td>all z (not 0 if k&gt;0, not ∞ if k&lt;0)</td></tr>
+  <tr><td>u[n]</td><td>z/(z−1)</td><td>|z| &gt; 1</td></tr>
+  <tr><td>−u[−n−1]</td><td>z/(z−1)</td><td>|z| &lt; 1</td></tr>
+  <tr><td>p<sup>n</sup>u[n]</td><td>z/(z−p)</td><td>|z| &gt; |p|</td></tr>
+  <tr><td>−p<sup>n</sup>u[−n−1]</td><td>z/(z−p)</td><td>|z| &lt; |p|</td></tr>
+  <tr><td>p<sup>n−1</sup>u[n−1]</td><td>1/(z−p)</td><td>|z| &gt; |p|</td></tr>
+  <tr><td class="opt">−p<sup>n−1</sup>u[−n] (optional)</td><td>1/(z−p)</td><td>|z| &lt; |p|</td></tr>
+  <tr><td>n·p<sup>n</sup>u[n]</td><td>pz/(z−p)²</td><td>|z| &gt; |p|</td></tr>
+  <tr><td class="opt">−n·p<sup>n</sup>u[−n−1] (optional)</td><td>pz/(z−p)²</td><td>|z| &lt; |p|</td></tr>
+  <tr><td>(n+1)·p<sup>n</sup>u[n]</td><td>z²/(z−p)²</td><td>|z| &gt; |p|</td></tr>
+  <tr><td>ρ<sup>n</sup>cos(Ω<sub>0</sub>n)u[n]</td><td>z(z − ρcosΩ<sub>0</sub>) / (z² − 2ρz·cosΩ<sub>0</sub> + ρ²)</td><td>|z| &gt; ρ</td></tr>
+  <tr><td>ρ<sup>n</sup>sin(Ω<sub>0</sub>n)u[n]</td><td>ρz·sinΩ<sub>0</sub> / (z² − 2ρz·cosΩ<sub>0</sub> + ρ²)</td><td>|z| &gt; ρ</td></tr>
+</table>
+<p><b>Special case Ω<sub>0</sub> = π/2:</b> ρ<sup>n</sup>cos(πn/2)u[n] ↔ z²/(z² + ρ²); ρ<sup>n</sup>sin(πn/2)u[n] ↔ ρz/(z² + ρ²); both |z| &gt; ρ.</p>
+
+<h2>6. Properties and ROC rules</h2>
+<table>
+  <tr><th>Property</th><th>Signal</th><th>X(z)</th><th>ROC (x: r<sub>1</sub> &lt; |z| &lt; r<sub>2</sub>)</th></tr>
+  <tr><td>Linear</td><td>a·x + b·y</td><td>a·X + b·Y</td><td>contains the overlap</td></tr>
+  <tr><td>Delay</td><td>x[n−k]</td><td>z<sup>−k</sup>·X(z)</td><td>same (except maybe 0, ∞)</td></tr>
+  <tr><td>Time flip</td><td>x[−n]</td><td>X(1/z)</td><td>1/r<sub>2</sub> &lt; |z| &lt; 1/r<sub>1</sub></td></tr>
+  <tr><td>× a<sup>n</sup></td><td>a<sup>n</sup>·x[n]</td><td>X(z/a)</td><td>|a|r<sub>1</sub> &lt; |z| &lt; |a|r<sub>2</sub></td></tr>
+  <tr><td>Convolution</td><td>x ∗ h</td><td>X(z)·H(z)</td><td>contains the overlap</td></tr>
+</table>
+<ul>
+  <li><b>Poles</b> = roots of the denominator (×); <b>zeros</b> = roots of the numerator (○).</li>
+  <li><b>ROC is a ring</b> r<sub>1</sub> &lt; |z| &lt; r<sub>2</sub> with edges at poles; never contains a pole.</li>
+  <li><b>Which ring:</b> right-sided → outside the outermost pole · left-sided → inside the innermost pole · two-sided → a ring between poles (can be empty: 2<sup>|n|</sup> needs |z| &gt; 2 and |z| &lt; ½ → no ROC) · finite length → all z except maybe 0 and ∞.</li>
+  <li><b>P poles at different radii</b> → P + 1 possible ROCs, each a different x[n].</li>
+  <li><b>Which way each pole runs:</b> pole inside the ring (|p| ≤ inner edge) → right-sided p<sup>n</sup>u[n]; pole outside (|p| ≥ outer edge) → left-sided −p<sup>n</sup>u[−n−1].</li>
+  <li><b>Stable (DTFT exists)</b> ⇔ unit circle |z| = 1 is in the ROC. A pole on |z| = 1 (e.g. z = 1) → no DTFT.</li>
+  <li><b>Causal</b> ⇔ ROC is outside the outermost pole <b>and</b> includes ∞ (numerator degree ≤ denominator degree in z).</li>
+  <li><b>Causal and stable</b> ⇔ every pole strictly inside the unit circle.</li>
+</ul>
+
+<h2>7. Inverting X(z)</h2>
+<ol>
+  <li><b>Factor the denominator</b> → poles. Mark the ROC's edges.</li>
+  <li><b>Numerator has a factor z:</b> expand X(z)/z = C/(z−p) + D/(z−q) → X(z) = C·z/(z−p) + D·z/(z−q) → p<sup>n</sup>-type terms.</li>
+  <li><b>No factor z:</b> expand X(z) = C/(z−p) + D/(z−q) → p<sup>n−1</sup>u[n−1]-type terms.</li>
+  <li><b>Cover-up:</b> C = [(z−p) × the fraction being expanded] at z = p.</li>
+  <li><b>Choose each term's side from the ROC</b> (section 6), then write x[n].</li>
+  <li><b>Special denominators:</b> repeated (z−p)² → n·p<sup>n</sup> or (n+1)p<sup>n</sup> pairs · quadratic z² − 2ρz·cosΩ<sub>0</sub> + ρ² → cos/sin pairs (ρ² = constant term, then cosΩ<sub>0</sub> from the middle) · only z² appears → set w = z², do partial fractions in w.</li>
+</ol>
+<div class="box"><b>Example:</b> X(z) = z/((z−½)(z−2)), |z| &gt; 2. X/z = 1/((z−½)(z−2)): C = 1/(½−2) = −⅔, D = 1/(2−½) = ⅔. Both poles inside the ring → right-sided: x[n] = [−⅔(½)<sup>n</sup> + ⅔·2<sup>n</sup>]u[n].</div>
+<p><b>Series expansion</b> (first few samples, right-sided): long-divide in powers of z<sup>−1</sup>; x[n] = coefficient of z<sup>−n</sup>. e.g. (1 + z<sup>−1</sup>)/(1 − ½z<sup>−1</sup>) = 1 + 1.5z<sup>−1</sup> + 0.75z<sup>−2</sup> + 0.375z<sup>−3</sup> + … → x[0..3] = 1, 1.5, 0.75, 0.375.</p>
+<p><b>Checks:</b> causal x: x[0] = lim<sub>z→∞</sub> X(z). Plug in n = 0, 1 and compare.</p>
+
+<h2>8. Difference equations (LCCDEs)</h2>
+<p><b>No initial conditions (bilateral, LTI) → H(z)</b></p>
+<ol>
+  <li>Transform every term: y[n−k] → z<sup>−k</sup>Y, x[n−k] → z<sup>−k</sup>X.</li>
+  <li>H(z) = Y/X = (b<sub>0</sub> + b<sub>1</sub>z<sup>−1</sup> + …)/(1 + a<sub>1</sub>z<sup>−1</sup> + …). Multiply top and bottom by the highest power of z to read the poles.</li>
+  <li>One H(z), several ROCs → several systems; use section 6 for causal/stable. Leftover positive power of z on top (from x[n+1]) → not causal for any ROC.</li>
+  <li>H = z<sup>−k</sup>·G ⇒ h[n] = g[n−k]: invert G, then shift.</li>
+</ol>
+<p><b>With initial conditions (unilateral, n ≥ 0): shift rules</b></p>
+<div class="f">
+  Z<sub>+</sub>{y[n−1]} = z<sup>−1</sup>Y<sub>+</sub> + y[−1] &nbsp;&nbsp;&nbsp;
+  Z<sub>+</sub>{y[n−2]} = z<sup>−2</sup>Y<sub>+</sub> + z<sup>−1</sup>y[−1] + y[−2]
+</div>
+<p>An input starting at n = 0 has X<sub>+</sub> = its usual right-sided pair.</p>
+<p><b>Recipe</b></p>
+<ol>
+  <li>Transform both sides with the shift rules.</li>
+  <li>Collect: Y<sub>+</sub>·(1 + a<sub>1</sub>z<sup>−1</sup> + …) = X<sub>+</sub> − (initial-condition terms).</li>
+  <li><b>Zero-input:</b> initial-condition terms ÷ (1 + a<sub>1</sub>z<sup>−1</sup> + …). <b>Zero-state:</b> H·X<sub>+</sub>.</li>
+  <li>Partial fractions (w = z² if only z² appears), invert with right-sided pairs (n ≥ 0).</li>
+  <li><b>Complete:</b> y = y<sub>zi</sub> + y<sub>zs</sub>.</li>
+  <li><b>Transient</b> = terms that die out (system poles inside |z| = 1). <b>Steady-state</b> = terms that last (input poles on |z| = 1).</li>
+  <li><b>Remove the transient:</b> set y[n] = y<sub>ss</sub>[n] for all n; plug into the equation at n = 0 and n = 1; solve for y[−1], y[−2].</li>
+  <li><b>Check:</b> compute y[0], y[1] straight from the equation. Initial value: y[0] = lim<sub>z→∞</sub> Y<sub>+</sub>(z). <span class="opt">(optional) Final value: y[∞] = lim<sub>z→1</sub>(1 − z<sup>−1</sup>)Y<sub>+</sub>(z), only if all poles inside the unit circle except at most one at z = 1.</span></li>
+</ol>
+<p>A system is LTI only if its initial conditions are zero.</p>
+</div>
+
+</body>
+</html>
