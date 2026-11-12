@@ -16,6 +16,50 @@ to π wraps round to form that circle: Ω = 0 → z = 1, π/2 → j, ±π → �
 the DTFT has **one dial** (Ω) and the Z-transform has **two dials** (r and Ω). It's not "a line
 against a plane".
 
+**Poles and zeros: how to find them, and signal or system?** They belong to a Z-transform
+*fraction*, so a signal has them (through X(z)) and so does a system (through H(z) = Z{h} = Y/X).
+It's the same recipe for both, but quizzes mostly ask about H(z).
+- **Recipe:** (1) make it **one fraction** (common denominator); (2) clear z⁻¹ by multiplying top and bottom by zᵏ; (3) factor and **cancel** common factors; (4) zeros = roots of the top (H = 0), poles = roots of the bottom (H → ∞).
+- **Lab 4 example:** z/(z−0.6) + z/(z−1.2) = [z(z−1.2) + z(z−0.6)]/(…) = 2z(z−0.9)/((z−0.6)(z−1.2)), so the zeros are 0 and 0.9 and the poles are 0.6 and 1.2. Check: H(0.9) = 0.9/0.3 + 0.9/(−0.3) = 3 − 3 = 0, while H(0.61) ≈ 60 and H(0.601) ≈ 600.
+- **Why the zeros get forgotten:** each piece z/(z−p) shows its pole, and partial fractions only use the poles. The zero at 0.9 is hidden until you combine the pieces; it's where they cancel.
+- **Traps:** 1/(1 − 0.5z⁻¹) = z/(z−0.5) has a zero at 0. (z−0.5)/((z−0.5)(z−0.8)) = 1/(z−0.8) has no pole at 0.5. 0.6ⁿu[n] + 1.2ⁿu[n] has zeros at 0 and 0.9, while 0.6ⁿu[n] − 1.2ⁿu[n] gives −0.6z/(…), whose only zero is at 0. So the poles say which pⁿ ingredients are present, and the zeros depend on how much of each.
+- **From an LCCDE:** y[n] = 0.5y[n−1] + x[n] − 0.9x[n−1] gives H = (1 − 0.9z⁻¹)/(1 − 0.5z⁻¹) = (z−0.9)/(z−0.5). The x-terms make the zeros and the y-terms (feedback) make the poles, which is why every FIR pole is at 0.
+- **Meaning:** a pole p means the signal or h contains pⁿ, and poles set the ROC, causality and stability. A zero means an input zⁿ at that z gives an output of 0, and zeros never affect the ROC or stability. The averager y = ½x[n] + ½x[n−1] has H = (z+1)/(2z), with a zero at −1 (Ω = π). Input (−1)ⁿ gives ½ − ½ = 0, while input 1, 1, 1 gives 1, so it's low-pass. A zero on the unit circle kills that frequency, a zero near it makes a dip, and a pole near it makes a peak. In the Lab 4 3D plot, the poles are spikes and the zeros touch the floor.
+
+**What pⁿ, zeros and the ROC mean physically.**
+- **pⁿ = start at 1 and multiply by p every step.** 0.5ⁿ = 1, 0.5, 0.25, 0.125 dies out. 1ⁿ = 1, 1, 1 stays (u[n]). 2ⁿ = 1, 2, 4, 8 blows up. (−0.5)ⁿ = 1, −0.5, 0.25 flips sign and dies. So |p| says dies/stays/grows, and the angle of p says how fast it wiggles (±0.9j → 0.9ⁿcos(πn/2) = 1, 0, −0.81, 0, 0.656). Everyday examples: 5% interest → 1.05ⁿ, and a cooling gap shrinking 10% a minute → 0.9ⁿ. The continuous-time twin is e^(−at): sampling e^(−t) every 0.693 s gives 0.5ⁿ.
+- **Poles are the ROC edges *because* pole p ⇔ the signal contains pⁿ (one idea, not two).** For 0.5ⁿu[n], X(z) = 1 + (0.5/z) + (0.5/z)² + …. At z = 1 the ratio is 0.5 and the sum is 2. At z = 0.6 the sum is 6. At z = 0.5 the ratio is 1 and the sum is 1 + 1 + 1 + … → ∞ (the edge). At z = 0.25 the ratio is 2 and the sum blows up, even though the formula z/(z−0.5) still gives −1 (that's "outside the ROC", Lab 4 1D). So the edge is |z| = 0.5, the number the signal multiplies by each step.
+- **"Feedback number" = the number in front of y[n−1].** y[n] = 0.5y[n−1] + x[n] → Y(1 − 0.5z⁻¹) = X → H = z/(z−0.5), so the pole is 0.5 (and kicking it with δ gives h = 1, 0.5, 0.25 = 0.5ⁿ). "Feedback" only means the old output is fed back in. This is where poles come from when a question gives an equation instead of a signal. (The bell/echo/interest/cooling analogies were just pictures of "h dies out or grows"; ignore them.)
+- **A zero is an input the system blocks.** Feed in zⁿ at the zero and the output is 0. On |z| = 1 at Ω₀, the blocked pattern is a pure tone, which is how filters remove frequencies:
+  - y = x[n] − x[n−1], zero at 1 (Ω = 0): 5, 5, 5 → 0, so it removes a constant offset.
+  - y = ½x[n] + ½x[n−1], zero at −1 (Ω = π): 1, −1, 1 → 0, so it smooths (low-pass).
+  - y = x[n] + x[n−2], zeros at ±j (Ω = π/2): cos(πn/2) = 1, 0, −1, 0, 1 → y[2..4] = 0. With fₛ = 200 Hz, that's 50 Hz mains hum removed (the same idea as removing the whistles in Lab 4 Q3).
+  - For a *signal*, zeros have little physical meaning; they're just where the pieces cancel.
+  - Poles + zeros + one gain number = all of H(z), so the pole-zero plot is the system's fingerprint. It's used to analyse a system (what it does by itself, what it blocks) and to design one (zeros on frequencies to kill, poles near frequencies to boost).
+- **The ROC picks which physical system one formula describes.** z/(z−2) with |z| > 2 is 2ⁿu[n] = 1, 2, 4, 8 (starts at the kick, blows up: causal, unstable). With |z| < 2 it's −2ⁿu[−n−1]: h[−1], h[−2], h[−3] = −0.5, −0.25, −0.125 (all before the kick: stable, not causal). The ROC answers (1) **which way in time**: outside the outermost pole → causal → can run in real time; inside → needs the future → offline only (e.g. a recorded file), and (2) **does it blow up**: |z| = 1 in the ROC → stable, with a frequency response. The edge is the signal's growth rate: 2ⁿ faded by r = 4 gives 0.5ⁿ (fine), by r = 1.5 gives 1.33ⁿ (blows up). With a pole at 2, a system can't be causal and stable at once. T03 Q4 (poles 2, −4): only |z| < 2 contains the unit circle → the only stable ROC, and it's left-sided.
+
+**"Converges" (ROC) is not the same as "stable".** The ROC is where Σ h[n]z⁻ⁿ adds up *with help from the
+weight z⁻ⁿ*. Stable means Σ|h[n]| adds up *with no help*, which is the weight at |z| = 1 (where |z⁻ⁿ| = 1).
+- **Lab 4 Region 0:** h[n] = −(0.6ⁿ + 1.2ⁿ)u[−n−1] = −2.5, −3.47, −5.21, …, −165.6 at n = −10 (−5.8×10⁷ at n = −35). It blows up going left.
+- **At z = 0.3** the weight 0.3^|n| tames it: −0.75, −0.31, −0.14, …, −0.001. The sum is −1.33 = H(0.3) ✓, so 0.3 is in the ROC.
+- **At z = 1** the weighted terms are just h[n], which goes to −∞. So 1 is not in the ROC, and the system is not stable.
+- The growth only limits *where* the ROC is (small |z| < 0.6 beats the 1.67^|n| growth); it doesn't remove it. All three Lab 4 regions have an ROC, but only Region 1 (the one containing |z| = 1) is stable. This is the fading idea again: the ROC lists the fading amounts that work, and stable means no fading is needed.
+- **Formula + ROC = exactly one signal.** "Stable" describes that signal or system, never the transform: a Z-transform only *exists* (has an ROC) or doesn't. An unstable signal can have a perfectly good Z-transform (2ⁿu[n] ↔ z/(z−2), |z| > 2); that's the Z-transform's advantage over the DTFT. The ROC still shows the instability (|z| = 1 is not in it). The DTFT is the transform that exists only for stable signals: it's X(z) on |z| = 1.
+
+**"Does the Z-transform make an unstable signal stable, so I can then take its DTFT?" No.**
+- On a circle r inside the ROC you get the DTFT of a *faded copy* r⁻ⁿx[n], which is a different signal. For 2ⁿu[n], r = 4 gives the DTFT of 0.5ⁿu[n].
+- Plugging z = e^(jΩ) into the formula when |z| = 1 is *outside* the ROC still gives a number, but it's the DTFT of the *other* signal with that formula (z/(z−2) at Ω = 0 gives −1 = Σ of −2ⁿu[−n−1] = −0.5 − 0.25 − …), not of 2ⁿu[n]. It's the same trap as Lab 4 1D at z = 1.5.
+- An unstable signal has no DTFT at all (1 + 2 + 4 + … = ∞). Physically, a sine fed into an unstable system makes the output blow up, so there is no frequency response. The fading is only on paper.
+- **Correct version:** the Z-transform analyses any signal, even one that blows up. You get its frequencies only when it's stable, and then they're X(e^(jΩ)) (0.5ⁿu[n]: 1/(1 − 0.5e^(−jΩ)); at Ω = 0 that's 2 = 1 + 0.5 + 0.25 + …). For unstable systems the Z-transform is for algebra (poles, ROC, causal/stable, inversion, LCCDEs), not frequencies.
+
+**What the Z-transform is for, and what "analyse" means.** It works on *all* systems; unstable ones are just
+where it's the only tool. It doesn't make difference equations: the LCCDE comes first (the rule applied each
+step), and the Z-transform **solves** it. "Analyse" means getting h[n], y[n] for an input, causal/stable, and
+(if stable) the frequency response, as formulas for every n at once.
+- **Stable:** y = 0.5y[n−1] + x with x = u[n]. By hand you get 1, 1.5, 1.75, 1.875, … (does it reach 2?). With Z: Y = z/(z−0.5) · z/(z−1) = −z/(z−0.5) + 2z/(z−1), so y = (2 − 0.5ⁿ)u[n], which goes to exactly 2.
+- **Unstable:** y = 2y[n−1] + x with x = u[n]. By hand: 1, 3, 7, 15, … With Z: Y = 2z/(z−2) − z/(z−1), so y = (2ⁿ⁺¹ − 1)u[n], which shows exactly how it blows up. The DTFT can't do this (h = 2ⁿu[n] has no DTFT).
+- The DTFT handles h/y formulas and the frequency response for stable systems only. The Z-transform also handles unstable systems, causal/stable checks, and initial conditions (unilateral).
+
 ## Systems
 
 **FIR vs IIR.** Both names describe h[n], the response to a single kick δ.
@@ -27,6 +71,7 @@ against a plane".
 - Transform an impulse response h and you get H: what the system does to each frequency.
 - They connect through Y = H·X.
 - The same ROC rules answer different questions. For a signal: which way it runs, and whether the DTFT exists. For a system: whether it's causal and whether it's stable.
+- **Two meanings of "analyse".** In the Fourier sense (DFT/DTFT), analysing a signal = which frequencies it contains, and analysing a system = its frequency response H(Ω) = DTFT of h. In the Z sense, it's the poles/zeros/ROC → h[n], causal?, stable?, y for any input; this works for every system. They meet on the unit circle: H(Ω) = H(z) at z = e^(jΩ), if |z| = 1 is in the ROC. Example: y = 0.5y[n−1] + x has H = z/(z−0.5), pole 0.5, causal and stable. H(Ω) = 1/(1 − 0.5e^(−jΩ)) gives H(0) = 2 (1, 1, 1 → 2, 2, 2; check 2 = 0.5·2 + 1) and H(π) = 0.67 ((−1)ⁿ → 0.67(−1)ⁿ), so it's low-pass. y = 2y[n−1] + x has no frequency response, but Z still gives pole 2, h = 2ⁿu[n], unstable. Quiz: "frequency response" → H(e^(jΩ)) (stable only); causal/stable/h/y → poles + ROC.
 
 **Causality (T01 Q3b definition).** If two inputs are identical up to time N, a causal system gives
 identical outputs up to N. In practice, check that **every x[·] index is ≤ n for every n**.

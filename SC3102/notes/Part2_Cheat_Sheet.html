@@ -170,7 +170,7 @@
   <tr><td>Convolution</td><td>x ∗ h</td><td>X(z)·H(z)</td><td>contains the overlap</td></tr>
 </table>
 <ul>
-  <li><b>Poles</b> = roots of the denominator (×); <b>zeros</b> = roots of the numerator (○).</li>
+  <li><b>Poles</b> = roots of the denominator (×); <b>zeros</b> = roots of the numerator (○). First make ONE fraction in +powers of z and cancel: zeros hide in sums (z/(z−0.6) + z/(z−1.2) = 2z(z−0.9)/(…)). LCCDE: x-terms → zeros, y-terms → poles.</li>
   <li><b>ROC is a ring</b> r<sub>1</sub> &lt; |z| &lt; r<sub>2</sub> with edges at poles; never contains a pole.</li>
   <li><b>Which ring:</b> right-sided → outside the outermost pole · left-sided → inside the innermost pole · two-sided → a ring between poles (can be empty: 2<sup>|n|</sup> needs |z| &gt; 2 and |z| &lt; ½ → no ROC) · finite length → all z except maybe 0 and ∞.</li>
   <li><b>P poles at different radii</b> → P + 1 possible ROCs, each a different x[n].</li>
@@ -219,6 +219,9 @@
   <li><b>Check:</b> compute y[0], y[1] straight from the equation. Initial value: y[0] = lim<sub>z→∞</sub> Y<sub>+</sub>(z). <span class="opt">(optional) Final value: y[∞] = lim<sub>z→1</sub>(1 − z<sup>−1</sup>)Y<sub>+</sub>(z), only if all poles inside the unit circle except at most one at z = 1.</span></li>
 </ol>
 <p>A system is LTI only if its initial conditions are zero.</p>
+
+<h2>9. Q&amp;A notes (continued)</h2>
+<p><b>Why poles are ROC edges:</b> pole p ⇔ signal has p<sup>n</sup> (×p each step); Σ(p/z)<sup>n</sup> needs |z| &gt; |p| → edge |z| = |p|. 1st-order LCCDE: pole = number before y[n−1] (y = 0.5y[n−1] + x → z/(z−0.5)). Zero: input z<sup>n</sup> → output 0. ROC = adds up <i>with</i> weight z<sup>−n</sup>; stable = with no weight (|z| = 1). A blowing-up h can still have an ROC (Lab 4 Region 0).</p>
 </div>
 
 </body>
