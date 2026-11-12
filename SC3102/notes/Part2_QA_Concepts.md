@@ -144,3 +144,46 @@ multiplication.
 **Why swap j ↔ −j, and where the row/column swap went.**
 - **Conjugate (j ↔ −j):** analysis multiplies by the walker spinning the *opposite* way. For x[n] = jⁿ (frequency k = 1), dotting with row 1 of G^H gives [1, −j, −1, j]·[1, j, −1, −j] = 1 + 1 + 1 + 1 = 4 = N. Each product jⁿ·(−j)ⁿ = 1, so the spin is stopped. Dotting with row 1 of G instead (no swap) gives 1 − 1 + 1 − 1 = 0, which is wrong. Any other frequency still spins and cancels to 0. That's why the DFT analysis has the minus sign.
 - **Transpose (swapping rows and columns):** it's there, but you can't see it. G[n,k] = ω^(nk) = ω^(kn) = G[k,n], so row 1 = column 1 = [1, j, −1, −j], and flipping changes nothing. The "H" includes the transpose because it matters for general matrices: [[1, 2j], [3, 4]]^H = [[1, 3], [−2j, 4]].
+
+**DTFS by Euler (T02 Q2(b)): why e^(−j2πn/8) becomes e^(j2π(7)n/8).** Three steps, no Σ needed.
+- **Split:** cos(2πn/8) = ½e^(j2πn/8) + ½e^(−j2πn/8). One arrow turns +1/8 lap per sample, the other −1/8.
+- **Rename:** the DTFS only uses k = 0…N−1, so k = −1 has to move. Back 1/8 lap = forward 7/8 lap (they differ by a whole lap), so the angles at n = 1, 2, 3 (−π/4 vs 7π/4, …) differ by 2π, 4π, 6π, which is the same spot. In general, **−k ≡ N − k** (aliasing again).
+- **Match:** synthesis is a[n] = (1/N)ΣA[k]e^(j2πkn/N), so each weight = A[k]/N, i.e. A[k] = N × weight. Weight ½ gives A[1] = A[7] = 4, and everything else is 0. Check: n = 0 gives (4 + 4)/8 = 1 = cos 0 ✓.
+
+**sin → cos first: same DTFS? Yes.** The coefficients of a signal are unique, so either route gives the same answer.
+- sin θ = cos(θ − π/2). T02 Q2(b): b[n] = sin(2πn/6 + π/3) = cos(2πn/6 − π/6) = ½e^(−jπ/6)·e^(j2πn/6) + ½e^(jπ/6)·e^(−j2πn/6).
+- Why the sin route agrees: 1/j = −j = e^(−jπ/2), so dividing by 2j means "halve it and turn back a quarter lap", the same −π/2 shift. e^(jπ/3)/(2j) = ½e^(−jπ/6) ✓ and −e^(−jπ/3)/(2j) = ½e^(jπ/6) ✓ (−1/j = e^(jπ/2)).
+- The cos route avoids dividing by j, so it's harder to slip on.
+
+**The geometric series, which is used everywhere (asked to make it prominent on the sheet).** Sum = **first term / (1 − ratio)**, and it only works if |ratio| < 1.
+- Any range: Σ from n = a to b of qⁿ = (qᵃ − q^(b+1))/(1 − q). Finite block from 0 to N−1: (1 − q^N)/(1 − q).
+- Right-sided Z: Σ_{n≥0} (az⁻¹)ⁿ = z/(z−a). It needs |az⁻¹| < 1, i.e. |z| > |a|, which is *where the ROC comes from*.
+- Left-sided Z: Σ_{n≥1} (z/a)ⁿ = (z/a)/(1 − z/a). It needs |z| < |a|.
+- DTFT: the same sum with z = e^(jΩ). For example Σ(ae^(−jΩ))ⁿ = 1/(1 − ae^(−jΩ)) when |a| < 1.
+
+**Why |q| < 1 for q = a⁻¹e^(−jΩ) (T02 Q3(b)).** Two facts: |A·B| = |A|·|B|, and |e^(−jΩ)| = √(cos²Ω + sin²Ω) = 1 (it only sets the direction). So |q| = (1/|a|)·1 = 1/|a|, which is < 1 exactly when |a| > 1.
+- a = 2: q = ½e^(−jΩ) = 0.5, −0.5j, −0.5, 0.5j at Ω = 0, π/2, π, 3π/2, always size 0.5 (a circle of radius 0.5).
+- a = 0.5: |q| = 2, so the sum blows up and there's no DTFT (Q3(a)).
+- **Why the official solution may "assume |a| > 1":** the question only says a ≠ 0, but Q3(a) showed Σ|x| = Σ(1/|a|)ⁿ < ∞ ⇔ |a| > 1 (and Σ|y| ≤ (Σ|x|)²). For any other a there is no DTFT to compute, so Q3(b) works in the only case that exists. Chain: Q3(a) → |a| > 1 → |q| < 1 → 1/(1 − q) allowed. With a = 0.5 the formula 1/(1 − 2e^(−jΩ)) can still be written (−1 at Ω = 0), but it isn't x's DTFT (the outside-the-ROC trap). On the test, write "valid since |q| < 1".
+- Then X(Ω) = Σ qⁿ = 1/(1 − a⁻¹e^(−jΩ)) and Y = X² (y = x ∗ x). Check with a = 2, Ω = 0: 1 + 0.5 + 0.25 + … = 2 = 1/(1 − 0.5) ✓.
+
+**T03 Q1(b): recovering x from X on the circle r = 3.** Given X(3e^(jΩ)) = 1/(1 − (j/2)e^(−jΩ)).
+- (1) With z = 3e^(jΩ), z⁻ⁿ = 3⁻ⁿe^(−jΩn), so X(3e^(jΩ)) = Σ(3⁻ⁿx[n])e^(−jΩn) is the DTFT of **w[n] = 3⁻ⁿx[n]**.
+- (2) Match aⁿu[n] ↔ 1/(1 − ae^(−jΩ)) (|a| < 1): a = j/2, |a| = ½ ✓, so w = (j/2)ⁿu[n].
+- (3) Undo the fading: x = 3ⁿw = (3j/2)ⁿu[n] = 1, 1.5j, −2.25, −3.375j, 5.06 (w shrinks, x grows).
+- Why r = 3: |3j/2| = 1.5 > 1, so x has no DTFT. The ROC is |z| > 1.5, and 3 is inside it. Check: 1/(1 − (3j/2)z⁻¹) at z = 3e^(jΩ) gives the given expression ✓.
+- **Reading the question's sentence** "z = 3e^(jΩ) in its ROC and X(3e^(jΩ)) = …" gives two facts. (1) The whole circle |z| = 3 (z = 3, 3j, −3, −3j at Ω = 0, π/2, π, 3π/2) is inside the ROC, so Σx[n]z⁻ⁿ converges there, w = 3⁻ⁿx has a DTFT, and inverting is legal (it also pins down which signal the formula belongs to). (2) The formula is X *evaluated at* those points, not multiplied: at Ω = 0, X(3) = 1/(1 − j/2), and the answer X(z) = 1/(1 − (3j/2)z⁻¹) gives the same ✓. Knowing X on one circle in the ROC is enough: that's the inverse-Z synthesis formula with r = 3.
+
+**Nonempty vs empty ROC.** The ROC is the *set* of z where Σx[n]z⁻ⁿ is finite. Nonempty means at least one z works, so the Z-transform exists. Empty means no z works, so there is no Z-transform.
+- Only two-sided signals can have an empty ROC: the right part needs |z| big (> a), the left part needs |z| small (< b), and they overlap only if a < b.
+- 0.5^|n|: |z| > 0.5 and |z| < 2 → ring 0.5 < |z| < 2 (at z = 1 the sum is 1 + 2(0.5 + 0.25 + …) = 3 ✓).
+- 2^|n|: |z| > 2 and |z| < 0.5 → empty. 2ⁿ for all n: |z| > 2 and |z| < 2 → empty (T03 Q1d).
+- The lecture's four nonempty shapes (L3 slide 37): finite → all z (except maybe 0/∞); right-sided → |z| > a; left-sided → |z| < b; two-sided → ring a < |z| < b.
+
+**T03 Q2(a): why Z{(n+1)u[n]} = U(z)².** (1) (u ∗ u)[n] = Σ u[m]u[n−m], where each term is 1 only for 0 ≤ m ≤ n, so it counts n+1 values: 1, 2, 3, … = (n+1)u[n] (the running sum again, T01 Q4b). (2) Convolution ↔ product, so Z{u ∗ u} = U·U = z²/(z−1)². Series check: (1 + z⁻¹ + z⁻² + …)² has coefficient of z⁻ⁿ = the number of ways a + b = n = n+1 ✓. Then n·u[n] = (n+1)u[n] − u[n], so X₂ = z²/(z−1)² − z/(z−1) = [z² − z(z−1)]/(z−1)² = z/(z−1)², |z| > 1, no DTFT (pole on |z| = 1). Shortcut: n·pⁿu[n] ↔ pz/(z−p)² with p = 1.
+
+**Right- or left-sided ROC (T03 Q2a), and making the pole at 1 left-sided.** Going from a signal to X(z), the *signal* picks the side, not the formula: u[n] (nonzero for n ≥ 0) → right-sided → |z| > |p|; u[−n−1] (n ≤ −1) → left-sided → |z| < |p|; mixed pieces → the overlap ring. x₂ = n·u[n] is right-sided, so |z| > 1.
+- Left-sided version: x = −n·u[−n−1] = …, 3, 2, 1 at n = −3, −2, −1, and 0 for n ≥ 0. X = Σ_{k≥1} k·z^k = z/(z−1)², which needs |z| < 1. It's the same formula with the opposite ROC (the extra pair −n·pⁿu[−n−1] ↔ pz/(z−p)², p = 1). Series check: z/(1−z)² = z + 2z² + 3z³ + … ✓. Still no DTFT (pole on |z| = 1).
+- Given only X = z/(z−1)², the question must state the ROC: |z| > 1 → n·u[n]; |z| < 1 → −n·u[−n−1]. One pole gives only 2 ROCs, so there's no two-sided option.
+
+**Range of the DTFT synthesis integral "∫_{2π}".** Any window of length 2π; the lecture writes 0 → 2π, and −π → π is identical. Reason: X(Ω) repeats every 2π, and e^(jΩn) does too (e^(j2πn) = 1 for whole n), so any full period gives the same area. Check with δ[n] (X = 1): x[0] = (1/2π)·2π = 1, and x[1] = (1/2π)∫e^(jΩ)dΩ = 0 (a full lap averages to 0). The CT twin integrates over all ω; DT needs only one lap because frequencies 2π apart are the same (aliasing).
