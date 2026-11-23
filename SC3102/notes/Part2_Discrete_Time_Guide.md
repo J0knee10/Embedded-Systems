@@ -40,16 +40,21 @@ STEP  TOPIC                                       SLIDES                 LAB
 11    Z-transform                                 lecture(2), Part 1     Lab 4 Q1
 12    ROC, poles and "sides"                      lecture(2), Parts 2-3  Lab 4 Q1
 13    Inverting a Z-transform                     lecture(2), Parts 3-4  Lab 4 Q1
-14    Difference equations                        lecture(3)             Lab 4 Q2-3
-15    Laplace + differential equations            lecture(4), lecture(5)
-        └─ Steps 11-14 again, for continuous time
+        └─ problem: real systems come as a rule (a recurrence), not as h[n]
+14    Difference equations (LCCDEs) solved with Z lecture(3)             Lab 4 Q2-3
+        └─ problem: back to continuous time; the CTFT fails on u(t), e^{2t}
+15    Laplace transform (Z's twin)                lecture(4)
+        └─ problem: real CT systems come as differential equations
+16    Differential equations solved with Laplace  lecture(5)
+        (15-16 are Steps 11-14 again, for continuous time)
 ```
 
 **Lecture numbers.** The slides count from 0: `lecture-00` is Lecture 0, `lecture.pdf` is 1,
 `lecture(1)` is 2, `lecture(2)` is 3, `lecture(3)` is 4 (its title slide says "Lecture 4"),
 `lecture(4)` is 5 and `lecture(5)` is 6. The Part 2 term test lists "Discrete Signals, DFT, Z and
-Laplace Transforms", which is Lectures 0–5. That's Steps 1–15, probably without the
-differential-equations half of Step 15.
+Laplace Transforms", which is Lectures 0–5. That's Steps 1–15. **The final exam covers the whole
+course, Steps 1–16 included** (every past final has a Laplace/differential-equation question); see
+`../PYP/Solutions/00_Exam_Guide.md`.
 
 **The four transforms are one idea, extended four times:**
 
@@ -59,6 +64,22 @@ differential-equations half of Step 15.
 | **DTFS** (Step 7) | a periodic signal, period $N_0$ | the same $N$, with $N=N_0$ | same formula, valid for every $n$ | Fourier series |
 | **DTFT** (Step 9) | a non-periodic signal with $\sum\lvert x\rvert<\infty$ | every $\Omega$ in $[0,2\pi)$ | $X(\Omega)=\sum_{n=-\infty}^{\infty}x[n]e^{-j\Omega n}$ | CTFT |
 | **Z** (Step 11) | almost anything | $z=re^{j\Omega}$ | $X(z)=\sum x[n]z^{-n}$, plus an ROC | Laplace |
+
+**The whole course is one ladder.** Each rung fixes what the one before couldn't handle, and the
+last rung on each side is *used* to solve equations:
+
+```
+ CONTINUOUS TIME (Part 1 + Steps 15-16)        DISCRETE TIME (Steps 6-14)
+ Fourier series   periodic x(t)                DFT    a list of N numbers
+   │ can't: non-periodic signals                 │ can't: a signal that goes on forever
+ CTFT             needs ∫|x| dt < ∞             DTFS   periodic x[n]
+   │ can't: u(t), e^{2t}u(t), unstable h(t)      │ can't: non-periodic signals
+ Laplace          fade by e^{-σt} first         DTFT   needs Σ|x| < ∞
+   │ used to solve                               │ can't: u[n], 2ⁿu[n], unstable h[n]
+ differential equations (Step 16)              Z      fade by r^{-n} first
+                                                 │ used to solve
+                                               difference equations (Step 14)
+```
 
 **Why the maths isn't really harder than Part 1:** continuous time uses **integrals of
 exponentials**, and discrete time uses **sums of powers**. Nearly every derivation below
@@ -1108,7 +1129,7 @@ a transform that can handle them.
 
 ### 11.1 The fix: fade the signal out before taking the DTFT
 
-**Idea.** Multiply the signal by a fading factor $r^{-n}$ first (Step 15 calls this "squashing"), so that it shrinks. Then take the
+**Idea.** Multiply the signal by a fading factor $r^{-n}$ first (Step 15 does the same with $e^{-\sigma t}$), so that it shrinks. Then take the
 DTFT of the faded signal, which now exists.
 
 Take $u[n]$ with $r=1.25$, so $r^{-n}=(1/1.25)^n=0.8^n$:
@@ -1600,23 +1621,57 @@ expanded in different directions gives different signals, which is 12.4 again.
 
 ---
 
-## Step 14: Difference equations
+## Step 14: Difference equations (LCCDEs), the job the Z-transform was built for
 
-### 14.1 A difference equation is a recipe a computer runs
+**Problem.** Steps 4–13 always started from something already given: $h[n]$, or a formula for
+$X(z)$. Real discrete-time systems (a DSP chip, a bank balance, the Lab 4 filters) are given as a
+**rule** instead: "new output = half the old output + the new input". Running the rule by hand
+gives numbers one at a time ($1.5,\ 1.75,\ 1.875,\dots$). It never gives a formula, never gives
+$h[n]$, and never says whether the system is stable or what it does to a sine. Worse, the rule on
+its own doesn't even fix a single answer (14.2).
 
-$y[n]=\tfrac12y[n-1]+x[n]$, with $y[-1]=1$ and $x[n]=u[n]$:
+**Idea.** A delay is $\times z^{-1}$ (Step 11.3), so the whole rule becomes **algebra in $z$**.
+Solve for $Y$ or $H$, then invert with Step 13. Step 12's ROC rules give causality and stability
+for free.
+
+### 14.1 What an LCCDE is (lecture 4, slide 5)
+
+$$\sum_{p=0}^{P}c_p\,y[n-p]=\sum_{q}b_q\,x[n-q]$$
+- **Linear:** every $y[\cdot]$ and $x[\cdot]$ appears to the power 1. No $y^2$, no $x[n]\,y[n]$.
+- **Constant coefficient:** the $c_p$ and $b_q$ are plain numbers, with no $n$ in them.
+- **Order $P$:** the biggest delay on $y$, i.e. how many past outputs it remembers.
+
+The running example is $y[n]-\tfrac12y[n-1]=x[n]$, which is order 1. Read it forward and it's a
+loop a computer can run: $y[n]=\tfrac12y[n-1]+x[n]$. With $y[-1]=1$ and $x[n]=u[n]$:
 $$y[0]=\tfrac12(1)+1=1.5,\quad y[1]=\tfrac12(1.5)+1=1.75,\quad y[2]=1.875,\ \dots\to 2$$
-There's no calculus here. It's a loop, which is why real DSP chips use these. The Z-transform
-gives you the **closed form** for $y[n]$, so you don't have to run the loop.
 
-### 14.2 Delays become $z^{-1}$, and initial conditions need the unilateral transform
+### 14.2 The rule alone has infinitely many answers (slides 7–12)
 
-When there are **initial conditions**, use the **unilateral** transform
-$Y_+(z)=\sum_{n\ge0}y[n]z^{-n}$. Its shift rule picks up the stored value:
+- **Particular solution** (one answer that fits): the input is constant for $n\ge0$, so guess a
+  constant $y=R$. Then $R-\tfrac12R=1$, so $R=2$.
+- **Homogeneous solution** (anything that makes the left side 0): $w[n]-\tfrac12w[n-1]=0$ gives
+  $w=C(\tfrac12)^n$ for **any** $C$. Adding it to a solution still gives a solution.
+- So every $y=2+C(\tfrac12)^n$ fits. To pick $C$ you need **$P$ initial conditions**
+  $y[-1],\dots,y[-P]$. With $y[-1]=1$: $y[0]=1.5=2+C$, so $C=-\tfrac12$ and $y=2-(\tfrac12)^{n+1}$.
+
+**Where the $\tfrac12$ comes from.** Try $w=p^n$ in the homogeneous equation:
+$p^n-\tfrac12p^{n-1}=0$ gives $p=\tfrac12$. That $p$ is about to reappear as the **pole** of
+$H(z)$. The homogeneous part of any LCCDE is built from one $p^n$ per pole.
+
+### 14.3 Two causes: zero-input + zero-state (slides 13–20)
+
+- **Zero-input** $y_{zi}$: set $x=0$ and keep the initial conditions. It's the stored memory
+  playing out.
+- **Zero-state** $y_{zs}$: set the initial conditions to 0 and keep the input. It's the response
+  to the input alone.
+- Total $=y_{zi}+y_{zs}$.
+
+To get both with Z you need the **unilateral** transform $Y_+(z)=\sum_{n\ge0}y[n]z^{-n}$. Its shift
+rule picks up the stored value:
 $$\sum_{n\ge0}y[n-1]z^{-n}=\underbrace{y[-1]}_{n=0\text{ term}}+\sum_{n\ge1}y[n-1]z^{-n}=y[-1]+z^{-1}Y_+(z).$$
 For a two-step delay: $y[n-2]\to z^{-2}Y_++z^{-1}y[-1]+y[-2]$.
 
-### 14.3 Fully worked: $y[n]-\tfrac12y[n-1]=u[n]$, $y[-1]=1$ (lecture 3's running example)
+**Fully worked:** $y[n]-\tfrac12y[n-1]=u[n]$, $y[-1]=1$ (lecture 4's running example).
 
 1. **Transform both sides:** $Y_+-\tfrac12\left(z^{-1}Y_++1\right)=\dfrac{1}{1-z^{-1}}$
 2. **Collect the $Y_+$ terms:** $Y_+\left(1-\tfrac12z^{-1}\right)=\tfrac12+\dfrac{1}{1-z^{-1}}$
@@ -1628,7 +1683,51 @@ $$y_{zi}[n]=(\tfrac12)^{n+1},\qquad y_{zs}[n]=2-(\tfrac12)^n,\qquad y[n]=2-(\tfr
 
 This gives $1.5,\ 1.75,\ 1.875,\dots$, the same as the loop in 14.1.
 
-### 14.4 Three ways to split the output (they're different splits)
+### 14.4 Zero initial conditions → an LTI system → $H(z)$ (slides 21–44)
+
+- **Nonzero initial conditions break linearity.** With $y[-1]=1$, input 0 gives output
+  $(\tfrac12)^{n+1}\ne0$, but a linear system must give 0 out for 0 in. **With zero initial
+  conditions an LCCDE is LTI**, so it has an $h[n]$ and an $H(z)$.
+- Use the ordinary (bilateral) Z. Every $y[n-p]\to z^{-p}Y$ and every $x[n-q]\to z^{-q}X$:
+$$H(z)=\frac{Y(z)}{X(z)}=\frac{\sum_q b_qz^{-q}}{\sum_p c_pz^{-p}}\qquad\begin{cases}y\text{-side (feedback)}\to\text{denominator}\to\textbf{poles}\\ x\text{-side}\to\text{numerator}\to\textbf{zeros}\end{cases}$$
+
+**The catch: one $H(z)$, several $h[n]$.** The formula needs an ROC, exactly as in Step 12.
+
+Lecture example: $y[n]-\tfrac52y[n-1]+y[n-2]=x[n]$.
+$$H(z)=\frac{1}{1-\tfrac52z^{-1}+z^{-2}}=\frac{z^2}{(z-\tfrac12)(z-2)}=-\frac13\cdot\frac{z}{z-\tfrac12}+\frac43\cdot\frac{z}{z-2}$$
+The poles are $\tfrac12$ and $2$, which gives three ROCs:
+
+| ROC | $h[n]$ | What it means |
+|---|---|---|
+| $\lvert z\rvert>2$ | $\left[-\tfrac13(\tfrac12)^n+\tfrac43\,2^n\right]u[n]$ $=1,\ 2.5,\ 5.25,\ 10.6,\dots$ | **causal** (run forward); unstable, because $2^n$ grows |
+| $\tfrac12<\lvert z\rvert<2$ | $-\tfrac13(\tfrac12)^nu[n]-\tfrac43\,2^nu[-n-1]$ | **stable** (contains $\lvert z\rvert=1$); two-sided, so not causal |
+| $\lvert z\rvert<\tfrac12$ | $\left[\tfrac13(\tfrac12)^n-\tfrac43\,2^n\right]u[-n-1]$ | anti-causal (run backward); unstable |
+
+- **Check row 1** by running the loop with $x=\delta$: $h[0]=1$, $h[1]=\tfrac52$,
+  $h[2]=\tfrac52\cdot\tfrac52-1=5.25$ ✓.
+- **Why there are several answers:** the same equation can be run **forward**
+  ($y[n]=\tfrac52y[n-1]-y[n-2]+x[n]$, building from the past) or **backward**
+  ($y[n-2]=\dots$, building from the future). The ROC records which direction.
+- **The question tells you which ROC.** "Causal" → outside the outermost pole. "Stable" → the ring
+  containing $\lvert z\rvert=1$. A pole outside the unit circle means you can't have both.
+
+### 14.5 Transient vs steady state, and the sinusoid shortcut (slides 45–48)
+
+- **Transient:** the part that dies out. **Steady state:** the part that stays.
+- In $y=2-(\tfrac12)^{n+1}$, the transient is $-(\tfrac12)^{n+1}$ and the steady state is $2$.
+- The steady state isn't always constant. With $x=(-1)^nu[n]$ and zero initial conditions,
+  $y=\underbrace{\tfrac23(-1)^n}_{\text{steady}}+\underbrace{\tfrac13(\tfrac12)^n}_{\text{transient}}$.
+- **Where each part comes from:** the **poles** make the transient (one $p^n$ per pole, which dies
+  if $\lvert p\rvert<1$). The **input's own frequency** makes the steady state.
+
+**The shortcut the exams love.** For a **stable** system, the input $\cos(\Omega_0n+\theta)$ settles to
+$$y_{ss}[n]=\lvert H(e^{j\Omega_0})\rvert\cos\!\big(\Omega_0n+\theta+\angle H(e^{j\Omega_0})\big).$$
+Plug $z=e^{j\Omega_0}$ into $H(z)$; you never need to invert anything. Initial conditions only
+change the transient.
+- $(-1)^n=\cos(\pi n)$, so $\Omega_0=\pi$ and $z=-1$: $H(-1)=\dfrac{1}{1-\frac12(-1)}=\tfrac23$, giving $\tfrac23(-1)^n$ ✓.
+- A constant is $\Omega_0=0$, so $z=1$: $H(1)=\dfrac{1}{1-\frac12}=2$. A unit step settles at $2$ ✓.
+
+### 14.6 Three ways to split the output (they're different splits)
 
 | Split | Based on | In the example |
 |---|---|---|
@@ -1636,15 +1735,14 @@ This gives $1.5,\ 1.75,\ 1.875,\dots$, the same as the loop in 14.1.
 | transient + steady-state | **time:** dies out vs persists | $-(\tfrac12)^{n+1}$ + $2$ |
 | homogeneous + particular | **maths:** solves the "$=0$" equation vs one particular solution | $C(\tfrac12)^n$ + $2$ |
 
-- A system described by a difference equation is **LTI only if its initial conditions are zero**.
-  Otherwise a zero input still gives a nonzero output (the zero-input response), which breaks
-  linearity.
-- **Initial value theorem:** $y[0]=\lim_{z\to\infty}Y_+(z)$. Here every $z^{-1}\to0$, giving
+### 14.7 Initial and final values without inverting (slides 49–58)
+
+- **Initial value theorem:** $y[0]=\lim_{z\to\infty}Y_+(z)$. Every $z^{-1}\to0$, which leaves
   $\tfrac12+1=\tfrac32$ ✓.
 - **Final value theorem:** $y[\infty]=\lim_{z\to1}(1-z^{-1})Y_+(z)$. It's valid only if all poles
   are inside the unit circle, except at most one simple pole at $z=1$. Here it gives 2 ✓.
 
-### 14.5 FIR vs IIR (Lab 4 Q3)
+### 14.8 FIR vs IIR (Lab 4 Q3)
 
 - **IIR (with feedback; $y$ appears on the right-hand side):** $y[n]=a\,y[n-1]+x[n]$ has
   $h[n]=a^n u[n]$, which never ends. The pole is at $a$, so it's stable only if $\lvert a\rvert<1$.
@@ -1653,48 +1751,287 @@ This gives $1.5,\ 1.75,\ 1.875,\dots$, the same as the loop in 14.1.
   stable**. The cost: you need many taps $M$ to get close to an ideal filter, and more taps means
   more memory, more computation and more delay.
 
-**Recipe: solve a difference equation with initial conditions**
-1. Take the unilateral Z-transform of both sides, using the shift rule from 14.2.
-2. Solve for $Y_+$. Terms involving $y[-1],y[-2]$ form the zero-input response; terms involving
-   $X_+$ form the zero-state response.
-3. Do partial fractions, then invert with the right-sided pairs (all for $n\ge0$).
+**Recipe: solve an LCCDE with Z**
+1. **No initial conditions:** transform with delays $\to z^{-k}$, form $H=Y/X$, factor, and pick the
+   ROC from "causal" or "stable" (14.4). Invert with partial fractions (Step 13).
+2. **With initial conditions:** take the unilateral transform (14.3 shift rule) and solve for
+   $Y_+$. Terms in $y[-1],y[-2]$ are zero-input; terms in $X_+$ are zero-state. Invert with the
+   right-sided pairs (all for $n\ge0$).
+3. **Sinusoid in, steady state wanted:** check stability, then use $H(e^{j\Omega_0})$ (14.5).
 4. **Sanity check:** compute $y[0]$ and $y[1]$ by hand from the equation and compare.
+
+**Takeaway.** The LCCDE is the system's rule. Z turns it into $H(z)$ (no initial conditions) or
+$Y_+(z)$ (with them). Step 12 then gives causal/stable, Step 13 gives the formula, and
+$H(e^{j\Omega})$ gives the steady state for sinusoids.
+
+**Past papers:** 23S1 Q4(b), 23S2 Q4(c), 24S1 Q4(b), 25S1 Q4(a), 25S2 Q3(c).
 
 ---
 
-## Step 15: Laplace and differential equations, Steps 11–14 again for continuous time
+## Step 15: The Laplace transform, the Z-transform's twin for continuous time
 
-`lecture(4).pdf` and `lecture(5).pdf` have almost the same slide titles as `lecture(2)` and
-`lecture(3)`. Every idea carries over:
+**Problem.** Back to continuous time. The CTFT from Part 1 needs $\int\lvert x(t)\rvert dt<\infty$.
+That fails for:
+- the step $u(t)$: $\int_0^\infty1\,dt=\infty$ (Part 1 had to patch it with a $\delta$);
+- growing signals like $e^{2t}u(t)$, which have no CTFT at all;
+- the impulse response of every unstable system, e.g. $h=e^{t}u(t)$ from $y'-y=x$.
 
-| Discrete time (Z) | Continuous time (Laplace) |
-|---|---|
-| squash by $r^{-n}$ | squash by $e^{-\sigma t}$ |
-| $z=re^{j\Omega}$ | $s=\sigma+j\omega$ |
-| $X(z)=\sum x[n]z^{-n}$ | $X(s)=\int x(t)e^{-st}dt$ |
-| ROC depends on $\lvert z\rvert$, so it's rings | ROC depends on $\mathrm{Re}\,s=\sigma$, so it's vertical strips |
-| unit circle = DTFT | $j\omega$-axis = CTFT |
-| right-sided: outside the outermost pole | right-sided: to the right of the rightmost pole |
-| $a^n u[n]\leftrightarrow\frac{z}{z-a}$, $\lvert z\rvert>\lvert a\rvert$ | $e^{-at}u(t)\leftrightarrow\frac{1}{s+a}$, $\mathrm{Re}\,s>-a$ |
-| causal + stable ⇔ poles inside the unit circle | causal + stable ⇔ poles in the left half-plane |
-| delay $y[n-1]\leftrightarrow z^{-1}Y$ | derivative $y'(t)\leftrightarrow sY$ |
-| unilateral: $y[n-1]\to z^{-1}Y_++y[-1]$ | unilateral: $y'\to sY-y(0^-)$ |
-| difference equation | differential equation |
+Part 1's tools also have no way to include **initial conditions**, such as a capacitor that is
+already charged at $t=0$. This is exactly the DTFT's problem from Step 11, so use exactly the same
+fix.
 
-**The link between them:** $z=e^{sT_s}$ (the lecture uses $T_s=1$, so $z=e^s$). If $\sigma<0$
-then $\lvert z\rvert=e^{\sigma T_s}<1$. So the left half-plane maps to the inside of the unit
-circle, and sampling $e^{-at}$ gives $(e^{-aT_s})^n$, which is a power $p^n$.
+**Idea.** Fade the signal with $e^{-\sigma t}$ first so that it shrinks. Then take the CTFT of the
+faded signal.
 
-**Twin examples:**
+### 15.1 Fade, then CTFT (lecture 5, slides 6–10)
 
-| | Discrete (lecture 3) | Continuous (lecture 5) |
+Fade $u(t)$ with $\sigma=1$ and you get $e^{-t}u(t)$, which has area 1, so its CTFT exists:
+$\int_0^\infty e^{-t}e^{-j\omega t}dt=\frac{1}{1+j\omega}$.
+
+The two exponentials merge into one: $e^{-\sigma t}e^{-j\omega t}=e^{-(\sigma+j\omega)t}=e^{-st}$.
+$$\boxed{X(s)=\int_{-\infty}^{\infty}x(t)\,e^{-st}\,dt,\qquad s=\sigma+j\omega}$$
+- $\sigma=\mathrm{Re}\,s$ is **how hard you fade**, like $r=\lvert z\rvert$.
+- $\omega=\mathrm{Im}\,s$ is the **frequency**, like $\Omega=\angle z$.
+
+**Worked:** $u(t)\leftrightarrow\displaystyle\int_0^\infty e^{-st}dt=\left[\frac{e^{-st}}{-s}\right]_0^\infty=\frac1s$.
+The $e^{-st}$ term only dies at $t=\infty$ if $\mathrm{Re}\,s>0$, so the ROC is $\mathrm{Re}\,s>0$.
+
+### 15.2 The ROC is vertical strips, not rings (slides 11–28)
+
+$\lvert x(t)e^{-st}\rvert=\lvert x(t)\rvert e^{-\sigma t}$: only $\sigma$ matters, $\omega$ doesn't. So
+if one point is in the ROC, the whole **vertical line** through it is. (In Z only $\lvert z\rvert$
+mattered, which is why its ROCs were **rings**.)
+
+| Signal | Laplace ROC | Z twin |
+|---|---|---|
+| finite length | all $s$ | all $z$ (maybe not $0$ or $\infty$) |
+| right-sided | $\mathrm{Re}\,s>a$: right of the rightmost pole | $\lvert z\rvert>a$ |
+| left-sided | $\mathrm{Re}\,s<b$: left of the leftmost pole | $\lvert z\rvert<b$ |
+| two-sided | a strip $a<\mathrm{Re}\,s<b$ (or nothing if $a\ge b$) | a ring |
+
+Why right-sided means "right half": as $t\to+\infty$, more fading (bigger $\sigma$) only helps. For
+a left-sided signal ($t\to-\infty$), $e^{-\sigma t}$ **grows** when $\sigma>0$, so you need $\sigma$
+small.
+
+**The CTFT lives on the $j\omega$-axis** ($\sigma=0$, no fading), so $X(j\omega)$ is the CTFT. The
+CTFT exists exactly when the $j\omega$-axis is inside the ROC. (Z twin: the DTFT lives on the unit
+circle.)
+- $e^{-t}u(t)$: ROC $\mathrm{Re}\,s>-1$ contains the axis, so the CTFT is $\frac{1}{1+j\omega}$.
+- $u(t)$: ROC $\mathrm{Re}\,s>0$. The axis is the edge, not inside, so there's no ordinary CTFT.
+
+### 15.3 Pairs: one pair does nearly all the work (slides 31–33, 58–62)
+
+$$e^{at}u(t)\leftrightarrow\frac{1}{s-a},\ \ \mathrm{Re}\,s>a\qquad\qquad -e^{at}u(-t)\leftrightarrow\frac{1}{s-a},\ \ \mathrm{Re}\,s<a$$
+Derivation: $\int_0^\infty e^{at}e^{-st}dt=\int_0^\infty e^{-(s-a)t}dt=\frac{1}{s-a}$, valid if
+$\mathrm{Re}(s-a)>0$. It's the same formula for two signals, and the ROC picks which one. (Z twin:
+$a^nu[n]$ and $-a^nu[-n-1]$ both give $\frac{z}{z-a}$.)
+
+| Signal (all $\times u(t)$) | $X(s)$ | ROC | How you get it |
+|---|---|---|---|
+| $\delta(t)$ | $1$ | all $s$ | |
+| $u(t)$ | $\frac1s$ | $\mathrm{Re}\,s>0$ | $a=0$ |
+| $e^{-at}$ | $\frac{1}{s+a}$ | $\mathrm{Re}\,s>-a$ | the main pair |
+| $t\,e^{at}$ | $\frac{1}{(s-a)^2}$ | $\mathrm{Re}\,s>a$ | the "$\times t$" rule |
+| $\cos\omega_0t$ | $\frac{s}{s^2+\omega_0^2}$ | $\mathrm{Re}\,s>0$ | Euler: poles at $\pm j\omega_0$ |
+| $\sin\omega_0t$ | $\frac{\omega_0}{s^2+\omega_0^2}$ | $\mathrm{Re}\,s>0$ | Euler |
+| $e^{\alpha t}\cos\omega_0t$ | $\frac{s-\alpha}{(s-\alpha)^2+\omega_0^2}$ | $\mathrm{Re}\,s>\alpha$ | replace $s$ by $s-\alpha$ |
+| $e^{\alpha t}\sin\omega_0t$ | $\frac{\omega_0}{(s-\alpha)^2+\omega_0^2}$ | $\mathrm{Re}\,s>\alpha$ | replace $s$ by $s-\alpha$ |
+
+Example: $e^{-t}\cos(2t)u(t)\leftrightarrow\dfrac{s+1}{(s+1)^2+4}$, $\mathrm{Re}\,s>-1$.
+
+### 15.4 Poles, zeros and inversion: Steps 12–13 again, but easier (slides 29–45)
+
+- Make one fraction $B(s)/A(s)$ and cancel common factors. **Poles** (×) are the roots of $A$ and
+  **zeros** (○) are the roots of $B$. The ROC never contains a pole; poles are its edges.
+- Do partial fractions **directly on $X(s)$**. There's no "divide by $z$ first" step, because the
+  basic pair is $\frac{1}{s-a}$, not $\frac{z}{z-a}$.
+
+Lecture example: $X(s)=\dfrac{s}{s^2-3s+2}=\dfrac{s}{(s-1)(s-2)}$. Cover-up: at $s=2$ the
+coefficient is $\frac{2}{2-1}=2$, and at $s=1$ it's $\frac{1}{1-2}=-1$. So
+$X=\frac{2}{s-2}-\frac{1}{s-1}$, with poles at 1 and 2 and three ROCs:
+
+| ROC | $x(t)$ | Shape |
+|---|---|---|
+| $\mathrm{Re}\,s>2$ | $\left(2e^{2t}-e^{t}\right)u(t)$ | right-sided |
+| $1<\mathrm{Re}\,s<2$ | $-e^{t}u(t)-2e^{2t}u(-t)$ | two-sided |
+| $\mathrm{Re}\,s<1$ | $\left(e^{t}-2e^{2t}\right)u(-t)$ | left-sided; the only one containing the $j\omega$-axis, so the only one with a CTFT |
+
+**Rule for each pole:** a pole to the **left** of the ROC runs forward ($\times u(t)$), and a pole
+to the **right** of the ROC runs backward ($\times-u(-t)$). In the middle row, the pole at 1 is left
+of the strip and the pole at 2 is right of it. (Z twin: poles inside the ring run forward, poles
+outside run backward.)
+
+### 15.5 Properties: the one that matters is "derivative = $\times s$" (slides 46–53)
+
+| Property | Time | $s$-domain | Z twin |
+|---|---|---|---|
+| Linearity | $\alpha x+\beta h$ | $\alpha X+\beta H$ | same |
+| Time shift | $x(t-t_0)$ | $e^{-st_0}X(s)$ | $x[n-k]\to z^{-k}X$ |
+| Exponential weighting | $e^{bt}x(t)$ | $X(s-b)$ | $a^nx[n]\to X(z/a)$ |
+| Multiply by $t$ | $t\,x(t)$ | $-\frac{dX}{ds}$ | $n\,x[n]\to-z\frac{dX}{dz}$ |
+| **Derivative** | $x'(t)$ | $\boldsymbol{s\,X(s)}$ | **delay** $\to z^{-1}$ |
+| Convolution | $x*h$ | $X\cdot H$ | same |
+
+**Why the derivative is $\times s$.** Laplace builds every signal from $e^{st}$, and
+$\frac{d}{dt}e^{st}=s\,e^{st}$: differentiating just multiplies by $s$. (Z builds signals from $z^n$,
+and delaying $z^n$ multiplies it by $z^{-1}$.) So a **differential** equation turns into polynomial
+algebra in $s$, exactly as a **difference** equation turned into algebra in $z^{-1}$. That's the
+whole reason Step 16 works.
+
+### 15.6 How Laplace and Z connect (slides 54–57)
+
+Sample $e^{at}$ every $T_s$ and you get $(e^{aT_s})^n$, a power $p^n$ with $p=e^{aT_s}$. So
+**$z=e^{sT_s}$** (the lecture uses $T_s=1$, so $z=e^s$):
+
+| s-plane | z-plane | Example |
+|---|---|---|
+| left half ($\sigma<0$) | inside the unit circle ($\lvert z\rvert=e^{\sigma}<1$) | $s=-1\to z=e^{-1}=0.37$ |
+| $j\omega$-axis | the unit circle | $s=j\frac{\pi}{2}\to z=j$ |
+| right half | outside the unit circle | $s=1\to z=2.72$ |
+
+So "causal + stable" moves from "poles inside the unit circle" to "**poles in the left
+half-plane**". (Why not just write $z^t$ in Laplace? For non-whole $t$ it isn't unique: $1^{1/4}$ has
+four values, $1, j, -1, -j$.)
+
+**Takeaway.** Laplace is the CTFT of a faded signal: an expression plus an ROC. Poles are the ROC's
+edges, the ROC is a vertical strip, and the $j\omega$-axis is the CTFT. Everything in Steps 11–13
+carries over with $z^n\to e^{st}$, circle $\to$ axis, and inside $\to$ left.
+
+**Past papers:** 24S1 Q3(c), 25S1 Q3(a)(b) (transforms); 23S2 Q3(c), 24S1 Q3(a) (CTFT vs Laplace
+essays); 24S1 Q4(a), 25S2 Q4(a) (s-plane vs z-plane).
+
+---
+
+## Step 16: Differential equations, Step 14 again for continuous time
+
+**Problem.** Continuous systems (circuits, springs, motors) are described by differential
+equations. A series RLC circuit, for example, gives $LC\,y''+RC\,y'+y=x$ (16.8). Part 1 could only
+handle these through $h(t)$ and convolution, or by integrating by hand. That's slow, it can't easily
+include a capacitor that is already charged at $t=0$, and it says nothing useful when the system is
+unstable.
+
+**Idea.** The same as Step 14, with $\frac{d}{dt}\to\times s$ in place of delay $\to\times z^{-1}$.
+The differential equation becomes algebra. Solve for $Y(s)$ and invert with partial fractions.
+
+### 16.1 Same structure as Step 14 (lecture 6, slides 4–14)
+
+$$\sum_{p=0}^{P}c_p\,y^{(p)}(t)=\sum_{q=0}^{Q}b_q\,x^{(q)}(t),\qquad y^{(p)}=\frac{d^py}{dt^p}$$
+
+Running example: $y'+y=2u(t)$, $y(0^-)=1$.
+- **Particular:** guess $y=R$. Then $0+R=2$, so $R=2$.
+- **Homogeneous:** $w'+w=0$ gives $w=Ce^{-t}$ for any $C$. (Try $w=e^{pt}$: $p+1=0$, so
+  $p=-1$, which is the pole of $H$.)
+- **General:** $y=2+Ce^{-t}$. You need $P$ initial conditions $y(0^-),y'(0^-),\dots$. Here
+  $y(0^-)=1$ gives $C=-1$, so $y=2-e^{-t}$.
+
+$0^-$ means **just before the input switches on**: the stored state (e.g. the capacitor voltage)
+before the input has had any effect.
+
+### 16.2 Unilateral Laplace: where the initial conditions go (slides 37–38)
+
+$$Y_+(s)=\int_{0^-}^{\infty}y(t)\,e^{-st}\,dt$$
+Integrate by parts:
+$$\int_{0^-}^{\infty}y'(t)e^{-st}dt=\Big[y(t)\,e^{-st}\Big]_{0^-}^{\infty}+s\int_{0^-}^{\infty}y(t)e^{-st}dt=sY_+(s)-y(0^-).$$
+Apply it twice to get $y''\to s^2Y_+-s\,y(0^-)-y'(0^-)$. (Z twin: $y[n-1]\to z^{-1}Y_++y[-1]$.)
+
+### 16.3 Fully worked: $y'+y=2u(t)$, $y(0^-)=1$ (slides 15–20, 40–48)
+
+1. **Transform both sides:** $sY_+-1+Y_+=\dfrac2s$
+2. **Collect the $Y_+$ terms:** $(s+1)Y_+=1+\dfrac2s$
+3. **Split by cause:**
+$$Y_+=\underbrace{\frac{1}{s+1}}_{\text{from }y(0^-)\text{: zero-input}}+\underbrace{\frac{2}{s(s+1)}}_{\text{from the input: zero-state}}$$
+4. **Partial fractions:** $\dfrac{2}{s(s+1)}=\dfrac2s-\dfrac{2}{s+1}$
+5. **Invert** ($t\ge0$):
+$$y_{zi}(t)=e^{-t},\qquad y_{zs}(t)=2-2e^{-t},\qquad y(t)=2-e^{-t}$$
+
+The transient is $-e^{-t}$ and the steady state is $2$. **Check:** $y(0)=1$ matches the initial
+condition, and $y'+y=e^{-t}+2-e^{-t}=2$ ✓.
+
+### 16.4 Second order: two initial conditions
+
+$y''+3y'+2y=0$ with $y(0^-)=1$, $y'(0^-)=0$ (zero-input only):
+$$\big(s^2Y-s\cdot1-0\big)+3\big(sY-1\big)+2Y=0\ \Rightarrow\ (s^2+3s+2)Y=s+3$$
+$$Y=\frac{s+3}{(s+1)(s+2)}=\frac{2}{s+1}-\frac{1}{s+2}\ \Rightarrow\ y(t)=2e^{-t}-e^{-2t},\quad t\ge0.$$
+**Check:** $y(0)=2-1=1$ ✓ and $y'(0)=-2+2=0$ ✓. The poles $-1,-2$ are the roots of $s^2+3s+2$, the
+coefficients of the $y$-side.
+
+### 16.5 Zero initial conditions → LTI → $H(s)$, and choosing the ROC (slides 22–35)
+
+- **Nonzero initial conditions break linearity:** input 0 still gives $e^{-t}$ out. With zero
+  initial conditions the equation is LTI, and
+$$H(s)=\frac{Y(s)}{X(s)}=\frac{\sum_q b_qs^q}{\sum_p c_ps^p}\qquad(y\text{-side}\to\text{poles},\ x\text{-side}\to\text{zeros}).$$
+- $y'+y=x$ gives $H=\frac{1}{s+1}$. That has two ROCs: $e^{-t}u(t)$ (forward integration, causal)
+  or $-e^{-t}u(-t)$ (backward integration).
+
+Lecture example: $y''-y=x$ gives $H=\dfrac{1}{s^2-1}=\dfrac{1/2}{s-1}-\dfrac{1/2}{s+1}$, with poles
+at $\pm1$:
+
+| ROC | $h(t)$ | What it means |
+|---|---|---|
+| $\mathrm{Re}\,s>1$ | $\tfrac12\left(e^{t}-e^{-t}\right)u(t)$ | **causal**; unstable, because $e^{t}$ grows |
+| $-1<\mathrm{Re}\,s<1$ | $-\tfrac12e^{-t}u(t)-\tfrac12e^{t}u(-t)$ | **stable** (contains the $j\omega$-axis); not causal |
+| $\mathrm{Re}\,s<-1$ | $\tfrac12\left(e^{-t}-e^{t}\right)u(-t)$ | anti-causal; unstable |
+
+**Causal + stable ⇔ every pole has $\mathrm{Re}<0$** (left half-plane).
+
+### 16.6 Sinusoidal steady state: plug in $s=j\omega_0$ (slide 21)
+
+For a **stable** system, the input $\cos(\omega_0t)u(t)$ settles to
+$\lvert H(j\omega_0)\rvert\cos\!\big(\omega_0t+\angle H(j\omega_0)\big)$.
+
+Example: $y'+y=\cos(t)u(t)$ with zero initial conditions.
+$H(j1)=\frac{1}{1+j}=\frac{1}{\sqrt2}\angle{-45^\circ}$, so
+$y_{ss}=\frac{1}{\sqrt2}\cos(t-45^\circ)=\tfrac12(\cos t+\sin t)$. The full Laplace answer is
+$y=\tfrac12(\cos t+\sin t)-\tfrac12e^{-t}$; the pole at $-1$ adds the transient. (Z twin: plug in
+$z=e^{j\Omega_0}$.)
+
+### 16.7 Initial and final values without inverting (slides 36–48)
+
+- **Initial value theorem:** $y(0^+)=\lim_{s\to\infty}sY_+(s)$. Here $sY_+=2-\frac{s}{s+1}\to2-1=1$ ✓.
+- **Final value theorem:** $\lim_{t\to\infty}y(t)=\lim_{s\to0}sY_+(s)=2-0=2$ ✓.
+- **Do the pole check first.** The FVT is valid only if every pole of $Y_+$ is strictly in the left
+  half-plane, except at most one simple pole at $s=0$. It fails for $e^{t}u(t)$ (a pole at $+1$),
+  $\cos t\,u(t)$ (poles at $\pm j$, on the axis) and $t\,u(t)$ (a double pole at 0).
+- **Trap:** $Y=\frac{1}{s(s-1)}$. The formula gives $\lim_{s\to0}\frac{1}{s-1}=-1$, but
+  $y=e^{t}-1\to\infty$. The pole at $+1$ fails the check, so the $-1$ is meaningless. 25S2 Q4(b)
+  marks this check.
+- Z twin: $y[0]=\lim_{z\to\infty}Y_+$ and $y[\infty]=\lim_{z\to1}(1-z^{-1})Y_+$, with all poles
+  inside the unit circle except at most one simple pole at 1.
+
+### 16.8 Where the equations come from: RLC circuits (slides 49–62)
+
+- Resistor: $v=Ri$. Inductor: $v=L\frac{di}{dt}$. Capacitor: $i=C\frac{dv}{dt}$.
+- Series loop, with the output $y$ taken across the capacitor. KVL gives $x=Ri+L\,i'+y$, and the
+  same current flows through $C$, so $i=Cy'$:
+$$x=RC\,y'+LC\,y''+y\quad\Rightarrow\quad H(s)=\frac{1}{LCs^2+RCs+1}.$$
+
+**Recipe: solve a differential equation with Laplace**
+1. Transform both sides. With initial conditions use $y'\to sY-y(0^-)$ and
+   $y''\to s^2Y-sy(0^-)-y'(0^-)$; take the input from the pairs table.
+2. Solve for $Y$, or for $H=Y/X$ if the initial conditions are zero.
+3. Do partial fractions. For complex poles, complete the square and use the damped cos/sin pairs.
+4. Invert for $t\ge0$, or pick the ROC from "causal" or "stable".
+5. **Check:** $y(0)$ should match the initial condition, and the FVT (after the pole check) should
+   match your steady state.
+
+**Takeaway.** Steps 14 and 16 are the same five lines with $z^{-1}\to s$, $y[-1]\to y(0^-)$, the
+unit circle $\to$ the $j\omega$-axis, and inside $\to$ left:
+
+| | Discrete (Step 14, lecture 4) | Continuous (Step 16, lecture 6) |
 |---|---|---|
 | Equation | $y[n]-\tfrac12y[n-1]=u[n]$, $y[-1]=1$ | $y'+y=2u(t)$, $y(0^-)=1$ |
+| Building block | $p^n$ | $e^{pt}$ |
+| Operator becomes | delay $\to z^{-1}$ | $\frac{d}{dt}\to s$ |
+| Initial condition rule | $y[n-1]\to z^{-1}Y_++y[-1]$ | $y'\to sY_+-y(0^-)$ |
 | Zero-input | $(\tfrac12)^{n+1}$ | $e^{-t}$ |
 | Zero-state | $2-(\tfrac12)^n$ | $2-2e^{-t}$ |
 | Total | $2-(\tfrac12)^{n+1}\to2$ | $2-e^{-t}\to2$ |
+| Steady state for a sinusoid | $H(e^{j\Omega_0})$ | $H(j\omega_0)$ |
+| Causal + stable | poles inside $\lvert z\rvert=1$ | poles in $\mathrm{Re}\,s<0$ |
+| IVT | $y[0]=\lim_{z\to\infty}Y_+$ | $y(0^+)=\lim_{s\to\infty}sY_+$ |
+| FVT | $\lim_{z\to1}(1-z^{-1})Y_+$ | $\lim_{s\to0}sY_+$ |
 
-They have the same shape, with $e^{-t}$ replaced by $(\tfrac12)^n$.
+**Past papers:** 23S1 Q3, 23S2 Q3(a)(b), 24S1 Q3(b), 25S1 Q3(c), 25S2 Q4(b).
 
 ---
 
@@ -1772,17 +2109,17 @@ The poles are $0.5$ and $-3$, at distances $0.5$ and $3$, which gives three ROCs
 
 | ROC | $x[n]$ | Causal? | Stable? |
 |---|---|---|---|
-| $\lvert zvert<0.5$ | $-\left(0.5^n+(-3)^night)u[-n-1]$ | ❌ | ❌ (1 isn't inside) |
-| $0.5<\lvert zvert<3$ | $0.5^nu[n]-(-3)^nu[-n-1]$ | ❌ | ✅ (contains $\lvert zvert=1$) |
-| $\lvert zvert>3$ | $\left(0.5^n+(-3)^night)u[n]$ | ✅ | ❌ ($(-3)^n$ blows up) |
+| $\lvert z\rvert<0.5$ | $-\left(0.5^n+(-3)^n\right)u[-n-1]$ | ❌ | ❌ (1 isn't inside) |
+| $0.5<\lvert z\rvert<3$ | $0.5^nu[n]-(-3)^nu[-n-1]$ | ❌ | ✅ (contains $\lvert z\rvert=1$) |
+| $\lvert z\rvert>3$ | $\left(0.5^n+(-3)^n\right)u[n]$ | ✅ | ❌ ($(-3)^n$ blows up) |
 </details>
 
 <details><summary>13. (Step 13) Invert X(z) = z / ((z−1)(z−0.5)), |z| > 1.</summary>
 
-There's a factor $z$ on top, so divide by $z$: $rac{X}{z}=rac{1}{(z-1)(z-0.5)}=rac{C}{z-1}+rac{D}{z-0.5}$.
-Cover-up gives $C=rac{1}{1-0.5}=2$ and $D=rac{1}{0.5-1}=-2$, so $X=rac{2z}{z-1}-rac{2z}{z-0.5}$.
+There's a factor $z$ on top, so divide by $z$: $\frac{X}{z}=\frac{1}{(z-1)(z-0.5)}=\frac{C}{z-1}+\frac{D}{z-0.5}$.
+Cover-up gives $C=\frac{1}{1-0.5}=2$ and $D=\frac{1}{0.5-1}=-2$, so $X=\frac{2z}{z-1}-\frac{2z}{z-0.5}$.
 The ROC is outside both poles, so both run forward:
-$x[n]=2\left(1-0.5^night)u[n]=0,\ 1,\ 1.5,\ 1.75,\dots$ **Check:** the first terms of the series
+$x[n]=2\left(1-0.5^n\right)u[n]=0,\ 1,\ 1.5,\ 1.75,\dots$ **Check:** the first terms of the series
 expansion are $0+z^{-1}+1.5z^{-2}+\dots$ ✓
 </details>
 
@@ -1790,4 +2127,34 @@ expansion are $0+z^{-1}+1.5z^{-2}+\dots$ ✓
 
 $Y_+=\frac{1}{(1-0.9z^{-1})(1-z^{-1})}$, and $(1-z^{-1})Y_+$ at $z=1$ is $\frac{1}{0.1}=10$. In
 general, a constant input $c$ settles at $\frac{c}{1-a}$, which you'll see in Lab 4 Q2A.
+</details>
+
+<details><summary>15. (Step 14) The causal system y[n] − 0.5y[n−1] = x[n], with x[n] = 4cos(πn/2). What is the steady state?</summary>
+
+The pole is $0.5$, inside the unit circle, so the system is stable and the shortcut works. At
+$\Omega_0=\pi/2$, $z=e^{j\pi/2}=j$: $H(j)=\frac{1}{1-0.5(-j)}=\frac{1}{1+0.5j}=0.894\angle{-26.6^\circ}$.
+So $y_{ss}=4(0.894)\cos(\pi n/2-26.6^\circ)=3.58\cos(\pi n/2-26.6^\circ)$.
+</details>
+
+<details><summary>16. (Step 15) Find the Laplace transform and ROC of x(t) = e^{3t}u(t). Does it have a CTFT?</summary>
+
+$X(s)=\frac{1}{s-3}$, ROC $\mathrm{Re}\,s>3$. The $j\omega$-axis ($\mathrm{Re}\,s=0$) isn't in the
+ROC, so there's no CTFT. That's the point of Laplace: the CTFT can't handle this signal, but Laplace
+can.
+</details>
+
+<details><summary>17. (Step 15) X(s) = 1/((s+1)(s−2)). Which ROC gives a stable signal? Write it.</summary>
+
+$X=\frac{-1/3}{s+1}+\frac{1/3}{s-2}$. The stable ROC is the strip $-1<\mathrm{Re}\,s<2$ (it contains
+the $j\omega$-axis). The pole at $-1$ is left of the strip, so it runs forward; the pole at 2 is
+right of it, so it runs backward:
+$x(t)=-\tfrac13e^{-t}u(t)-\tfrac13e^{2t}u(-t)$.
+</details>
+
+<details><summary>18. (Step 16) y' + 2y = 4u(t), y(0⁻) = 3. Find y(t), then check it with the IVT and FVT.</summary>
+
+$sY-3+2Y=\frac4s$, so $Y=\frac{3}{s+2}+\frac{4}{s(s+2)}=\frac{3}{s+2}+\frac2s-\frac{2}{s+2}=\frac2s+\frac{1}{s+2}$.
+So $y=2+e^{-2t}$ for $t\ge0$ (zero-input $3e^{-2t}$, zero-state $2-2e^{-2t}$).
+IVT: $sY=2+\frac{s}{s+2}\to3$ ✓. FVT: the poles are $0$ (simple) and $-2$ (left half), so it applies;
+$sY\to2$ as $s\to0$ ✓.
 </details>

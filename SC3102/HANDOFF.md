@@ -1,13 +1,22 @@
 # SC3102 Handoff
 
-Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-12.
+Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-24.
 
 ## Where I am
 
-- **Part 2 term test:** 12 Nov 2026, 16:00–17:00. Closed-book and on paper, with one double-sided A4 sheet of notes allowed. **Confirmed scope (2026-11-12): discrete time only.** That's the five discrete decks (`lecture-00` to `lecture(3)`: discrete signals, DFT, DTFT, Z, and LCCDEs with Z), which means T01–T03 plus T04 Q1–2. **Laplace and differential equations are NOT tested** (`lecture(4)`, `lecture(5)`, T04 Q3–4, T05). `Cheatsheet.docx` is the Part 1 sheet only. **The answer script provides a Z-transform table** (pairs pⁿu[n], −pⁿu[−n−1], ρⁿcos/sin(Ω₀n)u[n]; properties linear/delay/x[−n]/aⁿx/x∗h; unilateral and bilateral shift rules), so the cheat sheet leaves these out and keeps only the extra pairs.
+- **Final exam: Mon 30 Nov 2026, 09:00–11:00.** It has 4 compulsory questions of 25 marks each, and one double-sided A4 sheet is allowed. **It covers the whole course, including Laplace and differential equations.** The "NOT tested" note below applied only to the Part 2 term test; every past final has a Laplace question.
+- **Resume here (2026-11-24): doing the past papers.**
+  - Worked solutions for all five papers, plus a whole-course topic map, are in `PYP/Solutions/` (start with `00_Exam_Guide.md`). Each file has a collapsed answer key for self-marking.
+  - **Started 25S1.** Q1(a)(i) (why the decaying pulse train is periodic, and how to read Σ f(t−4n)e^(−α|t−4n|)) has been explained. **Next: 25S1 Q1(a)(ii) onwards**, then 25S2.
+  - Concepts explained on 2026-11-24 are all in `notes/Part2_QA_Concepts.md`:
+    - discrete LCCDE → Laplace → differential equations, now Steps 14–16 of the guide;
+    - an LCCDE is a description of a system, not a new kind of system: LCCDE at rest ⊂ LTI, and Y = H·X needs LTI;
+    - when a Σ p(t − nT) sum is periodic.
+  - **To do before the exam:** build a whole-course A4 sheet (Part 1 + Part 2). The Part 2 sheet is nearly full, and the exam allows only one sheet.
+- **Part 2 term test (done):** 12 Nov 2026, 16:00–17:00. Closed-book and on paper, with one double-sided A4 sheet of notes allowed. **Confirmed scope (2026-11-12): discrete time only.** That's the five discrete decks (`lecture-00` to `lecture(3)`: discrete signals, DFT, DTFT, Z, and LCCDEs with Z), which means T01–T03 plus T04 Q1–2. **Laplace and differential equations are NOT tested** (`lecture(4)`, `lecture(5)`, T04 Q3–4, T05). `Cheatsheet.docx` is the Part 1 sheet only. **The answer script provides a Z-transform table** (pairs pⁿu[n], −pⁿu[−n−1], ρⁿcos/sin(Ω₀n)u[n]; properties linear/delay/x[−n]/aⁿx/x∗h; unilateral and bilateral shift rules), so the cheat sheet leaves these out and keeps only the extra pairs.
 - **Part 1 (continuous time):** done and understood. Tutorials 1–4 have worked solutions in `Tut/Part1/`.
 - **Part 2 (discrete time):** working through `notes/Part2_Discrete_Time_Guide.md` one step at a time. Covered in the Q&A so far: Steps 1–9, which are sampling through the DTFS, leakage, circular convolution and the DTFT. I understand these conceptually but am still shaky. **The Z-transform and the ROC (Steps 11–13) don't make sense to me yet; that's next.** On 2026-11-11, Steps 5–13 were rewritten at a beginner level: Steps 5–10 from this Q&A, and Steps 11–13 from scratch using T03 as the worked examples.
-- **Resume here (test-day plan, 2026-11-12):** the Z concept and FIR/IIR are now understood. Do the tutorial questions in this order, attempting each before checking it against the guide section or with Claude:
+- **Test-day plan (2026-11-12, now past):** the Z concept and FIR/IIR are now understood. Do the tutorial questions in this order, attempting each before checking it against the guide section or with Claude:
   **The question list, in tutorial order T01 → T02 → T03 → T04 Q1–2, is in `Tut/Part2/Question_Tracker.md`.** It has tick boxes, what each question tests, where to check it, and hidden final answers. Within T03 it goes easiest first, finishing with Q4. ⭐ marks the questions for when time is short. **Current position (2026-11-12 afternoon):** T01 is done. In T02, Q2(b)(c) and Q3(a)(b) have been explained, but **Q1(a)(d) and Q4 are still to do**. In T03, Q1(b) and Q2(a) (x₂ = n·u[n], including the left-sided −n·u[−n−1] variant) have been explained. **Next: T03 Q2 x₃, x₄**, then the rest of T03 in tracker order, then T04 Q1–2. I now give full worked answers, not hints.
   Cheat sheet (handwritten, double-sided A4): the content is in the Claude Doc "SC3102 Part 2 Cheat Sheet" (https://claude.ai/artifact/DhJn8mg5wuztEbXWaBpQTi). The print-ready sheet is `notes/Part2_Cheat_Sheet.pdf`: **A4 landscape**, 2 sides × 3 columns of panels, built from `notes/Part2_Cheat_Sheet.html`. It includes question-type recipe panels (R) and a partial-fractions panel (7b). There's also a blue handwriting-font copy, `notes/Part2_Cheat_Sheet_Handwritten.pdf`; rebuild it with `python notes/make_handwritten.py` after any edit to the main HTML (the fonts are in `notes/fonts/`). Print both landscape, double-sided, flipping on the long edge. Skip T02 Q3(c), T03 Q1(a)(c), T03 Q2(b), T03 Q3(d) and all of Laplace.
 - **Labs 1–4:** done (`Lab1/` … `Lab4/`, each with a `_Answers.md`).
@@ -16,7 +25,8 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 
 | Path | Contents |
 |---|---|
-| `notes/Part2_Discrete_Time_Guide.md` | The 15-step discrete-time study guide. It refers to `../Slides/`, which is local only: it's in `.gitignore`, so other devices won't have it |
+| `notes/Part2_Discrete_Time_Guide.md` | The 16-step study guide. Steps 1–14 are discrete time; Step 15 is Laplace and Step 16 is differential equations. It refers to `../Slides/`, which is local only: it's in `.gitignore`, so other devices won't have it |
+| `PYP/*.pdf`, `PYP/Solutions/` | The five past finals (23S1, 23S2, 24S1, 25S1, 25S2), with worked solutions, figures (`figs/`, redrawn by `make_figures.py`) and `00_Exam_Guide.md` (question patterns, recipes, the paper hints that are wrong) |
 | `Slides/` (local, gitignored) | Part 2 lecture slides, numbered from 0. `sc3102-transform-lecture-00-…`=L0 discrete signals and systems, `lecture.pdf`=L1 DFT, `lecture(1)`=L2 DTFS/circular convolution/DTFT, `lecture(2)`=L3 Z-transform, `lecture(3)`=L4 LCCDEs with Z (its title says "Lecture 4"), `lecture(4)`=L5 Laplace, `lecture(5)`=L6 differential equations. `Introduction`, `Signals(1)`, `Systems`, `Transforms(1)` are Part 1 |
 | `Tut/Part1/Tutorial{1..4}(…).pdf` | Part 1 question sheets, with short answer keys |
 | `Tut/Part1/Tutorial{1..4}_Solutions.md` | Worked solutions that follow the official NTULearn method step by step, written in our own words |
@@ -26,7 +36,7 @@ Where I am in this course, so I (or Claude) can pick up on another device. Last 
 
 ## Already explained in the Q&A (no need to repeat)
 
-**Standing rule (2026-11-12):** log every new concept question in `notes/Part2_QA_Concepts.md` and add a compact version to section 9 of the cheat sheet. Update both the HTML/PDF (keep it at exactly 2 pages) and the Claude Doc. Space is tight. Each side clips silently at about 575pt (`overflow:hidden`), so after any edit, re-render and check that every column's bottom is ≤ about 570pt (`make_handwritten.py` prints these for the handwritten copy). Only add maths that's a concept. The user doesn't want pure working on the sheet, and the given Z table must stay off it. Rebuild the PDF with headless Edge: `msedge --headless --no-pdf-header-footer --print-to-pdf=<out> file:///…/Part2_Cheat_Sheet.html`, then check that it has 2 pages.
+**Standing rule (2026-11-12):** log every new concept question in `notes/Part2_QA_Concepts.md` and add a compact version to section 9 of the cheat sheet. Update both the HTML/PDF (keep it at exactly 2 pages) and the Claude Doc. Space is tight. Each side clips silently at about 575pt (`overflow:hidden`), so after any edit, re-render and check that every column's bottom is ≤ about 570pt (`make_handwritten.py` prints these for the handwritten copy). Only add maths that's a concept. The user doesn't want pure working on the sheet, and the given Z table must stay off it. Rebuild the PDF with headless Edge: `msedge --headless --no-pdf-header-footer --print-to-pdf=<out> file:///…/Part2_Cheat_Sheet.html`, then check that it has 2 pages. **Give `--print-to-pdf` an absolute path and a fresh `--user-data-dir`.** A relative path, or a profile still held by an earlier Edge process, silently writes nothing, so you end up checking the old PDF (this happened on 2026-11-24). Delete the old PDF first, or check that the new text is in it.
 
 - **FFT:** you don't need the algorithm for this course. Know three things: it gives exactly the same output as the DFT, it costs N log₂N instead of N², and it works by splitting into even and odd samples. What you do need is a fast hand-computed 4-point DFT, using the matrix of 1, −j, −1, j.
 - **What "the DFT handles a finite list" means:** the sum stops at N−1, the frequencies are 2πk/N, and the inversion relies on q^N=1 (whole laps). This is not about energy signals. Finite length is not the same as finite energy. The synthesis formula repeats the block forever, which is what causes leakage.
@@ -74,5 +84,4 @@ See `Tut/Part1/Disagreements.md`. The main ones are in the Tutorial 3 answer key
 - **Guide gaps compared with the tutorials** (the guide doesn't cover these yet):
   - T04 Q1: partial fractions in z² with a cosine input, and setting initial conditions to cancel the transient
   - T04 Q2: H(z) with a delay x[n−k], for k=2 and k=−1
-  - Laplace damped cosine/sine pairs and partial fractions with a quadratic factor (T04 Q3b–c)
-  - Laplace ROCs and whether the CTFT exists (T04 Q4); Step 15 is only a comparison table
+  - Laplace partial fractions with a quadratic factor (T04 Q3c). The damped cos/sin pairs are now in Step 15.3; Laplace ROCs and whether the CTFT exists (T04 Q4) are in Step 15.2 (added 2026-11-24)

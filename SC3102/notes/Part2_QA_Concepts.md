@@ -129,6 +129,22 @@ doesn't change N₀ either, because 3.5π, 1.5π, −0.5π and 0.5π all give a 
 signal itself, cos(−θ) = cos θ, so the sign disappears, while sin(−θ) = −sin θ, so the sign moves to
 the front.
 
+**25S1 Q1: how to read x(t) = Σ f(t − 4n)·e^(−α|t−4n|), and why it's periodic although it "decays".**
+- **n is only a counter** (n = …, −1, 0, 1, 2, …); t is time. The question never says what n means. Write the terms out (α = 1):
+  - n = 0: f(t)·e^(−|t|). The gate f = u(t+1) − u(t−1) is on for −1 ≤ t < 1, so this is a pulse on [−1, 1) peaking at 0.
+  - n = 1: f(t−4)·e^(−|t−4|), on for −1 ≤ t−4 < 1, i.e. [3, 5), peaking at 4.
+  - n = −1: on [−5, −3), peaking at −4. So term n is the same pulse centred at 4n ("pulse number" is a nickname for the counter).
+- **Shift rule:** g(t − c) is g moved right by c, because at t = c it gives g(0).
+- **Evaluating at a time:** substitute that t into every term. x(4.5): only n = 1 has its gate on (f(0.5) = 1), giving e^(−0.5) = 0.607. x(2) = 0, because every gate is off (a gap). t = 4.5 was my test point, not part of the formula.
+- **Why it's periodic:** the exponent is the distance from *each pulse's own centre*, |t − 4n|, not from t = 0, so the decay restarts at every pulse: x(0.5) = x(4.5) = x(8.5) = 0.607. "Decaying" means *within* each pulse (1 at the centre → e^(−1) = 0.368 at the edges). The misread version e^(−α|t|)·Σf(t − 4n) would shrink (peaks 1, 0.018, 0.0003) and wouldn't be periodic.
+- **Template:** Σ p(t − nT) = copies of one shape p every T → periodic with period T (re-index m = n − 1). Then rule out a smaller period: x = 1 only at t = 4n, so T₀ = 4. 23S1 Q1 is the same with Σ g(t − 3n).
+- **"So is the exponential periodic?" No.** e^(−|t|) is one bump, and one term f(t−4)e^(−|t−4|) is that bump once, at 4. Only the **whole sum** is periodic: a copy every 4 s, forever both ways. At any t at most one gate is on, so x(t) = e^(−distance to the nearest centre) within 1 of a centre, else 0, and that distance repeats every 4 s.
+- **"Does any |t − xn| make it periodic?" No.** The shift test decides: put t + T in for t and check that term n just becomes another term of the same sum. Here f(t+4−4n)e^(−α|t+4−4n|) = term n−1 ✓. It fails when:
+  - the shifts don't match: Σ f(t−4n)e^(−|t−2n|) (term n → gate n−1 but exponential n−2); values at t = 0, 4, 8 are 1, 0.135, 0.018;
+  - the exponential isn't shifted: Σ f(t−4n)e^(−|t|); values 1, 0.018, 0.0003;
+  - n doesn't run over all integers: Σ_{n≥0} has 1, 1, 1 at t = 0, 4, 8 but x(−4) = 0 ≠ x(0) = 1. A periodic signal has no start.
+- **The rule:** Σ_{n=−∞}^{∞} p(t − nT) is periodic with period T when every t in the term appears as t − nT (the same nT everywhere) and the sum is finite at each t. Overlap is fine: without the gate, Σ e^(−α|t−4n|) has overlapping tails but is still periodic. Then check whether a smaller period exists.
+
 ## DFT
 
 **The matrix notation on the T02 "Recall" slide.** It's the ordinary DFT sums written as matrix
@@ -187,3 +203,41 @@ multiplication.
 - Given only X = z/(z−1)², the question must state the ROC: |z| > 1 → n·u[n]; |z| < 1 → −n·u[−n−1]. One pole gives only 2 ROCs, so there's no two-sided option.
 
 **Range of the DTFT synthesis integral "∫_{2π}".** Any window of length 2π; the lecture writes 0 → 2π, and −π → π is identical. Reason: X(Ω) repeats every 2π, and e^(jΩn) does too (e^(j2πn) = 1 for whole n), so any full period gives the same area. Check with δ[n] (X = 1): x[0] = (1/2π)·2π = 1, and x[1] = (1/2π)∫e^(jΩ)dΩ = 0 (a full lap averages to 0). The CT twin integrates over all ω; DT needs only one lap because frequencies 2π apart are the same (aliasing).
+
+## LCCDEs, Laplace and differential equations (final-exam prep)
+
+The full version with rendered maths is Steps 14–16 of `Part2_Discrete_Time_Guide.md`.
+
+**The ladder: each transform fixes what the one before couldn't handle.**
+- Continuous time: Fourier series (periodic only) → CTFT (needs ∫|x| < ∞) → Laplace (fade by e^(−σt) first, so u(t), e^(2t)u(t) and unstable h work) → used to solve differential equations.
+- Discrete time: DFT → DTFS → DTFT (needs Σ|x| < ∞) → Z (fade by r⁻ⁿ first) → used to solve difference equations.
+
+**Difference equations (lecture 4).** The system is given as a rule, y[n] − ½y[n−1] = x[n]. Running it gives numbers one at a time; Z gives formulas because a delay is ×z⁻¹.
+- The rule alone has infinitely many answers: for x = u, every y = 2 + C(½)ⁿ fits. You need P initial conditions; y[−1] = 1 gives C = −½. The ½ is the pole (try w = pⁿ).
+- Output = zero-input (initial conditions only) + zero-state (input only). Unilateral shift: y[n−1] → z⁻¹Y₊ + y[−1]. Example: (½)ⁿ⁺¹ + [2 − (½)ⁿ] = 2 − (½)ⁿ⁺¹ = 1.5, 1.75, 1.875 ✓ (same as the loop).
+- Zero initial conditions → LTI → H(z) = Y/X; y-terms → poles, x-terms → zeros. One H, several h: y − 2.5y[n−1] + y[n−2] = x has poles ½ and 2, so |z| > 2 is causal (unstable) and ½ < |z| < 2 is stable (two-sided). That's running the rule forward vs backward.
+- Stable + sinusoid in → y_ss = |H(e^(jΩ₀))|·cos(Ω₀n + ∠H). Input (−1)ⁿ: H(−1) = 1/(1 + ½) = 2/3, so y_ss = (2/3)(−1)ⁿ. The poles make the transient; the input's frequency makes the steady state.
+
+**Laplace (lecture 5) is Z's twin.** X(s) = ∫x(t)e^(−st)dt with s = σ + jω: σ is how hard you fade, ω is the frequency.
+- The ROC depends only on σ, so it's a vertical strip (Z: a ring). Right-sided → right of the rightmost pole. The CTFT is X on the jω-axis, so it exists iff the axis is in the ROC.
+- Main pair: e^(at)u(t) ↔ 1/(s−a), Re s > a. −e^(at)u(−t) gives the same formula with Re s < a. Partial fractions work directly on X(s) (no ÷z step). A pole left of the ROC runs forward (×u(t)); right of it, backward (×−u(−t)).
+- **d/dt ↔ ×s** because d/dt e^(st) = s·e^(st) (Z: delaying zⁿ multiplies it by z⁻¹). That's why differential equations become algebra.
+- z = e^(sT): the left half-plane → inside the unit circle, the jω-axis → the unit circle. So causal + stable means poles in Re s < 0.
+
+**Differential equations (lecture 6) = lecture 4 with z⁻¹ → s.** y' + y = 2u(t), y(0⁻) = 1.
+- Unilateral: y' → sY − y(0⁻) (integration by parts); y'' → s²Y − s·y(0⁻) − y'(0⁻).
+- sY − 1 + Y = 2/s → Y = 1/(s+1) [zero-input] + 2/(s(s+1)) [zero-state] → y = e^(−t) + (2 − 2e^(−t)) = 2 − e^(−t). Discrete twin: 2 − (½)ⁿ⁺¹.
+- Zero initial conditions → H(s); y'' − y = x has poles ±1: Re s > 1 is causal (unstable), −1 < Re s < 1 is stable.
+- Steady state for cos ω₀t: H(jω₀). y' + y = cos t: H(j) = 1/(1+j) = 0.707∠−45°, so y_ss = ½(cos t + sin t).
+- IVT: y(0⁺) = lim_{s→∞} sY. FVT: lim_{s→0} sY, but only if every pole of Y is in Re s < 0 apart from at most one simple pole at 0. Trap: 1/(s(s−1)) gives −1, but y = e^t − 1 → ∞.
+
+**"Is an LCCDE another kind of system, besides LTI and non-LTI?" No: it's a way of *describing* a system, not a category.** LTI is a *property* (yes/no), like causal or stable. An LCCDE is a *description*, like a formula, an h[n], an H(z) or a circuit.
+- The name says it's built to be LTI: **linear** (no y², no x·y) → L; **constant coefficients** (no n or t in them) → TI. The only thing that can break it is a non-zero starting state: y[−1] = 1 makes input 0 give output (½)ⁿ⁺¹ ≠ 0.
+- **The nesting:** LCCDE at rest ⊂ LTI ⊂ all systems.
+  - LTI but not an LCCDE: the pure delay y(t) = x(t − 2) (H = e^(−2s), not a fraction of polynomials) and the ideal low-pass filter (sinc h).
+  - Not LTI at all: y = x², y[n] = n·x[n], y = x[2n], 2sin(x) (23S1 Q1).
+- **Transforms belong to signals, not systems.** You can take the FT/Z/Laplace of any signal that has one, including the output of a non-LTI system. What needs LTI is the *system* shortcut y = h ∗ x ⇔ Y = H·X, and "sinusoid in → same sinusoid out, scaled".
+  - y = x² with input cos t gives ½ + ½cos 2t. New frequencies 0 and 2 appear, but H can only scale and shift the frequencies already there, so no H exists. Its output's FT is still fine: impulses at 0 and ±2.
+  - y[n] = n·x[n]: kicking at n = 0 gives 0, kicking at n = 1 gives δ[n−1]. The response depends on *when* you kick, so there's no single h.
+- **LCCDE with initial conditions → yes, Z/Laplace still work.** The unilateral transform gives Y₊ = (initial-condition terms)/A + H·X₊ = zero-input + zero-state. The zero-state part is pure LTI; the "non-LTI" part is just an added term from the stored memory, not real nonlinearity.
+- In all five past papers, non-LTI systems appear only in "test linear / time-invariant / causal" questions. Every convolution or transform question is about an LTI system (or an LCCDE with initial conditions).

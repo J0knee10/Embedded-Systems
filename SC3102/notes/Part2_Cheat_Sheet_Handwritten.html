@@ -141,6 +141,15 @@
 </ul>
 </div>
 
+<div class="panel qa">
+<h2>10. Laplace + ODEs: §5–8 again with z → s</h2>
+<ul>
+  <li>X(s) = ∫x e<sup>−st</sup>dt = CTFT of x·e<sup>−σt</sup>, s = σ + jω. ROC = vertical strips; CTFT = X on the jω-axis. <mark>e<sup>at</sup>u(t) ↔ 1/(s−a)</mark>, Re s &gt; a.</li>
+  <li><b>d/dt → ×s</b> since (e<sup>st</sup>)′ = s·e<sup>st</sup>: y′ → sY − y(0<sup>−</sup>), y″ → s²Y − s·y(0<sup>−</sup>) − y′(0<sup>−</sup>).</li>
+  <li>Causal + stable ⇔ poles Re &lt; 0. y<sub>ss</sub> for cos ω<sub>0</sub>t: H(jω<sub>0</sub>). IVT lim<sub>s→∞</sub> sY; FVT lim<sub>s→0</sub> sY only if poles Re &lt; 0 (≤ 1 simple at 0).</li>
+</ul>
+</div>
+
 </div>
 <div class="col">
 <div class="panel">
@@ -222,6 +231,7 @@
   <li><b>Running sum, h = u</b> (§2): u in → (n+1)u[n] out. Bounded in, unbounded out → unstable (pole at z = 1).</li>
   <li><b>Signal or system?</b> Transform a signal → X: what it contains. Transform h → H: what the system does to each frequency. Y = H·X. ROC for a signal → which side, whether the DTFT exists; for a system → causal, stable.</li>
   <li><b>DFT as matrices:</b> ω = e<sup>j2π/N</sup> (N = 4: ω = j), G[n,k] = ω<sup>nk</sup>; G<sup>H</sup> = conjugate transpose (G symmetric → just j ↔ −j). X = G<sup>H</sup>x (analysis: row k · x = X[k]); x = (1/N)·G·X (synthesis); works because G·G<sup>H</sup> = N·I. <b>Why −j:</b> the opposite spin stops a matching walker (j<sup>n</sup>(−j)<sup>n</sup> = 1 each time, sums to N); any other frequency cancels to 0.</li>
+  <li><b>Σ p(t − nT) (25S1 Q1):</b> n is a counter; term n = one pulse moved to 4n (g(t − c) = g shifted right by c); no single term is periodic, only the sum. Periodic because <i>every</i> t is t − 4n (same shift) and n runs over all integers: t → t + 4 turns term n into term n − 1. e<sup>−α|t|</sup> or e<sup>−α|t−2n|</sup> there → pulses shrink → not periodic.</li>
 </ul>
 </div>
 </div>
@@ -339,6 +349,7 @@
   <li><b>Check:</b> compute y[0], y[1] straight from the equation. Initial value: y[0] = lim<sub>z→∞</sub> Y<sub>+</sub>(z). <span class="opt">(optional) Final value: y[∞] = lim<sub>z→1</sub>(1 − z<sup>−1</sup>)Y<sub>+</sub>(z), only if all poles inside the unit circle except at most one at z = 1.</span></li>
 </ol>
 <p><b>A system is LTI only if its initial conditions are zero.</b></p>
+<p><b>LCCDE</b> = a <i>description</i> (a rule), not a new kind of system; LTI is a <i>property</i>. Linear + constant coeffs ⇒ LTI at rest (LCCDE ⊂ LTI). ICs ≠ 0 just add a zero-input term → Z<sub>+</sub>/L<sub>+</sub> still work. Any signal can be transformed, but <mark>Y = H·X needs LTI</mark> (y = x²: cos t → ½ + ½cos 2t, no H).</p>
 </div>
 
 <div class="panel">
