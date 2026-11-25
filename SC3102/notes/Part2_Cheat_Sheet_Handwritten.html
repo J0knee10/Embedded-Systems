@@ -112,8 +112,8 @@
   <li><b>Period of cos(Ω<sub>0</sub>n):</b> write <mark>Ω<sub>0</sub>/2π = m/N in lowest terms → N<sub>0</sub> = N</mark> (the denominator).
     <ul><li>sin(πn/12): 1/24 → N<sub>0</sub> = 24. cos(3.5πn): 7/4 → N<sub>0</sub> = 4.</li>
         <li>Ω<sub>0</sub>/2π irrational (e.g. cos(n)) → not periodic.</li></ul></li>
-  <li><b>Sum of periodic signals:</b> N<sub>0</sub> = LCM(N<sub>1</sub>, N<sub>2</sub>).</li>
-  <li><b>Nonzero periodic signal is never absolutely summable</b> (Σ|x| adds the same block forever).</li>
+  <li><b>Sum of periodic signals:</b> N<sub>0</sub> = LCM(N<sub>1</sub>, N<sub>2</sub>). CT: LCM(T<sub>1</sub>, T<sub>2</sub>) if T<sub>1</sub>/T<sub>2</sub> rational.</li>
+  <li><b>Nonzero periodic signal is never absolutely summable</b> (Σ|x| repeats a block forever) but is a power signal (not ⇐: u(t), P = ½).</li>
   <li><b>Aliasing:</b> Ω, Ω + 2πk and (for cos) −Ω give identical samples. In Hz: f, f + k·f<sub>s</sub>, f<sub>s</sub> − f look the same.
     <ul><li>e.g. cos(3.5πn) = cos(−0.5πn) = cos(0.5πn).</li>
         <li>Unique only if 0 ≤ Ω ≤ π, i.e. f &lt; f<sub>s</sub>/2. <mark>Nyquist: f<sub>s</sub> &gt; 2f<sub>max</sub></mark>.</li></ul></li>
@@ -144,7 +144,7 @@
 <div class="panel qa">
 <h2>10. Laplace + ODEs: §5–8 again with z → s</h2>
 <ul>
-  <li>X(s) = ∫x e<sup>−st</sup>dt = CTFT of x·e<sup>−σt</sup>, s = σ + jω. ROC = vertical strips; CTFT = X on the jω-axis. <mark>e<sup>at</sup>u(t) ↔ 1/(s−a)</mark>, Re s &gt; a.</li>
+  <li>X(s) = ∫x e<sup>−st</sup>dt = CTFT of x·e<sup>−σt</sup>, s = σ + jω. ROC = vertical strips; CTFT = X on the jω-axis. <mark>e<sup>at</sup>u(t) ↔ 1/(s−a)</mark>, Re s &gt; a. z = e<sup>sT</sup>.</li>
   <li><b>d/dt → ×s</b> since (e<sup>st</sup>)′ = s·e<sup>st</sup>: y′ → sY − y(0<sup>−</sup>), y″ → s²Y − s·y(0<sup>−</sup>) − y′(0<sup>−</sup>).</li>
   <li>Causal + stable ⇔ poles Re &lt; 0. y<sub>ss</sub> for cos ω<sub>0</sub>t: H(jω<sub>0</sub>). IVT lim<sub>s→∞</sub> sY; FVT lim<sub>s→0</sub> sY only if poles Re &lt; 0 (≤ 1 simple at 0).</li>
 </ul>
@@ -231,7 +231,7 @@
   <li><b>Running sum, h = u</b> (§2): u in → (n+1)u[n] out. Bounded in, unbounded out → unstable (pole at z = 1).</li>
   <li><b>Signal or system?</b> Transform a signal → X: what it contains. Transform h → H: what the system does to each frequency. Y = H·X. ROC for a signal → which side, whether the DTFT exists; for a system → causal, stable.</li>
   <li><b>DFT as matrices:</b> ω = e<sup>j2π/N</sup> (N = 4: ω = j), G[n,k] = ω<sup>nk</sup>; G<sup>H</sup> = conjugate transpose (G symmetric → just j ↔ −j). X = G<sup>H</sup>x (analysis: row k · x = X[k]); x = (1/N)·G·X (synthesis); works because G·G<sup>H</sup> = N·I. <b>Why −j:</b> the opposite spin stops a matching walker (j<sup>n</sup>(−j)<sup>n</sup> = 1 each time, sums to N); any other frequency cancels to 0.</li>
-  <li><b>Σ p(t − nT) (25S1 Q1):</b> n is a counter; term n = one pulse moved to 4n (g(t − c) = g shifted right by c); no single term is periodic, only the sum. Periodic because <i>every</i> t is t − 4n (same shift) and n runs over all integers: t → t + 4 turns term n into term n − 1. e<sup>−α|t|</sup> or e<sup>−α|t−2n|</sup> there → pulses shrink → not periodic.</li>
+  <li><b>Σ p(t − nT) (25S1 Q1):</b> n is a counter; term n = one pulse moved to 4n (g(t − c) = g shifted right by c); no single term is periodic, only the sum. Periodic because <i>every</i> t is t − 4n (same shift) and n runs over all integers: t → t + 4 turns term n into term n − 1. e<sup>−α|t|</sup> or e<sup>−α|t−2n|</sup> there → pulses shrink → not periodic. Overlap OK: f + e<sup>−α|t−4n|</sup> still T<sub>0</sub> = 4 (α &gt; 0 so tails sum).</li>
 </ul>
 </div>
 </div>
@@ -249,7 +249,7 @@
 <ul>
   <li><b>Meaning:</b> X(re<sup>jΩ</sup>) = DTFT of the faded signal r<sup>−n</sup>·x[n]. |z| = r = fading, ∠z = Ω = frequency. <mark>On |z| = 1: X(e<sup>jΩ</sup>) = DTFT.</mark></li>
   <li><b>Undo the fading:</b> if W(Ω) = X(re<sup>jΩ</sup>) then w[n] = r<sup>−n</sup>x[n], so x[n] = r<sup>n</sup>·w[n] (= the synthesis formula; in practice invert with §7).</li>
-  <li><b>Tags:</b> finite list → X(z) = Σ x[n]z<sup>−n</sup>. Coefficient of z<sup>−k</sup> = x[k] (future); of z<sup>+k</sup> = x[−k] (past).</li>
+  <li><b>Tags:</b> finite list → X(z) = Σ x[n]z<sup>−n</sup>. Coefficient of z<sup>−k</sup> = x[k] (future); of z<sup>+k</sup> = x[−k] (past). ×z<sup>−1</sup> adds 1 to every tag = whole signal 1 step later.</li>
   <li><b>Same thing, two forms:</b> z/(z−p) = 1/(1 − p·z<sup>−1</sup>).</li>
   <li><b>DTFT inside X(z):</b> the Ω axis from −π to π wraps round the unit circle (Ω = 0 → z = 1, π/2 → j, ±π → −1). DTFT = 1 dial (Ω); Z = 2 dials (r, Ω). Building blocks are spirals z<sup>n</sup> = r<sup>n</sup>e<sup>jΩn</sup>; a pole p means the signal contains p<sup>n</sup>. e.g. 2<sup>n</sup>u[n] faded with r = 4 gives 0.5<sup>n</sup> (works for any r &gt; 2, which is the ROC).</li>
 </ul>
@@ -319,7 +319,8 @@
   <li><b>1st-order LCCDE:</b> pole = number before y[n−1] (y = 0.5y[n−1] + x → z/(z−0.5)).</li>
   <li><b>Zero:</b> input z<sup>n</sup> → output 0.</li>
   <li><b>ROC</b> = adds up <i>with</i> weight z<sup>−n</sup>; stable = with no weight (|z| = 1). A blowing-up h can still have an ROC (Lab 4 Region 0).</li>
-  <li><b>sin or cos route, same X[k]:</b> sin θ = cos(θ − π/2), and 1/j = e<sup>−jπ/2</sup> does the same −π/2 turn. T02: sin(2πn/6 + π/3) = cos(2πn/6 − π/6) → weights ½e<sup>∓jπ/6</sup>.</li></ul>
+  <li><b>sin or cos route, same X[k]:</b> sin θ = cos(θ − π/2), and 1/j = e<sup>−jπ/2</sup> does the same −π/2 turn. T02: sin(2πn/6 + π/3) = cos(2πn/6 − π/6) → weights ½e<sup>∓jπ/6</sup>.</li>
+  <li><b>Bi- vs unilateral:</b> Σ all n vs n ≥ 0 only. Same for causal signals; only shifts differ: y[n−1] → z<sup>−1</sup>Y<sub>+</sub> + y[−1], y′ → sY<sub>+</sub> − y(0<sup>−</sup>). ICs given → unilateral.</li></ul>
 </div>
 </div>
 <div class="col">

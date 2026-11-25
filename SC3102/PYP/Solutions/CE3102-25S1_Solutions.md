@@ -94,7 +94,15 @@ $$P=\frac{1}{T_0}\int_{T_0}|x(t)|^2dt=\frac14\int_{-1}^{1}e^{-2|t|}dt=\frac14\cd
 
 **Answer:** **valid** (for any $A,B,C\ge0$, not all zero). Physically it's the sum of three uncorrelated components: noise whose correlation decays exponentially (a Lorentzian spectrum), ideal band-limited noise (a flat spectrum on $|f|<f_0/2$), and a sinusoid at $f_1$ (spectral lines). The non-negativity of $A$, $B$ and $C$ is what makes it work. With, say, $B<0$, $S(f)$ could go negative near $f=0$ and the function would be invalid.
 
-> **Note on the paper's hint table:** two pairs have scaling slips. The correct pairs are $e^{-\alpha|\tau|}\leftrightarrow\frac{2\alpha}{\alpha^2+(2\pi f)^2}$ (the hint drops the $\alpha$ on top) and $\frac{\sin\pi f_0\tau}{\pi f_0\tau}\leftrightarrow\frac{1}{f_0}\Pi(\frac{f}{f_0})$ (the hint writes $\Pi(\frac{f}{2f_0})$). The sign is what matters here, and it's the same either way, so using the hint as printed still earns the marks.
+> **Note on the paper's hint table:** two pairs have scaling slips. The correct pairs are $e^{-\alpha|\tau|}\leftrightarrow\frac{2\alpha}{\alpha^2+(2\pi f)^2}$ (the hint drops the $\alpha$ on top) and $\frac{\sin\pi f_0\tau}{\pi f_0\tau}\leftrightarrow\frac{1}{f_0}\Pi(\frac{f}{f_0})$ (the hint writes $\Pi(\frac{f}{2f_0})$). The sign is what matters here, and it's the same either way, so the hint as printed leads to the same conclusion.
+>
+> **Two independent checks (also verified by numerical integration):**
+> - **X(0) must equal the area under x.**
+>   - ∫e^(−α|τ|)dτ = 2/α, and 2α/α² = 2/α ✓, but the hint gives 2/α². At α = 2, f = 0.3 the transform is 0.530; the hint gives 0.265.
+>   - ∫sinc(f₀τ)dτ = 1/f₀, but the hint gives Π(0) = 1.
+> - **sin(πf₀τ) oscillates at f₀/2,** so the spectrum must stop at |f| = f₀/2. For f₀ = 2, numerically X(0.5) = 0.5 and X(1.5) = 0; the hint's Π(f/2f₀) would still be on at 1.5.
+>
+> The hint's right-hand side is the transform of sin(2πf₀τ)/(πτ), a different function.
 
 ---
 
@@ -141,6 +149,17 @@ In words: an impulse of area 6 at $t=5$, $+3$ on $[6,8]$, an impulse of area $-6
 | otherwise | 0 | |
 
 (This is a multipath channel: three echoes, the middle one inverted.)
+
+**Showing the convolution process (the question asks for it).**
+
+Use $y(t)=\int h(\tau)\,x(t-\tau)\,d\tau$: keep $h$'s impulses fixed at $\tau=2,5,9$, and flip and slide the triangle. For a given $t$, the flipped triangle $x(t-\tau)$ occupies $t-2<\tau\le t$. Each impulse inside that window adds (its weight) × (the triangle's value there), by sifting:
+- $t=2.5$: window $(0.5,2.5]$ holds the impulse at 2, so $y=x(0.5)=0.5$
+- $t=3$: window $(1,3]$ holds 2, so $y=x(1)=1$
+- $t=4.5$: window $(2.5,4.5]$ holds none, so $y=0$
+- $t=6$: window $(4,6]$ holds 5 (weight −1), so $y=-x(1)=-1$
+- $t=10$: window $(8,10]$ holds 9, so $y=x(1)=1$
+
+These match the table. The output contains shifted copies, not flipped ones: the flip in $\tau$ is undone when the window slides past each impulse (the right end of the flipped triangle, $x(0)$, reaches the impulse first). Here the triangle is also symmetric, so a flip would look the same anyway.
 
 ![Q2(b)](figs/25S1_Q2b.png)
 

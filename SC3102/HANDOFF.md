@@ -1,18 +1,30 @@
 # SC3102 Handoff
 
-Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-24.
+Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-26.
 
 ## Where I am
 
 - **Final exam: Mon 30 Nov 2026, 09:00–11:00.** It has 4 compulsory questions of 25 marks each, and one double-sided A4 sheet is allowed. **It covers the whole course, including Laplace and differential equations.** The "NOT tested" note below applied only to the Part 2 term test; every past final has a Laplace question.
-- **Resume here (2026-11-24): doing the past papers.**
+- **Resume here (2026-11-26): doing the past papers.**
   - Worked solutions for all five papers, plus a whole-course topic map, are in `PYP/Solutions/` (start with `00_Exam_Guide.md`). Each file has a collapsed answer key for self-marking.
-  - **Started 25S1.** Q1(a)(i) (why the decaying pulse train is periodic, and how to read Σ f(t−4n)e^(−α|t−4n|)) has been explained. **Next: 25S1 Q1(a)(ii) onwards**, then 25S2.
-  - Concepts explained on 2026-11-24 are all in `notes/Part2_QA_Concepts.md`:
-    - discrete LCCDE → Laplace → differential equations, now Steps 14–16 of the guide;
-    - an LCCDE is a description of a system, not a new kind of system: LCCDE at rest ⊂ LTI, and Y = H·X needs LTI;
+  - **25S1 progress:** Q1(a)–(b) and Q2(a)–(c) are done, and I worked Q3(a)–(b) myself. **Next: 25S1 Q3(c)** (unilateral Laplace with initial conditions), then Q4, then 25S2.
+  - Every concept question is logged in `notes/Part2_QA_Concepts.md`. 2026-11-24 covered:
+    - discrete LCCDE → Laplace → differential equations (now Steps 14–16 of the guide);
+    - LCCDE vs LTI;
     - when a Σ p(t − nT) sum is periodic.
-  - **To do before the exam:** build a whole-course A4 sheet (Part 1 + Part 2). The Part 2 sheet is nearly full, and the exam allows only one sheet.
+  - 2026-11-26 covered:
+    - s ↔ z (z = e^(sT));
+    - sums of periodic signals and LCM;
+    - power and power signals; calculus refresher;
+    - autocorrelation vs convolution; PSD/ESD/Parseval;
+    - CTFT by hand and |a + jb|²;
+    - FS vs FT vs Laplace;
+    - FS methods (Euler vs integral vs table shortcut) and harmonics;
+    - time-shift property; the properties tested in past papers;
+    - the flip in convolution;
+    - the 25S1 Q1(b) hint slips;
+    - a flipped phase at ±1 Hz in the "modulated waveform" answer.
+  - **Final cheat sheet (to do, when asked):** a NEW whole-course double-sided A4 sheet, in the same format as the Part 1/Part 2 sheets, focused on formulas and solving methods. Build it from every Q&A entry tagged **[FINAL SHEET: must include]**, plus the exam guide. The Part 2 sheet and its Claude Doc are frozen.
 - **Part 2 term test (done):** 12 Nov 2026, 16:00–17:00. Closed-book and on paper, with one double-sided A4 sheet of notes allowed. **Confirmed scope (2026-11-12): discrete time only.** That's the five discrete decks (`lecture-00` to `lecture(3)`: discrete signals, DFT, DTFT, Z, and LCCDEs with Z), which means T01–T03 plus T04 Q1–2. **Laplace and differential equations are NOT tested** (`lecture(4)`, `lecture(5)`, T04 Q3–4, T05). `Cheatsheet.docx` is the Part 1 sheet only. **The answer script provides a Z-transform table** (pairs pⁿu[n], −pⁿu[−n−1], ρⁿcos/sin(Ω₀n)u[n]; properties linear/delay/x[−n]/aⁿx/x∗h; unilateral and bilateral shift rules), so the cheat sheet leaves these out and keeps only the extra pairs.
 - **Part 1 (continuous time):** done and understood. Tutorials 1–4 have worked solutions in `Tut/Part1/`.
 - **Part 2 (discrete time):** working through `notes/Part2_Discrete_Time_Guide.md` one step at a time. Covered in the Q&A so far: Steps 1–9, which are sampling through the DTFS, leakage, circular convolution and the DTFT. I understand these conceptually but am still shaky. **The Z-transform and the ROC (Steps 11–13) don't make sense to me yet; that's next.** On 2026-11-11, Steps 5–13 were rewritten at a beginner level: Steps 5–10 from this Q&A, and Steps 11–13 from scratch using T03 as the worked examples.
