@@ -421,6 +421,288 @@ the front.
 - **Shift = replace every t by (t − t₀), inside the brackets:** y_u(t − 4) = 2δ(t − 5) + Π(((t−4) − 3)/2) = 2δ(t − 5) + Π((t − 7)/2), the box on [6, 8]. Not Π((t−3)/2 − 4).
 - **Answer:** 6δ(t − 5) + 3Π((t−7)/2) − 6δ(t − 9) − 3Π((t−11)/2): an arrow of area 6 at 5, +3 on [6, 8], an arrow of area −6 at 9, −3 on [10, 12].
 
+**25S1 Q3(c) method: an ODE with initial conditions via unilateral Laplace** (y″ − 2y′ + y = u(t), y(0) = 2, y′(0) = 0).
+- **Transform term by term:** y″ → s²Y − s·y(0) − y′(0) = s²Y − 2s; −2y′ → −2(sY − 2) = −2sY + 4; y → Y; u(t) → 1/s.
+- **Collect:** Y(s² − 2s + 1) = 1/s + 2s − 4, and s² − 2s + 1 = (s − 1)². So Y = 1/(s(s−1)²) [zero-state, from the input] + (2s − 4)/(s−1)² [zero-input, from the ICs].
+- **Numerator trick for (s − a)² denominators:** 2s − 4 = 2(s − 1) − 2, so the zero-input part = 2/(s−1) − 2/(s−1)² → 2eᵗ − 2teᵗ (pairs 1/(s−a) ↔ e^(at), 1/(s−a)² ↔ te^(at)).
+- **Repeated-pole partial fractions:** 1/(s(s−1)²) = A/s + B/(s−1) + C/(s−1)². Cover-up gives A = 1 (s = 0) and C = 1 (s = 1); B from the s² coefficients of 1 = A(s−1)² + Bs(s−1) + Cs: A + B = 0, so B = −1 (or plug in s = 2). That gives 1 − eᵗ + teᵗ.
+- **Answer:** y = 1 + (1 − t)eᵗ. Checks: y(0) = 2, y′ = −teᵗ → y′(0) = 0, and substituting back gives 1.
+- **Unstable:** double pole at s = +1, so y → −∞ (t = 2: −6.39; t = 3: −39.2). **FVT trap:** blindly, sY → 1 as s → 0, but the pole check fails (an RHP pole), so there is no final value.
+- **(ii)** h: zero ICs, x = δ → H = 1/(s−1)² → h = teᵗu(t) (causal ROC Re s > 1, excludes the jω-axis → unstable). Cross-check: ∫₀ᵗ τe^τ dτ = teᵗ − eᵗ + 1 = the zero-state step response ✓.
+- **Where the derivative rule comes from (integration by parts):** ∫₀^∞ y′e^(−st) dt = [y·e^(−st)]₀^∞ − ∫₀^∞ y·(−s)e^(−st) dt = (0 − y(0)) + sY. The fade kills the ∞ end, and the t = 0 end leaves −y(0), which is how the ICs get in. Apply it twice: L{y″} = s·L{y′} − y′(0) = s²Y − s·y(0) − y′(0).
+- **Reading Y's poles as ingredients:**
+  - The pole at 0 comes from the step input (1/s), giving the forced "1".
+  - The double pole at 1 comes from the system's (s − 1)², giving the natural modes eᵗ and teᵗ.
+  - A double pole needs both B/(s−1) and C/(s−1)² because it contributes both shapes.
+
+**Why L{y′} = sY − y(0), on a timeline. y′ is the slope, not a delay.** (Figure: `figs/laplace_derivative_rule.png`.)
+- **y′ = the rate of change (slope) at each t.** E.g. y = t² → y′ = 2t; y = 2e^(−0.5t) → y′ = −e^(−0.5t). Nothing moves in time. The delay is the DT twin: y[n−1].
+- **Why ×s:** the building blocks obey d/dt e^(st) = s·e^(st), so differentiating multiplies each spiral by its s.
+- **Why −y(0):** the unilateral transform only sees t ≥ 0. It treats the signal as y(t)u(t), which **jumps from 0 to y(0) at t = 0**: a cliff.
+  - sY is the slope of that chopped picture, cliff included: d/dt[y·u] = y′(t)u(t) + y(0)δ(t).
+  - The real signal was smooth through t = 0, so the ODE's y′ has no spike. Subtract it: L{y′} = sY − y(0).
+- **Numbers:** y = 2e^(−0.5t), Y = 2/(s+0.5).
+  - sY = 2s/(s+0.5) = 2 − 1/(s+0.5) ↔ 2δ(t) − e^(−0.5t)u(t). That's the cliff spike plus the real slope.
+  - sY − 2 = −1/(s+0.5) ↔ −e^(−0.5t) = y′ ✓.
+  - Even simpler: a constant y = 2 has Y = 2/s and sY = 2 (the spike), while y′ = 0, so sY − 2 = 0 ✓.
+- **Integration by parts says the same thing.** The boundary term [y·e^(−st)]₀^∞ is the edges of the window: the fade kills ∞, and the t = 0 edge leaves −y(0).
+- **y″:** apply the rule to y′. Its cliff at t = 0 has height y′(0), so L{y″} = s(sY − y(0)) − y′(0).
+- **The DT twin really is a delay (see the next entry for how s and z connect):** unilateral Z{y[n−1]} = z⁻¹Y + y[−1]. The delay drags the value from n = −1 (outside the window) into n = 0, so you add it back. Both cases say the same thing: the window cuts the signal at the start, the operation touches that edge, and the starting value leaks in.
+
+**How s and z talk to each other: why s goes with the derivative and z with the delay, yet z = e^(sT).**
+- **Same building block, two domains.** CT uses e^(st). Sample it at t = nT: e^(s·nT) = (e^(sT))ⁿ = zⁿ with **z = e^(sT)**. So z is the factor the spiral is multiplied by over one sample step. (The lecture uses T = 1, so z = e^s.)
+- **Each variable = what the block is multiplied by under that domain's basic operation.**
+  - CT equations are built from derivatives, and d/dt e^(st) = s·e^(st) → ×s.
+  - DT has no derivative (no in-between times). Its equations are built from delays, and z^(n−1) = z⁻¹·zⁿ → ×z⁻¹.
+- **The shared language is the shift.** Laplace has a delay too: x(t − T) ↔ e^(−sT)X(s). Delaying by one sample period in CT is ×e^(−sT) = ×z⁻¹, so z⁻¹ *is* the Laplace delay operator for one sample.
+- **DT's stand-in for the derivative is the difference:** (y[n] − y[n−1])/T ↔ (1 − z⁻¹)/T·Y.
+  - With z⁻¹ = e^(−sT) ≈ 1 − sT (from e^x ≈ 1 + x), this is ≈ s.
+  - Numbers: s = −2, T = 0.01 gives (1 − e^(0.02))/0.01 = −2.02 ≈ −2. With T = 0.5 it's −3.44, a poor match, so it only works for small T.
+- **Poles map by z = e^(sT):** e^(at)u(t) (pole a) sampled is (e^(aT))ⁿu[n] (pole e^(aT)).
+  - E.g. a = −2, T = 0.5: z-pole e^(−1) = 0.368. x[n] = 1, 0.368, 0.135, which equals x(t) at t = 0, 0.5, 1 ✓.
+  - Left half ↔ inside the unit circle; jω-axis ↔ unit circle; right half ↔ outside.
+- **Caveat:** "the same system" holds only for a sampled or DT-model version of a CT system. Poles map exactly, but zeros and gain don't map so simply, and a DT system need not come from any CT one.
+- **Past papers:** 24S1 Q4(a), 25S2 Q4(a) (s-plane vs z-plane).
+
+**Refresher: the Z time-shift rules (unilateral), next to Laplace's derivative rules.**
+- **y[n−1] → z⁻¹Y(z) + y[−1].** Write the sum out: Σ_{n≥0} y[n−1]z⁻ⁿ = y[−1]·z⁰ + y[0]z⁻¹ + y[1]z⁻² + … = y[−1] + z⁻¹(y[0] + y[1]z⁻¹ + y[2]z⁻² + …) = y[−1] + z⁻¹Y. The n = 0 term drags in the value from just before the window.
+- **y[n−2] → z⁻²Y + z⁻¹y[−1] + y[−2]** (the first two terms are y[−2] and y[−1]z⁻¹, then z⁻²Y).
+- **Side by side:**
+  - CT: y′ → sY − y(0); y″ → s²Y − s·y(0) − y′(0).
+  - DT: y[n−1] → z⁻¹Y + y[−1]; y[n−2] → z⁻²Y + z⁻¹y[−1] + y[−2].
+  - The sign differs. Laplace *subtracts*: it removes the fake cliff spike at t = 0. Z *adds*: the delay pulls a value from n = −1 into the window. CT uses the value at 0; DT uses the values before 0.
+- **Zero initial conditions (transfer-function questions, e.g. 25S1 Q4(a)) → y[n−k] → z⁻ᵏY, nothing extra.** Same for x[n−k] when the input starts at n = 0.
+- **Why 25S1 Q4(a) can drop y[−1]:**
+  - (a) **H(z) is defined at rest**, like h(t) in Q3(c)(ii). With y[−1] kept: Y(1 − 0.1z⁻¹) = X(1 + 0.5z⁻¹) + 0.1y[−1]. So Y/X = (1 + 0.5z⁻¹)/(1 − 0.1z⁻¹) + 0.1y[−1]/((1 − 0.1z⁻¹)X). The second term depends on the input X, so it isn't a property of the system. Only y[−1] = 0 makes Y/X the system's own H. Parts (i), (ii), (iii) and (v) (H, poles/ROC, stability, h) are all about the system, so it's not an assumption but the definition.
+  - (b) **The question gives no initial conditions → default "initially at rest"** for (iv).
+  - (c) **Even if y[−1] ≠ 0, the steady state is unchanged** (stable system). The extra zero-input part is 0.1y[−1]/(1 − 0.1z⁻¹) → y[−1](0.1)ⁿ⁺¹. With y[−1] = 1 it adds 0.1, 0.01, 0.001, …: outputs 1.1, −0.39, 0.461, −0.4539 vs 1, −0.4, 0.46, −0.454, both → ±5/11 = ±0.4545 (checked by running the recursion).
+  - You need + y[−1] only when the question gives one (e.g. "y[−1] = 2", Lab 4 Q2), with the unilateral transform.
+- **"So if they mention a transfer function or a response, assume LTI with zero initial conditions?" Nearly, with two corrections:**
+  - **The causation runs the other way:** zero initial conditions → the LCCDE behaves as LTI → H and h exist. H and h are *defined* at rest, so a question about them means zero initial conditions.
+  - **"Response" alone is not the trigger; given initial values are.** "Complete response" with y(0) = 2, y′(0) = 0 (Q3(c)(i)) must use them.
+  - **Per-part checklist:**
+    - (1) The part is about the system itself (H, h, poles/zeros, ROC, stable, frequency response) → zero initial conditions, even if the stem gave some. Q3(c)(ii) uses 0 although the stem gave y(0) = 2.
+    - (2) Output/response asked and initial values given → unilateral, keep them: zero-input + zero-state, and the zero-state part is still H·X.
+    - (3) Output asked, none given → initially at rest → Y = H·X (Q4(a)(iv)).
+    - (4) Steady state of a stable system → initial conditions don't matter anyway.
+- **"Zero-state = H·X. Is there an equivalent for zero-input?" Yes: Y_zi = C/A, the initial-condition terms over the SAME denominator A as H.**
+  - CT 2nd order: a₂y″ + a₁y′ + a₀y = x.
+    - Transform: a₂[s²Y − s·y(0) − y′(0)] + a₁[sY − y(0)] + a₀Y = X.
+    - Collect: Y·A(s) = X + C(s), with A = a₂s² + a₁s + a₀ (the characteristic polynomial) and C = a₂y(0)·s + a₂y′(0) + a₁y(0).
+    - So Y = X/A + C/A = H·X + C/A.
+    - 25S1 Q3(c): a = 1, −2, 1 → C = 2s + 0 − 4 = 2s − 4 → Y_zi = (2s − 4)/(s − 1)² → 2eᵗ − 2teᵗ ✓.
+  - DT: y[n] + a₁y[n−1] = b₀x[n] + b₁x[n−1].
+    - Y(1 + a₁z⁻¹) = (b₀ + b₁z⁻¹)X − a₁y[−1] → Y = H·X + (−a₁y[−1])/(1 + a₁z⁻¹).
+    - 25S1 Q4(a): a₁ = −0.1 → 0.1y[−1]/(1 − 0.1z⁻¹) → y[−1](0.1)ⁿ⁺¹ ✓.
+  - **Compare the two parts:**
+    - Zero-state: numerator B·X (x-side coefficients × input); poles from the system + the input → natural modes + forced part; scales with the input.
+    - Zero-input: numerator C (initial conditions × y-side coefficients); poles from the system only → natural modes only; scales with the initial conditions (double y(0), y′(0) → double).
+  - **When H's numerator is 1 (Q3(c)):** Y_zi = H·C, so the initial conditions act like an extra input C(s) fed into the same system: Y = H·(X + C) = H·(1/s + 2s − 4). That's the "kick = initial condition" link the other way round.
+- **Example:** y[n] − ½y[n−1] = u[n], y[−1] = 1.
+  - Transform: Y − ½(z⁻¹Y + 1) = 1/(1 − z⁻¹), so Y(1 − ½z⁻¹) = ½ + 1/(1 − z⁻¹).
+  - Zero-input: ½/(1 − ½z⁻¹) → (½)ⁿ⁺¹.
+  - Zero-state: 1/((1 − ½z⁻¹)(1 − z⁻¹)) = 2/(1 − z⁻¹) − 1/(1 − ½z⁻¹) (cover-up at z⁻¹ = 1 and z⁻¹ = 2) → 2 − (½)ⁿ.
+  - Total 2 − (½)ⁿ⁺¹ = 1.5, 1.75, 1.875 = running the rule by hand ✓.
+
+**25S1 Q3(c) comment unpacked: "characteristic polynomial (s − 1)², double pole at +1 (RHP), unstable, y → −∞, no steady state, the '1' is the forced part."**
+- **Characteristic polynomial = the y-side coefficients as a polynomial in s.** y″ − 2y′ + y has coefficients 1, −2, 1 → s² − 2s + 1. It's what multiplies Y after transforming, and it's the denominator of H = 1/(s² − 2s + 1).
+  - Same thing from "try y = e^(st)" in y″ − 2y′ + y = 0: s²e^(st) − 2s·e^(st) + e^(st) = (s² − 2s + 1)e^(st) = 0. Since e^(st) ≠ 0, s² − 2s + 1 = 0.
+- **Factor:** (s − 1)(s − 1) = s² − s − s + 1 = s² − 2s + 1. Root s = 1 twice → a **double pole at s = 1**.
+- **Right half-plane:** Re(s) = σ = 1 > 0, so the mode e^(σt) = eᵗ grows. A double pole adds a second mode teᵗ (check: y = teᵗ → y′ = eᵗ + teᵗ, y″ = 2eᵗ + teᵗ; y″ − 2y′ + y = 2eᵗ + teᵗ − 2eᵗ − 2teᵗ + teᵗ = 0 ✓).
+- **Two ways to split the same y = 1 + eᵗ − teᵗ:**
+  - Zero-input (2eᵗ − 2teᵗ) + zero-state (1 − eᵗ + teᵗ): split by *cause* (ICs vs input).
+  - Natural (eᵗ − teᵗ) + forced (1): split by *shape*. The natural part uses the system's poles (modes eᵗ, teᵗ). The forced part copies the input's shape: the step's pole at s = 0 → a constant. Try y_p = K: y″ = y′ = 0, so K = 1.
+- **Why y → −∞:** teᵗ beats eᵗ (their ratio is t → ∞), and its coefficient is −1. y = 1 + (1 − t)eᵗ: t = 1 → 1; t = 2 → −6.39; t = 3 → −39.2; t = 5 → −593.
+- **"No steady state":** steady state = what's left after the natural part dies. Stable → the natural part → 0 and y → forced part. Here it grows, so it swamps the 1 and y never settles. (FVT would wrongly say 1.)
+- **The ICs only change the coefficients, not the instability.** General ICs: natural part = (y(0) − 1)eᵗ + (y′(0) − y(0) + 1)teᵗ.
+  - y(0) = 1, y′(0) = 1 → y = 1 + teᵗ → +∞.
+  - y(0) = 1, y′(0) = 0 → y = 1 exactly (balanced). But y(0) = 1.01 gives y(10) = −1981: like a pencil balanced on its tip, any error grows.
+
+**"Why isn't s = 0 also a pole?" It is a pole of Y, but it belongs to the input, not the system.**
+- **Pole = an s that makes the denominator 0** (so the expression blows up there). Y = 1/(s(s−1)²) + (2s−4)/(s−1)². At s = 0 the first denominator is 0·1 = 0, so 0 *is* a pole of **Y**.
+- **Trace where each factor came from:**
+  - The y-terms on the left side (y″ − 2y′ + y, the system's rule) → Y·(s² − 2s + 1) = Y·(s − 1)².
+  - The right side, x = u(t) (the input) → 1/s.
+  - The ICs → 2s − 4.
+  - Divide by (s − 1)²: Y = (1/s)/(s−1)² + (2s−4)/(s−1)². So **(s − 1)² comes from the rule and s comes from the step.**
+- **Experiment: same system, different inputs.** Zero-state Y = X/(s−1)².
+  - x = δ: X = 1 → poles {1, 1}.
+  - x = u: X = 1/s → poles {0, 1, 1}.
+  - x = e^(−3t)u: X = 1/(s+3) → poles {−3, 1, 1}.
+  - The pair at 1 never moves, so it is the system's. Poles of Y = poles of H (system) + poles of X (input).
+- **"Characteristic polynomial" = the rule's polynomial only, s² − 2s + 1.** Its roots are the poles of H. (The comment's "polynomial has a double pole" is loose wording for "its double root is a double pole of H".)
+- **Why stability ignores the input's pole:** stable (BIBO) = every bounded input gives a bounded output. The step is bounded; its pole at 0 makes the constant "1". Compare the stable y′ + y = u(t): Y = 1/(s(s+1)) = 1/s − 1/(s+1) (cover-up: A = 1/(0+1) = 1, B = 1/(−1) = −1). So y = 1 − e^(−t): 0, 0.632, 0.950, 0.993 at t = 0, 1, 3, 5. Y has a pole at 0 too, but the output settles at 1. The input's pole at 0 *is* the steady state, not instability.
+
+**What "ICs" (initial conditions) are, and how 25S1 Q3(c)(ii) uses them.** (Figure: `figs/ics_q3c_i_vs_ii.png`.)
+- **Initial conditions = the state the output is already in at the start (t = 0), before the input acts.** For a 2nd-order ODE that's the position y(0) and the slope/speed y′(0). Q3(c): y(0) = 2, y′(0) = 0 means "sitting at 2, not moving".
+- **Why the rule needs them:** y″ − 2y′ + y = x rearranges to y″ = x + 2y′ − y. It only gives the *acceleration* from the current y and y′. At t = 0: y″(0) = 1 + 2·0 − 2 = −1, which you can only work out because y(0) and y′(0) are known. Order 2 → 2 initial conditions (they fix the 2 constants in front of eᵗ and teᵗ). DT twin: y[−1] is the starting value of y[n] = 2y[n−1] + x[n].
+- **Same rule, same input, different initial conditions → different outputs:** (2, 0) → 1 + (1−t)eᵗ; (1, 1) → 1 + teᵗ; (1, 0) → 1.
+- **Where they enter Laplace:** L{y′} = sY − y(0), L{y″} = s²Y − s·y(0) − y′(0). They produce the zero-input part.
+- **(ii) asks for h(t) = the output when x = δ(t) AND the system starts at rest (all initial conditions 0).**
+  - Why 0: h is the system's own fingerprint. Nonzero initial conditions would add the zero-input part 2(1−t)eᵗ, which has nothing to do with the kick. (With stored energy, input 0 gives output ≠ 0, so the system isn't LTI and has no single h.)
+  - Work: s²Y − 0 − 0 − 2(sY − 0) + Y = L{δ} = 1 (sifting: ∫δ(t)e^(−st)dt = e⁰ = 1). So Y(s−1)² = 1 → H = 1/(s−1)² → pair te^(at)u(t) ↔ 1/(s−a)² with a = 1 → **h = teᵗu(t)**: 0, 2.72, 14.78, 60.26 at t = 0, 1, 2, 3.
+  - Causal (the ODE runs forward) → ROC right of the pole: Re s > 1. Directly: ∫₀^∞ teᵗe^(−σt)dt needs the fade e^(−σt) to beat eᵗ → σ > 1. σ = 0 is not included → unstable (∫|h| = ∞).
+- **The kick = a special initial condition.** δ is an acceleration spike of area 1. The area under acceleration = the change in speed, so y′ jumps 0 → 1, while y has no time to move (h(0) = 0). So h = the zero-input response with y(0) = 0, y′(0) = 1: y(0)·eᵗ + (y′(0) − y(0))·teᵗ = teᵗ ✓ (also checked by stepping the ODE numerically: 14.778 at t = 2).
+- **"Only 1/(s−1)² has an ROC, not teᵗ, right? So how do you get it?"** (Figure: `figs/roc_te_t_from_integral.png`.)
+  - **The ROC (region of convergence) is drawn on the s-plane next to the formula, but the time signal decides it.** It's the set of s where the integral ∫x(t)e^(−st)dt that *makes* the formula gives a finite number. So it belongs to the pair teᵗu(t) ↔ 1/(s−1)².
+  - **Get the formula and the ROC from one integral:** ∫₀^∞ teᵗe^(−st)dt = ∫₀^∞ t·e^(−(s−1)t)dt (exponent rule eᵗe^(−st) = e^((1−s)t)). Its size is t·e^((1−σ)t), since |e^(−jωt)| = 1.
+    - σ = 2: t·e^(−t) → 0.37, 0.034, 0.0005 at t = 1, 5, 10; area = 1 = 1/(2−1)² ✓.
+    - σ = 1.5: area 4 = 1/0.5² ✓.
+    - σ = 1: just t, area T²/2 → ∞.
+    - σ = 0.5: t·e^(0.5t) → ∞.
+    - So the integral is finite ⇔ σ > 1 ⇔ **Re s > 1**, and there it equals 1/(s−1)². By parts with a = s − 1: [−t·e^(−at)/a]₀^∞ + (1/a)∫₀^∞e^(−at)dt = 0 + 1/a²; both pieces need Re a > 0.
+  - **The formula can't tell you its ROC.** 1/(s−1)² gives a number at every s except 1, e.g. 1 at s = 0. But for teᵗu(t) the integral at s = 0 is ∫teᵗdt = ∞, so "1" there is meaningless for this signal.
+  - **−teᵗu(−t) has the same formula** (substitute u = −t → ∫₀^∞ u·e^((s−1)u)du = 1/(s−1)² if Re s < 1). At s = 0 its integral really is 1 ✓. So formula + ROC together pin down the signal; that's why answers always state both.
+  - **Exam shortcut:** the poles of the formula give the possible boundaries (here Re s = 1). The time signal's side (or the word "causal") picks the half: right-sided → right of the rightmost pole, left-sided → left of the leftmost. The extra t doesn't move the boundary: t·e^(−εt) → 0 for any ε > 0 (100·e^(−10) = 0.0045).
+- **Exam: doing (ii) by reusing (i).**
+  - **Way 1 (s-domain):** (i)'s zero-state part is Y_zs = H·X = 1/(s(s−1)²) with X = 1/s. So H = Y_zs ÷ X = [1/(s(s−1)²)]·s = 1/(s−1)². Or reuse (i)'s line (s² − 2s + 1)Y = X + (initial-condition terms) with the initial conditions set to 0 and X = L{δ} = 1. Then the table gives h = teᵗu(t).
+  - **"Why X = 1/s, isn't the δ's transform 1?"** Both are right, for different parts. X just means the transform of the input currently in use.
+    - (i)'s input is the step (the question stem says "input x(t) = u(t)"): X₁ = ∫₀^∞ e^(−st)dt = [−e^(−st)/s]₀^∞ = 0 − (−1/s) = 1/s.
+    - (ii)'s input is δ (that's what "impulse response" means): X₂ = 1.
+    - H is the same in both, because it's the same system. Way 1 = use (i)'s known Y₁ and X₁ to get H = Y₁/X₁. Then (ii)'s output is Y₂ = H·X₂ = H·1 = H.
+    - Check at s = 2: Y₁ = 1/(2·1²) = 0.5, X₁ = 0.5, H = 1 = 1/(2−1)² ✓.
+  - **Way 2 (time domain): h = d/dt of the zero-state step response.** δ = du/dt, and an LTI system passes the derivative through. u(t) → s(t); u(t−ε) → s(t−ε) (time invariance); [u(t) − u(t−ε)]/ε → [s(t) − s(t−ε)]/ε (linearity); as ε → 0, δ → s′(t).
+    - s(t) = 1 − eᵗ + teᵗ → s′ = 0 − eᵗ + (eᵗ + teᵗ) = teᵗ ✓ (product rule on teᵗ).
+    - No δ term, because s(0) = 1 − 1 + 0 = 0 (starts at rest). In s: H = s·Y_zs.
+  - **Trap:** differentiate only the ZERO-STATE part. The complete response gives d/dt[1 + (1−t)eᵗ] = −eᵗ + (1−t)eᵗ = −teᵗ ✗, because the initial-conditions part has nothing to do with the input.
+  - **Write-up (6 marks):** state "zero initial conditions, x = δ ⇒ X = 1"; transform → Y(s − 1)² = 1 → H = 1/(s−1)² → table (a = 1) → h = teᵗu(t); then add the one-line check h = d/dt(1 − eᵗ + teᵗ). Show H(s) explicitly; don't just write "from (i)".
+- **"Where does the ROC come from in Q3(c)? Just the table? Always take the overlap? No overlap → no transform?"**
+  - **Q3(c) never asks for an ROC.** The paper says only "(i) find the complete response, (ii) find the impulse response". The ROC/unstable remark in the solution is extra.
+  - **Direction 1, signal → transform (Q3a, Q3b): the signal forces the ROC.**
+    - Each term's ROC comes from the table (or its integral). The sum's ROC = the overlap, because ∫(x₁ + x₂)e^(−st) = ∫x₁e^(−st) + ∫x₂e^(−st) is finite only where both pieces are.
+    - Q3(a): Re s > −2 and Re s > −5 → Re s > −2. At s = −3 the first term becomes e^(−2t)e^(3t) = eᵗ → ∞.
+    - **No overlap → no transform.** E.g. x = 1 for all t = u(t) + u(−t): Re s > 0 and Re s < 0 → nothing. Adding the formulas blindly gives 1/s − 1/s = 0, which is nonsense. (u(−t): for t < 0, e^(−σt) = e^(σ|t|) shrinks only if σ < 0.)
+  - **Direction 2, transform → signal (Q3c(ii) if asked; Q4(a); the Z questions): the same procedure as Z.**
+    - (1) Find the poles. (2) The candidate ROCs are the regions between them (Laplace: vertical strips; Z: rings). (3) The description picks one: causal → right of the rightmost pole (Z: outside the outermost); stable → contains the jω-axis (Z: |z| = 1). (4) Only *then* use the table: a pole left of the ROC → the right-sided row (×u(t)); a pole right of the ROC → the left-sided row (×−u(−t)).
+    - The table is for looking up the signal after choosing, not for choosing.
+  - **H = 1/(s−1)²:** pole 1 → candidates Re s > 1 or Re s < 1.
+    - Nothing stated, but an ODE with initial conditions at t = 0 is a system running forward in time → causal (the default) → Re s > 1 → teᵗu(t).
+    - "Stable" would force Re s < 1 (contains 0) → −teᵗu(−t): 0.368, 0.149, 0.015 at t = −1, −3, −6, area 1.
+    - Table rows (e^(−at) convention, a = −1): t·e^(−at)u(t), σ > −a; −t·e^(−at)u(−t), σ < −a.
+  - **Q3(c)(i) is unilateral (∫ from 0), so every signal is treated as right-sided.** The ROC is automatically right of the rightmost pole and only ×u(t) rows are used, so there's never a choice. Y's poles 0, 1, 1 → Re s > 1, which is also the overlap of 1/s (Re s > 0) and 1/(s−1)ⁿ (Re s > 1).
+- **"Why is h a zero-state response (rest + δ)? Doesn't the zero-input response describe the system better?"**
+  - The user's definitions are right. Zero-state = start at rest, see how it reacts to the input. Zero-input = start with stored initial conditions, no input, see how it lets go.
+  - **The zero-input response isn't one curve; it's a family, one per starting state.** For the Q3(c) system, (2, 0) → 2(1−t)eᵗ, (1, 1) → eᵗ, (0, 1) → teᵗ. The starting state is history, not the system (a car's starting position isn't a property of the car). Which one would be "the" system?
+  - **What every member shares is the system's:** the modes eᵗ, teᵗ (the poles). h has exactly these too. In fact h *is* the family member with (0, 1), because the kick sets y′ = 1. So they don't compete; δ is just a *standard* starting state.
+  - **h's job is to give the output for ANY input:** y = h ∗ x. That needs linearity + time invariance, which hold only from rest.
+    - From rest, at t = 0.5: δ → 0.824, 2δ → 1.649 (doubles ✓).
+    - With initial conditions (2, 0): δ → 1.649 + 0.824 = 2.473, 2δ → 1.649 + 1.649 = 3.297, but 2 × 2.473 = 4.946 ✗. The stored part doesn't scale with the input.
+    - From rest, two kicks δ(t) + δ(t−1) → h(t) + h(t−1) (shift + add). That's convolution.
+  - **So the full output = zero-input (handles the stored state, built from the same poles) + h ∗ x (handles the input).** Neither alone is the whole story; h is the input→output part.
+
+**Steady state vs transient: not the same term, not the same as zero-state. A third way to split y, by what survives as t → ∞.** (Figure: `figs/three_splits_of_y.png`.)
+- **Transient = the part that dies out (→ 0). Steady state = what's left after it has died** (what y settles into).
+- **"Zero-*state*" ≠ "*steady* state".** In "zero-state", "state" = the stored initial conditions (the system's memory). "Steady" = settled after a long time.
+- **Stable example:** y′ + y = u(t), y(0) = 3. sY − 3 + Y = 1/s → Y = 3/(s+1) + 1/(s(s+1)) → y = 3e^(−t) + (1 − e^(−t)) = 1 + 2e^(−t). Values 3, 1.736, 1.100, 1.014 at t = 0, 1, 3, 5.
+  - By cause: zero-input 3e^(−t) | zero-state 1 − e^(−t).
+  - By shape: natural 2e^(−t) (= 3e^(−t) − e^(−t), the system's pole −1) | forced 1 (copies the step).
+  - By time: transient 2e^(−t) | steady state 1.
+- **Stable → transient = natural, steady state = forced.** The natural modes have poles with Re < 0, so they die. The zero-input part is all transient; the zero-state part holds some transient (−e^(−t)) plus the whole steady state.
+- **Unstable (25S1 Q3c) → the natural part eᵗ − teᵗ grows, so it isn't "transient", and there's no steady state.**
+- **Exception: a system pole exactly at s = 0 (an integrator, 25S2 Q4(b): 3y′ = x).**
+  - Its natural mode is e^(0·t) = a constant, so it never dies and becomes the steady state (−23/24).
+  - The decaying input e^(−2t) makes the forced part (−(1/24)e^(−2t)) the transient.
+  - So "transient = natural" needs every system pole strictly in the left half-plane, not on the axis.
+- **Steady-state shape = the input's shape:** step → constant (= the final value, FVT); cos ω₀t → |H(jω₀)|cos(ω₀t + ∠H). It needs stability. DT: 25S1 Q4(a), y = (6/11)(0.1)ⁿ [transient] + (5/11)(−1)ⁿ [steady state].
+- **Link (i) ↔ (ii):** the zero-state part of (i) = H·X = [1/(s−1)²]·[1/s] = h ∗ u = the running area under h: ∫₀ᵗ τe^τ dτ = [τe^τ − e^τ]₀ᵗ = (teᵗ − eᵗ) − (0 − 1) = teᵗ − eᵗ + 1 ✓ (by parts: ∫τe^τ = τe^τ − ∫e^τ). At t = 2: 8.39. (i) = zero-input (from the initial conditions) + h ∗ x (from the input).
+
+**What an LCCDE's poles and ROC tell you, and what they don't.**
+- **The LCCDE fixes the H formula (so the poles and zeros), but not the ROC.** Shown in full, with the figure `figs/roc_one_rule_two_h.png`, on y[n] = 2y[n−1] + x[n]:
+  - **Formula:** each delay becomes ×z⁻¹, so Y = 2z⁻¹Y + X → Y(1 − 2z⁻¹) = X → H = 1/(1 − 2z⁻¹) = z/(z − 2) (top and bottom ×z). The pole is at z = 2. The "delay = ×z⁻¹" rule holds for every signal, so this algebra never chose an h.
+  - **The rule needs a starting point, and there are two choices.**
+    - At rest *before* the kick (y = 0 for n < 0), run forward: y[0] = 2·0 + 1 = 1, y[1] = 2·1 + 0 = 2, then 4, 8, … → h₁ = 2ⁿu[n].
+    - At rest *after* the kick (y = 0 for n ≥ 0), rearrange to y[n−1] = (y[n] − x[n])/2 and run backward: y[−1] = (0 − 1)/2 = −½, y[−2] = (−½ − 0)/2 = −¼, then −⅛, … → h₂ = −2ⁿu[−n−1].
+    - Both obey the rule at every n. E.g. at n = 0 for h₂: y[0] = 2y[−1] + 1 → 0 = 2(−½) + 1 ✓.
+  - **Transform both:**
+    - h₁: Σ_{n≥0} (2/z)ⁿ = 1/(1 − 2/z) = z/(z−2). The geometric series needs |2/z| < 1, i.e. |z| > 2.
+    - h₂: −Σ_{n≤−1} 2ⁿz⁻ⁿ. Put m = −n: −Σ_{m≥1} (z/2)^m = −(z/2)/(1 − z/2) = −z/(2 − z) = z/(z−2). This needs |z/2| < 1, i.e. |z| < 2.
+    - **Same formula, different ROC:** the ROC is the record of which way the rule was run.
+  - **Picking the ROC:** the question's words decide it.
+    - "Causal" → at rest before → outside the outermost pole.
+    - "Stable" → Σ|h| < ∞ → the ROC containing |z| = 1. Here h₂: ½ + ¼ + … = 1 ✓, while h₁: 1 + 2 + 4 + … = ∞.
+    - A real-time system, or an ODE solved forward from ICs (25S1 Q3c) → causal.
+  - **CT twin:** y′ − y = x, H = 1/(s−1). The two choices are eᵗu(t) (Re s > 1) and −eᵗu(−t) (Re s < 1).
+- **From the poles + ROC alone:**
+  - Order = number of poles (highest derivative/delay of y).
+  - Causal ⇔ ROC right of the rightmost pole (Z: outside the outermost circle).
+  - Stable ⇔ ROC contains the jω-axis (Z: the unit circle). Causal + stable ⇔ all poles in Re s < 0 (Z: |p| < 1).
+  - Natural modes (the transient's shape): real pole → e^(at); complex pair → cos inside e^(σt); double → extra t; Z negative real → alternating sign; Z pole at 0 only → FIR.
+  - How fast the transient dies: distance from the jω-axis/unit circle.
+  - Whether a steady state exists (stable, so the natural part dies).
+- **Need zeros + gain as well:**
+  - The frequency response, the steady-state amplitude/phase, the exact h and y values (the partial-fraction coefficients).
+  - E.g. same pole 0.1: H = (z + 0.5)/(z − 0.1) gives H(−1) = 5/11 = 0.455, but (z + 0.9)/(z − 0.1) gives 1/11 = 0.091. 1/(s+2) vs 10/(s+2): same pole, h = e^(−2t) vs 10e^(−2t).
+- **Need the ICs:** the zero-input coefficients (which mode mix you get, as above).
+- **Not from poles at all:** linear/time-invariant. Read that from the equation (constant coefficients, no y², zero ICs). Writing H already assumes LTI.
+
+**25S1 Q4(a)(iv) worked: "Determine the state response … input x[n] = cos(πn)u[n]" (4 marks), with H = (z + 0.5)/(z − 0.1).**
+- **Wording:** "state response" probably means steady-state, or else zero-state. Write the full zero-state response, then point out its steady-state part; that covers both readings.
+- **Simplify the input:** cos(πn) at n = 0, 1, 2, 3 = 1, −1, 1, −1 → x = (−1)ⁿu[n]. Ω₀ = π, the fastest DT frequency (flips every sample).
+- **Shortcut for the steady state (needs stable: pole 0.1, |0.1| < 1 ✓):** y_ss = |H(e^(jΩ₀))|cos(Ω₀n + ∠H). e^(jπ) = cos π + j·sin π = −1, so H(−1) = (−1 + 0.5)/(−1 − 0.1) = (−0.5)/(−1.1) = 5/11 (real, positive → phase 0) → **y_ss = (5/11)(−1)ⁿ**.
+  - Check without transforms: guess y = K(−1)ⁿ in y[n] = x[n] + 0.5x[n−1] + 0.1y[n−1]. Divide by (−1)ⁿ, using (−1)^(n−1)/(−1)ⁿ = −1: K = 1 − 0.5 − 0.1K → 1.1K = 0.5 → K = 5/11 ✓.
+- **Full zero-state response:**
+  - X = Σ(−z⁻¹)ⁿ = 1/(1 + z⁻¹) = z/(z + 1), |z| > 1. Y = H·X = z(z + 0.5)/((z − 0.1)(z + 1)).
+  - Partial fractions on Y/z: A = (0.1 + 0.5)/(0.1 + 1) = 6/11; B = (−1 + 0.5)/(−1 − 0.1) = 5/11. Check: A + B = 1 (z coefficient), A − 0.1B = 0.5 (constant) ✓.
+  - Y = (6/11)·z/(z − 0.1) + (5/11)·z/(z + 1) → **y = (6/11)(0.1)ⁿ + (5/11)(−1)ⁿ, n ≥ 0**.
+  - Running the recursion: 1, −0.4, 0.46, −0.454, 0.4546 ✓.
+- **Reading it:** (6/11)(0.1)ⁿ = transient/natural (the system's pole) → 0.545, 0.055, 0.005. (5/11)(−1)ⁿ = steady state/forced (the input's pole −1).
+- **B = H(−1) is no coincidence:** covering up the input's pole evaluates H there. That's why the shortcut works.
+- **Filter view:** H(1) = 1.5/0.9 = 1.67 at Ω = 0 vs 5/11 = 0.45 at Ω = π → low-pass-ish. The zero at −0.5 sits near z = −1 and pulls the high-frequency gain down.
+
+**Inverse Z: the 3 methods vs the "same power on top and bottom" fix (25S1 Q4(a)(v), H = (z + 0.5)/(z − 0.1)).**
+- **The 3 inversion methods** (L3 `lecture(2).pdf` p.59):
+  - (1) **inspection**: match a table pair;
+  - (2) **partial fractions**: split into table terms;
+  - (3) **series expansion**: long division into powers of z⁻¹, then read x[n] off z⁻ⁿ; the ROC picks the division direction (p.60–63).
+  - "Long division" = method 3. The lecture says to use 1 and 2 mostly; 3 is hard in general.
+- **Same power on top and bottom is a separate problem inside partial fractions.** The top's power must be lower, otherwise there's a leftover polynomial part P(z) (p.44: X = P(z) + Σc/(z−p)ᵏ). A constant in H ↔ δ[n]. Three fixes:
+  - (a) **Divide by z first:** H/z = (z + 0.5)/(z(z − 0.1)) = −5/z + 6/(z − 0.1) (cover-up) → H = −5 + 6z/(z − 0.1) → **−5δ[n] + 6(0.1)ⁿu[n]**.
+  - (b) **Polynomial long division first:** z + 0.5 = (z − 0.1) + 0.6, so H = 1 + 0.6/(z − 0.1). Pair 1/(z − a) ↔ a^(n−1)u[n−1] (p.46; it's z⁻¹·z/(z−a), delayed by 1) → **δ[n] + 0.6(0.1)^(n−1)u[n−1]**.
+  - (c) **Write in z⁻¹ and split the top:** H = 1/(1 − 0.1z⁻¹) + 0.5z⁻¹·1/(1 − 0.1z⁻¹) → **(0.1)ⁿu[n] + 0.5(0.1)^(n−1)u[n−1]** (inspection + delay).
+- **All agree:** 1, 0.6, 0.06, 0.006 (e.g. n = 2: (a) 6(0.01); (b) 0.6(0.1); (c) 0.01 + 0.05). Series expansion gives the same: (z + 0.5) ÷ (z − 0.1) = 1 + 0.6z⁻¹ + 0.06z⁻² + …
+- **Exam default: (a).** It always works, lands straight on z/(z − p), and handles equal powers automatically. Then check h[0], h[1] by running the recursion (or by series expansion).
+- **Long division, worked examples.** The loop is: divide the leading terms → multiply the divisor by that answer → subtract → repeat on the remainder.
+  - **Z series expansion** (method 3): X = z/(z² − 0.75z + 0.125), |z| > 0.5.
+    - z ÷ z² = z⁻¹; z⁻¹·(divisor) = z − 0.75 + 0.125z⁻¹; remainder 0.75 − 0.125z⁻¹.
+    - 0.75 ÷ z² = 0.75z⁻²; times the divisor = 0.75 − 0.5625z⁻¹ + 0.09375z⁻²; remainder 0.4375z⁻¹ − 0.09375z⁻².
+    - 0.4375z⁻¹ ÷ z² = 0.4375z⁻³ → X = 0·z⁰ + 1z⁻¹ + 0.75z⁻² + 0.4375z⁻³ + … → x = 0, 1, 0.75, 0.4375.
+    - Check: partial fractions on X/z give 4(0.5)ⁿ − 4(0.25)ⁿ → 0, 1, 0.75, 0.4375 ✓.
+  - **Laplace, same power top and bottom:** H = (s² + 3s + 3)/(s² + 3s + 2).
+    - s² ÷ s² = 1; 1·(s² + 3s + 2); remainder 1 → H = 1 + 1/((s + 1)(s + 2)).
+    - Cover-up: 1/(s+1) − 1/(s+2) → h = δ(t) + (e^(−t) − e^(−2t))u(t).
+    - Check: H(0) = 3/2 = ∫h = 1 + 1 − 0.5 ✓. In Laplace you can't skip this step: a leftover constant ↔ δ(t).
+  - **"For Laplace, is long division the only choice?" No, there are three routes:**
+    - (1) **Long division:** the general fallback; needed if the top's power is *higher*.
+    - (2) **Rewrite the numerator using the denominator** (mental long division): s² + 3s + 3 = (s² + 3s + 2) + 1 → 1 + 1/(s² + 3s + 2). It's the same trick as 2s − 4 = 2(s − 1) − 2 in 25S1 Q3(c).
+    - (3) **No division (fastest for equal powers):** write H = K + A/(s+1) + B/(s+2).
+      - K = the ratio of the leading coefficients (1/1 = 1), since as s → ∞ the fractions → 0 and H → s²/s² (H(1000) = 1.000001).
+      - Cover-up still works on the original H. Multiply by (s+1) and set s = −1, which kills the K and B terms: A = (1 − 3 + 3)/(−1 + 2) = 1. Likewise B = (4 − 6 + 3)/(−2 + 1) = −1.
+      - Same answer; check H(0) = 1 + 1 − 0.5 = 1.5 ✓.
+    - **Z has more routes, and long division is never forced.**
+      - Equal powers: (a) divide by z (default); (b) long division or rewriting the numerator; (c) z⁻¹ split + delay; (d) K + cover-up. For (d), H = (z + 0.5)/(z − 0.1) gives K = 1, A = 0.6 → 1 + 0.6/(z − 0.1), which is (b)'s form and needs the delayed pair; that's why (a) is the default.
+      - **Top power > bottom** (X = z²/(z − 0.5), |z| > 0.5), all → x = (0.5)ⁿ⁺¹u[n+1] = 1, 0.5, 0.25, … starting at n = −1:
+        - (i) Pull out z, then advance: X = z·[z/(z − 0.5)], and ×z = advance by 1.
+        - (ii) Divide by z, then K + cover-up: X/z = 1 + 0.5/(z − 0.5) → X = z + 0.5z/(z − 0.5) → δ[n+1] + (0.5)ⁿ⁺¹u[n].
+        - (iii) Long division: z² = (z − 0.5)(z + 0.5) + 0.25 → z + 0.5 + 0.25/(z − 0.5).
+        - (iv) Series expansion: z + 0.5 + 0.25z⁻¹ + …
+      - **Top > bottom (in powers of z) means samples before n = 0, i.e. not causal.** A causal x has only z⁰, z⁻¹, … so X(∞) = x[0] is finite. So it won't appear in a causal-system H written in powers of z. (In z⁻¹ form a "longer top" is common and harmless: (1 + 0.5z⁻¹ + 0.2z⁻²)/(1 − 0.1z⁻¹) = (z² + 0.5z + 0.2)/(z(z − 0.1)), equal powers.)
+    - **Why the Z "divide by z" trick doesn't carry over:** the Z pairs have z on top (z/(z − p) ↔ pⁿ), so dividing by z and multiplying back lands on table form. The Laplace pairs are 1/(s + a), so ×s would give s/(s + a), which isn't a basic pair.
+
+**"Where did the recursion check in 25S1 Q4(a)(v) come from?" It's the question's own difference equation, run step by step.**
+- **"Recursion"** = a rule that builds each new output from its own earlier outputs (y[n] uses y[n−1]). The rule is y[n] = x[n] + 0.5x[n−1] + 0.1y[n−1].
+- **Impulse response = the output when the input is δ, from rest.** So replace x → δ and y → h: h[n] = δ[n] + 0.5δ[n−1] + 0.1h[n−1], with δ[0] = 1, δ[anything else] = 0, and h[−1] = 0 (at rest).
+  - n = 0: δ[0] + 0.5δ[−1] + 0.1h[−1] = 1 + 0 + 0 = 1.
+  - n = 1: δ[1] + 0.5δ[0] + 0.1h[0] = 0 + 0.5 + 0.1 = 0.6.
+  - n = 2: 0 + 0 + 0.1(0.6) = 0.06. From n = 2 on, only the feedback is left: h[n] = 0.1h[n−1].
+- **Why it's a check:** it uses no transforms at all, so if −5δ[n] + 6(0.1)ⁿu[n] gives 1, 0.6, 0.06 too, the Z algebra was right. It catches a missing −5δ (which would give h[0] = 6).
+- As a loop: y_prev = x_prev = 0; each step y = x + 0.5·x_prev + 0.1·y_prev, then shift. This is how a DSP chip runs it.
+
+**"Inverse DFT (25S1 Q4(b)): how many n values? Why stop at n = 3?" Exactly N values: n = 0, 1, …, N − 1.**
+- **N = the number of DFT coefficients you're given.** X[k] = [1, 3+j, 2, 3−j] has 4 → N = 4 → n = 0, 1, 2, 3 (start at 0, so the last is N − 1 = 3). N numbers in ↔ N numbers out: the DFT is an N × N matrix.
+- **The formula repeats after that, so there's nothing new to compute.** e^(j2πk(n+N)/N) = e^(j2πkn/N)·e^(j2πk) (exponent rule), and e^(j2πk) = cos 2πk + j·sin 2πk = 1 for whole k. So x[n + N] = x[n].
+  - Here: x[4] = 2.25 = x[0], x[5] = −0.75 = x[1], x[−1] = 0.25 = x[3] (checked numerically).
+- **What the DFT "knows":** one block of N samples. It treats the signal as that block repeated forever, which is why the inverse comes out periodic. Answer with the N values (as a list or a stem plot over n = 0..3), and don't extend unless asked.
+
 **Which transform properties the five past papers tested** (from the solution files).
 - **[FINAL SHEET: must include, user asked] This whole list:** each property's formula with the paper references, the time-shift traps, and the system-property tests.
 - **CT Fourier:**
@@ -477,6 +759,134 @@ the front.
   - **Variant h = δ(t−2) + δ(t−5) − δ(t−9)** (the − spike last, to see the order): flipped, the − spike is at −9, the back of the train, so it arrives last. t = 0: spikes at −9(−), −5(+), −2(+); t = 3: the + from 2 is on the triangle → 1; t = 6: the + from 5 → 1; t = 10: the − from 9 → −1. So y = x(t−2) + x(t−5) − x(t−9): +, +, − copies at 2, 5, 9, the same order as h.
   - **Why the answer isn't mirrored:** the flip puts h's *earliest* spike (from 2) at the front (rightmost) of the marching train, so it reaches the triangle first (at t = 2), then the one from 5 (t = 5), then 9. Each spike scans x left to right, reading x(0), x(0.5), x(1), … in order. Flip + slide right = original order. "Looks the same" was about the final output, not the intermediate picture.
 - **Why convolution flips:** y(t) = ∫x(τ)h(t − τ) dτ, and t − τ is how long ago input τ went in. h(t − τ) weights each past input by its age. E.g. h = e^(−t)u(t) at t = 5: input at τ = 5 → h(0) = 1, τ = 4 → h(1) = 0.368, τ = 3 → h(2) = 0.135. Later inputs get the start of h, so h is read backwards along τ, which is the flip. Discrete: y[n] = Σ x[k]h[n − k].
+
+**25S1 Q2(b) variant where the copies OVERLAP: h = δ(t−2) + δ(t−3) − δ(t−4)** (figure: `figs/conv_overlap_25S1Q2b_variant.png`).
+- **First step is the same:** y = x(t−2) + x(t−3) − x(t−4), i.e. copies at 2 (+), 3 (+) and 4 (−).
+- **What's new:** the impulses are 1 apart, but x is 2 wide, so neighbouring copies overlap. Where they overlap, **add them point by point**. The overlap test is: impulse spacing < width of x.
+- **Getting each copy's formula on an interval:** the triangle is t on [0, 1) and 2 − t on [1, 2). For x(t − 3) on [4, 5), t − 3 is in [1, 2), so it's on the falling side: 2 − (t − 3) = 5 − t.
+- **Breakpoints** are every start, peak and end of every copy: 2, 3, 4, 5, 6. On each interval, sum the pieces that are switched on.
+  - 2 ≤ t < 3: copy 1 rising only. y = t − 2.
+  - 3 ≤ t < 4: copy 1 falling (4 − t) plus copy 2 rising (t − 3). y = 4 − t + t − 3 = 1, a flat top.
+  - 4 ≤ t < 5: copy 2 falling (5 − t) plus copy 3 rising, negated: −(t − 4). y = 5 − t − t + 4 = 9 − 2t. It goes from 1 to −1 and crosses 0 at t = 4.5.
+  - 5 ≤ t < 6: copy 3 falling, negated: −(2 − (t − 4)) = −(6 − t) = t − 6. It goes from −1 to 0.
+  - Everywhere else, y = 0.
+- **Checks:**
+  - y is continuous at 3, 4, 5 and 6.
+  - Area of y = (area of x) × (sum of the weights) = 1 × (1 + 1 − 1) = 1. The pieces give 0.5 + 1 + 0 − 0.5 = 1 ✓.
+- **Flip and slide:** the window is still (t − 2, t], but now **two impulses can be inside it at once**, so add both readings.
+  - t = 3.5: x(1.5) + x(0.5) = 1.
+  - t = 4.5: x(1.5) − x(0.5) = 0.
+  - t = 5: x(2) − x(1) = −1.
+
+**What σ means in a Laplace ROC (and the twin with |z| = r).**
+- **s = σ + jω.** By the exponent rule e^(a+b) = e^a·e^b, e^(−st) = e^(−σt)·e^(−jωt). So X(s) = ∫x(t)e^(−σt)·e^(−jωt) dt is the **CTFT of the faded signal x(t)e^(−σt)**.
+  - σ (the real part) is the **fade rate**. ω (the imaginary part) is the frequency.
+- **Only σ decides convergence.** |e^(−jωt)| = √(cos² + sin²) = 1, so the spin never helps or hurts. That makes the ROC a set of σ values, drawn as **vertical strips/half-planes** bounded by lines Re(s) = const.
+- **Z twin:** z = re^(jΩ), so z⁻ⁿ = r⁻ⁿe^(−jΩn). Here r = |z| is the fade dial and Ω is the frequency. |e^(−jΩn)| = 1, so only r matters, and the ROC is **rings**. Note z itself is re^(jΩ); r⁻ⁿe^(−jΩn) is z⁻ⁿ.
+- **Example: e^(−2t)u(t).** Faded, it's e^(−2t)e^(−σt) = e^(−(2+σ)t) for t ≥ 0. That's integrable iff 2 + σ > 0, so the ROC is σ > −2.
+  - σ = 0 → e^(−2t) ✓
+  - σ = −1 → e^(−t) ✓
+  - σ = −3 → e^(t), which blows up ✗
+- **Example: e^(3t)u(t).** The ROC is σ > 3: you need at least 3 of fade to beat the growth.
+- **Example: −e^(−2t)u(−t)** (left-sided). As t → −∞ you need 2 + σ < 0, so σ < −2.
+- **Shape rule:** right-sided → right of the rightmost pole (Z: outside the outermost circle). Left-sided → left of the leftmost pole (Z: inside a disc). Two-sided → a strip between poles (Z: a ring).
+- **z = e^(sT) maps one onto the other:** r = e^(σT) and Ω = ωT.
+  - σ = 0 ↔ r = 1: the jω-axis maps to the unit circle.
+  - σ < 0 ↔ inside the circle; σ > 0 ↔ outside it.
+  - A vertical line σ = σ₀ maps to the circle r = e^(σ₀T).
+- **Why it matters:**
+  - The CTFT exists ⇔ σ = 0 is in the ROC, i.e. no fade needed (Z: |z| = 1 in the ROC ⇔ the DTFT exists).
+  - Causal + stable ⇔ all poles have σ < 0 (Z: all poles inside the unit circle).
+  - In 25S1 Q3(c) the double pole is at s = 1, so the causal ROC is σ > 1. That misses σ = 0, so the system is unstable.
+
+**Why does Laplace have a spin e^(−jωt) as well as the fade? (Z has it too.)**
+- **Z isn't "just shrinking":** z⁻ⁿ = (re^(jΩ))⁻ⁿ = r⁻ⁿ·e^(−jΩn). Both transforms are fade first, then Fourier: Laplace = CTFT of x(t)e^(−σt), Z = DTFT of x[n]r⁻ⁿ. Writing one complex variable (s or z) hides the two parts.
+- **Two jobs:**
+  - The fade (σ or r) makes the sum or integral converge.
+  - The spin (ω or Ω) is the Fourier part. It measures how much of each frequency is present.
+  - Without the spin you get one number per fade amount, not a spectrum.
+- **Numbers: x = cos(2t)u(t), X(s) = s/(s² + 4).** Fix σ = 0.1 and sweep ω.
+  - ω = 0 (fade only): X = 0.1/4.01 = 0.025.
+  - ω = 2: s² + 4 = (0.1 + j2)² + 4 = 0.01 + 0.4j, so |X| = 2.0025/0.4001 ≈ 5.0, a peak.
+  - ω = 5: |X| = 5.001/21.01 ≈ 0.24.
+  - The spin is what finds the 2 rad/s.
+- **Why bundle them as s = σ + jω:**
+  - e^(−σt)e^(−jωt) = e^(−st), so one formula covers every (σ, ω), e.g. ∫e^(−2t)e^(−st) dt = 1/(s + 2).
+  - The building blocks e^(st) = e^(σt)·e^(jωt) are spirals (growing/decaying oscillations). These are exactly the natural modes of ODEs, and d/dt e^(st) = s·e^(st) is why derivatives become ×s.
+  - A pole at s = −1 ± j2 means the signal contains e^(−t)cos(2t).
+  - With real s only (no spin), oscillations like cos(2t)u(t) (poles at ±j2) couldn't be described.
+- **You already use the spin in Z:**
+  - H(e^(jΩ)) is r = 1, spin only.
+  - Complex poles ρe^(±jΩ₀) give ρⁿcos(Ω₀n).
+- **The fade isn't the goal; it's the price of admission.** The goal is the Fourier machinery (convolution → ×, derivative/delay → ×s/×z⁻¹) for any signal, including growing ones.
+
+**So is X(s) or X(z) a formula you plot as |X| against ω to find the frequencies? Nearly: it's a surface, you take one slice, and the poles already tell you.** (Figure: `figs/laplace_splane_peak.png`.)
+- **Two dials make a surface.** |X(s)| has a height at every point (σ, ω) of the s-plane. For Z, at every (r, Ω).
+- **"|X| against ω" is one slice at a fixed fade.** The standard slice is σ = 0 (the jω-axis), and that slice *is* the CTFT magnitude spectrum or frequency response. For Z the slice is the unit circle r = 1, giving |X(e^(jΩ))| against Ω, the DTFT.
+  - Only slice inside the ROC. If σ = 0 isn't in it (a growing signal), there's no CTFT. The formula still gives numbers there, but they're not the transform.
+- **The poles give the answer without plotting.** At a pole, |X| = ∞, a spike in the surface.
+  - A pole at s = σₚ ± jωₚ means the signal contains e^(σₚt)cos(ωₚt). The imaginary part is the frequency; the real part is the growth or decay rate.
+  - The closer the pole is to the jω-axis, the taller and sharper the peak.
+  - Example: e^(−at)cos(2t)u(t), X = (s+a)/((s+a)² + 4).
+    - a = 0.2: peak 2.51 at ω ≈ 2.01.
+    - a = 1: peak 0.55 at ω ≈ 2.16, broad.
+    - a = 0: the pole is on the axis, the peak is infinite, and you get the δ in the CTFT of cos.
+- **Z twin:** poles at ρe^(±jΩ₀) give a peak near Ω₀, sharper as ρ → 1 (ρⁿcos(Ω₀n)u[n]).
+- **How exams use it:** you don't plot to discover frequencies. You read stability and modes off the poles, then evaluate the slice at the frequency you need. E.g. 25S1 Q4(a)(iv): input cos(πn), so H(e^(jπ)) = H(−1) = (−1 + 0.5)/(−1 − 0.1) = 5/11.
+
+**How to find the poles of a Laplace transform (step by step).**
+- **Recipe:**
+  1. Get X(s) from the table (or the integral).
+  2. Write it as one fraction N(s)/D(s).
+  3. Poles = the s values that make **D(s) = 0** (X blows up there). Zeros = the roots of N(s).
+- **e^(−2t)u(t) ↔ 1/(s+2):** s + 2 = 0, so the pole is at s = −2. Check: s = −1.999 gives 1/0.001 = 1000.
+- **cos(2t)u(t) ↔ s/(s²+4)** (table row with β = 2): s² + 4 = 0, so s² = −4 and s = ±√4·√(−1) = ±j2. Check: (j2)² = 4j² = −4 ✓.
+  - **Why ±j2, via Euler:** cos 2t = ½e^(j2t) + ½e^(−j2t), and e^(at)u(t) ↔ 1/(s − a). That gives ½/(s − j2) + ½/(s + j2).
+  - The common denominator is (s − j2)(s + j2) = s² − (j2)² = s² + 4 (difference of squares), and the numerator is ½(s + j2 + s − j2) = s ✓.
+- **e^(−t)cos(2t)u(t) ↔ (s+1)/((s+1)²+4):**
+  - **Way 1:** (s+1)² = −4, so s + 1 = ±j2 and s = −1 ± j2.
+  - **Way 2:** expand to s² + 2s + 5 = 0. The quadratic formula gives s = (−2 ± √(4 − 20))/2 = (−2 ± √(−16))/2 = (−2 ± 4j)/2 = −1 ± 2j.
+- **What a pole means:** a pole at p means the signal contains e^(pt). With p = σₚ + jωₚ, e^(pt) = e^(σₚt)·e^(jωₚt).
+  - Real signals have conjugate pairs p and p*, which combine into e^(σₚt)cos(ωₚt).
+  - If b² − 4ac < 0 in the quadratic, the poles are a complex pair.
+- **Exam direction (reverse):** given H(s), factor the denominator, find the poles, read off the modes. E.g. 25S1 Q3(c): (s − 1)² is a double pole at 1, giving eᵗ and teᵗ.
+
+**So Laplace/Z are for making the operations easy, and Fourier is for finding frequencies? Yes, as the main jobs, with two corrections.**
+- **Fourier (FT/FS/DTFT):** breaks a signal into pure spins, which is the spectrum. It also turns convolution into × and derivative into ×j2πf.
+- **Laplace/Z:** the same algebra tricks (convolution → ×, derivative → ×s, delay → ×z⁻¹), plus initial conditions (unilateral), poles → stability, causality and modes, and growing signals.
+- **Correction 1: Laplace/Z still contain the frequencies.** The jω-axis slice (or unit circle) *is* the Fourier transform, and a pole's imaginary part is an oscillation frequency. Their building blocks are spirals ("complex frequencies") rather than pure spins.
+- **Correction 2: the FT condition isn't "finite length", it's "doesn't grow".**
+  - Sufficient: ∫|x| dt < ∞. E.g. e^(−t)u(t) lasts forever but has ∫ = 1, so X = 1/(1 + j2πf).
+  - With δ's the FT also covers signals that neither decay nor grow: cos, 1, u(t), sgn.
+  - It fails for growing signals: e^(2t)u(t) has no FT, but Laplace gives 1/(s − 2), σ > 2.
+- **Not a strict ladder:** an eternal cos (two-sided) has an FT but **no** Laplace (no ROC). e^(|t|) has neither.
+- **Exam: which tool?**
+  - "Spectrum / frequency content / bandwidth / PSD / Parseval" → Fourier (FS for periodic, FT otherwise).
+  - "Solve the ODE/LCCDE with ICs, find h or y, transfer function, poles/zeros, stability" → Laplace/Z.
+  - "Frequency response / steady state to a sinusoid" → H(s) at s = jω, or H(z) at z = e^(jΩ).
+
+**What a pole physically means, and what a "complex number in a signal" means (Laplace and Z).**
+- **Each pole is one ingredient of the signal.** Partial fractions split X(s) = Σ Aᵢ/(s − pᵢ), so x(t) = Σ Aᵢe^(pᵢt)u(t). The poles are the shapes and the coefficients Aᵢ are the amounts.
+  - E.g. 1/((s+1)(s+3)). Cover-up gives ½ at s = −1 and −½ at s = −3, so x = ½e^(−t) − ½e^(−3t).
+- **Real pole p = σ:** e^(σt).
+  - σ < 0 decays: −2 → e^(−2) = 0.135 at t = 1; it halves every ln2/2 ≈ 0.35 s.
+  - σ > 0 grows (unstable). σ = 0 is constant (a step).
+  - Physically: an RC discharge, with its pole at −1/RC.
+- **Complex poles come in conjugate pairs, and the pair is real.** e^((σ+jω)t) + e^((σ−jω)t) = e^(σt)(e^(jωt) + e^(−jωt)) = 2e^(σt)cos ωt; the j parts cancel.
+  - A single complex exponential is bookkeeping: two arrows spinning opposite ways, whose sum stays on the real axis.
+  - The physical meaning of σ ± jω: an **oscillation at ω rad/s inside an envelope e^(σt)**. Like a plucked string or a damped spring: it rings at ω and dies at rate |σ|.
+    - σ = 0 rings forever (poles on the jω-axis).
+    - σ > 0 is an oscillation that grows (unstable).
+  - E.g. e^(−t)cos 2t: period 2π/2 ≈ 3.14 s; t = 0 → 1, t = π/2 → −e^(−1.57) = −0.208, t = π → e^(−π) = 0.043.
+  - Complex coefficients ½re^(±jθ) give the amplitude and phase: r·e^(σt)cos(ωt + θ).
+- **System H(s): poles = natural modes,** what the system does by itself after a kick (h = Σ modes). The input's poles give the forced part.
+  - 25S1 Q3(c): Y has a pole at 0 from the step (→ the forced "1") and a double pole at 1 from the system (→ eᵗ, teᵗ).
+- **Z: a pole at p means pⁿ is in the signal.** Write p = ρe^(jΩ₀), so pⁿ = ρⁿe^(jΩ₀n).
+  - ρ is the per-step fade (< 1 decays, > 1 grows, = 1 steady). Ω₀ is the turn per sample, i.e. the frequency in rad/sample.
+  - A conjugate pair gives ρⁿcos(Ω₀n). E.g. 0.8e^(±jπ/4) gives 1, 0.566, 0, …, n = 4 → −0.41, n = 8 → 0.168: period 8 samples.
+  - **A negative real pole** (angle π) alternates sign: (−0.5)ⁿ = 1, −0.5, 0.25, … This is the fastest DT oscillation, with no CT twin.
+  - 25S1 Q4(a): the system pole is 0.1 (→ 6(0.1)ⁿ, which dies fast). The input cos(πn) = (−1)ⁿ acts like a pole at −1 and gives the forced (5/11)(−1)ⁿ.
+- **Link:** z = e^(sT), so ρ = e^(σT) and Ω₀ = ωT.
 
 **Across the five past papers: definition integral/sum, or table/Euler?** (Checked against all five solution files.)
 - **CT Fourier transform: table + properties almost always.**
@@ -676,6 +1086,11 @@ The full version with rendered maths is Steps 14–16 of `Part2_Discrete_Time_Gu
 - Steady state for cos ω₀t: H(jω₀). y' + y = cos t: H(j) = 1/(1+j) = 0.707∠−45°, so y_ss = ½(cos t + sin t).
 - IVT: y(0⁺) = lim_{s→∞} sY. FVT: lim_{s→0} sY, but only if every pole of Y is in Re s < 0 apart from at most one simple pole at 0. Trap: 1/(s(s−1)) gives −1, but y = e^t − 1 → ∞.
 
+**Abbreviations: ODE, LCCDE.**
+- **ODE = ordinary differential equation.** "Differential equation" = an equation linking an unknown function to its derivatives (y″ − 2y′ + y = x). "Ordinary" = one variable only (t). A PDE (partial differential equation) has several, e.g. time and position.
+- **Order** = the highest derivative: y″ → 2nd order → 2 initial conditions, 2 poles. 25S1 Q3(c) says "second-order ordinary differential equation".
+- **LCCDE = linear constant-coefficient differential (CT) or difference (DT) equation.** Q3(c) is one: linear (y, y′, y″ appear only to power 1, never y² or y·y′), and the coefficients 1, −2, 1 don't change with t.
+
 **"Is an LCCDE another kind of system, besides LTI and non-LTI?" No: it's a way of *describing* a system, not a category.** LTI is a *property* (yes/no), like causal or stable. An LCCDE is a *description*, like a formula, an h[n], an H(z) or a circuit.
 - The name says it's built to be LTI: **linear** (no y², no x·y) → L; **constant coefficients** (no n or t in them) → TI. The only thing that can break it is a non-zero starting state: y[−1] = 1 makes input 0 give output (½)ⁿ⁺¹ ≠ 0.
 - **The nesting:** LCCDE at rest ⊂ LTI ⊂ all systems.
@@ -739,7 +1154,7 @@ The full version with rendered maths is Steps 14–16 of `Part2_Discrete_Time_Gu
 |---|---|
 | 1. Model or design in continuous time: ODE → H(s) | Laplace + ODEs (guide Step 16, L6 RLC) |
 | 2. Sample the sensor: x[n] = x(nT), with fₛ > 2 × the highest frequency | sampling, Nyquist, aliasing (Steps 1–2) |
-| 3. Move each pole: z = e^(sT) (left half-plane → inside the unit circle) | the Laplace–Z link (Step 15.6, L5 p.54–57; 24S1/25S2 Q4(a)) |
+| 3. Move each pole: z = e^(sT) (left half-plane → inside the unit circle) | the Laplace–Z link (Step 15.6, L5 slides 54–57 = PDF p.68–71; 24S1/25S2 Q4(a)) |
 | 4. H(z) → difference equation: cross-multiply, z⁻ᵏ → a k-step delay | LCCDE, run backwards (Step 14) |
 | 5. Check: poles inside |z| = 1, H(e^(jΩ)) with Ω = ωT | poles/ROC, frequency response (Steps 10, 12, 14.5) |
 | 6. Run it every sample; the stored y_prev starts at the initial condition | LCCDE as a loop; zero-input = the starting value (14.1, 14.3) |

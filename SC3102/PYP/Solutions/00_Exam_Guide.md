@@ -240,7 +240,7 @@ A stable LTI system maps $A\cos(\omega t+\theta)\mapsto A|H(j\omega)|\cos(\omega
 9. Missing $\delta$ terms when the numerator degree equals the denominator degree ($2\delta(t)$ in 23S2 Q3b; $-5\delta[n]$ in 23S2 Q4c and 25S1 Q4a).
 
 ### Errors in the papers' own hints (don't let them throw you)
-- **23S1 Q2c:** says $\mathrm{sinc}(x)=\frac{\sin x}{x}$; it must be $\frac{\sin\pi x}{\pi x}$ for $\Pi(t/T)\leftrightarrow T\mathrm{sinc}(fT)$ to hold.
+- **23S1 Q2c and 23S2 Q2c:** both say $\mathrm{sinc}(x)=\frac{\sin x}{x}$; it must be $\frac{\sin\pi x}{\pi x}$ for $\Pi(t/T)\leftrightarrow T\mathrm{sinc}(fT)$ to hold.
 - **25S1 Q1b:** $e^{-\alpha|\tau|}\leftrightarrow\frac{2\alpha}{\alpha^2+(2\pi f)^2}$ (the hint drops the $\alpha$), and $\mathrm{sinc}(f_0\tau)\leftrightarrow\frac1{f_0}\Pi(\frac{f}{f_0})$ (the hint writes $\Pi(\frac{f}{2f_0})$). Neither changes the conclusion.
 - **24S1 Q3b:** $h(t)$ is missing $u(t)$. Assume causal and say so.
 - **25S1 Q4a(iv):** "state response" means steady-state response.
