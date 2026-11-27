@@ -1176,3 +1176,39 @@ The full version with rendered maths is Steps 14–16 of `Part2_Discrete_Time_Gu
 - Table with T = 0.01 (fₛ = 100 Hz): s = −10 → 0.9048 (dies); 0 → 1 (constant); +10 → e^(0.1) = 1.105 (grows ×1.105 per sample, so unstable); j2π·50 (50 Hz) → e^(jπ) = −1, which is cos(πn) = (−1)ⁿ at the Nyquist rate.
 - ω and ω + 2π/T land on the same z (e^(j2π) = 1). That's **aliasing**, seen as poles.
 - You **move poles**; you don't substitute. Putting s = ln(z)/T into H(s) gives 10/(100 ln z + 10), which isn't a fraction of polynomials, so you can't run it on an MCU. Then set the gain separately (here H(1) = 1 gives b = 0.0952).
+
+
+## 24S1 walkthrough (2026-11-28)
+
+**Can I keep H(s) = 2/(s+1) + 4/(s+3) and still get ∠H(jω)? (24S1 Q3(b)(ii)).** Yes, but you **can't add the two terms' angles**. The rules "sizes multiply, angles add" and "sizes divide, angles subtract" only work for **products and quotients** (e^(jα)·e^(jβ) = e^(j(α+β))). There is no such rule for a **sum**.
+- Counter-example: 1 has angle 0° and j has angle 90°, but 1 + j has angle 45° (not 90°), and its size is √2 = 1.414 (not 1 + 1 = 2).
+- Right method for a sum: turn each term into **a + jb** (multiply top and bottom by the conjugate), **add the real parts and the imaginary parts**, then take the size and angle of the total once.
+  - 2/(1 + j9.4248) = 2(1 − j9.4248)/89.83 = 0.0223 − 0.2098j (its own angle is −83.94°)
+  - 4/(3 + j9.4248) = 4(3 − j9.4248)/97.83 = 0.1227 − 0.3854j (its own angle is −72.34°)
+  - Sum: 0.1449 − 0.5952j → |H| = 0.6126, ∠H = tan⁻¹(−0.5952/0.1449) = −76.3°, the same as the one-fraction route.
+  - Wrong: −83.94° + (−72.34°) = −156.3°.
+- Which to choose: one combined fraction lets you use the angle rules (3 sizes, 3 angles). The sum route needs 2 conjugate multiplications, then one size and one angle. Both are fine; a calculator's complex mode does either in one line.
+- Quadrant: if the summed real part comes out negative, add 180° to tan⁻¹.
+
+**What does "general frequency behaviour" of a transfer function mean? (24S1 Q4(a)).** It means: which frequencies does the system pass and which does it block, i.e. the rough shape of the gain |H| as you go from the lowest to the highest frequency. The answer is a filter type: **low-pass, high-pass, band-pass or band-stop**. The gain |H| at a frequency is the number a sinusoid's amplitude gets multiplied by (as in 24S1 Q3(b)(ii)).
+- Where the frequencies are: s-plane, on the jω-axis going up from s = 0 (ω = 0) to ω → ∞. z-plane, on the unit circle from z = 1 (Ω = 0, lowest) to z = −1 (Ω = π, the highest discrete frequency).
+- Method 1, plug in the two ends (and one middle point). Here the pair factor simplifies to (s + 0.5)² + 0.25.
+  - s: ω = 0 → |H| = 8; ω = 1 → 1.79; ω = 10 → 0.0102 (dies like 1/ω²). Big at the low end → **low-pass**.
+  - z: Ω = 0 (z = 1) → 0.267; Ω = π/2 (z = j) → 1.79; Ω = π (z = −1) → 12. Big at the high end → **high-pass**.
+- Method 2, geometry: |H| = (product of distances from the frequency point to the zeros) ÷ (product of distances to the poles). A pole near part of the frequency path makes the gain big there; a zero near it makes the gain small.
+  - The poles −0.5, −0.5 ± j0.5 sit next to s = 0 (the low end of the jω-axis) but next to z = −1 (the high end of the unit circle).
+  - Distances from z = −1: 0.5, 0.707, 0.707, zero 3 away → 3/0.25 = 12. From z = 1: 1.5, 1.58, 1.58, zero 1 away → 1/3.75 = 0.267.
+- Quick rules. z-plane: poles near z = 1 → low-pass; poles near z = −1 → high-pass; poles near e^(±jΩ₀) → peak at Ω₀ (band-pass); a zero at z = 1 blocks DC; a zero at z = −1 blocks Ω = π. s-plane: poles near the origin → low-pass; poles near ±jω₀ → peak at ω₀; a zero at s = 0 blocks DC.
+- The same formula gives opposite filters because the frequency path differs (a straight line up from 0 vs a circle from 1 round to −1).
+- **Is the geometric (distance) method in the course? No (checked 2026-11-28).** No slide or tutorial uses distances to poles and zeros. The pole-zero slides (L3 p.55-56, L5 p.57-58) only define poles, zeros and the ROC. The course's way is **Method 1, evaluate H on the frequency contour**: L2 p.103-106 (the two-sample mean, |H(Ω)| = |cos(Ω/2)|: gain 0.95 at 0.2π, 0.31 at 0.8π, 0 at π, so low-pass), plus L5 p.17 (CTFT = H on the jω-axis) and L3 p.15 (DTFT = H on the unit circle). In the exam, write the Method 1 numbers as the answer; one geometry sentence is fine as the reason, since it follows from |ab| = |a||b|.
+- **Band-pass: the geometry tells you where to look, and Method 1 proves it.** H(z) = z²/(z² + 0.81) has poles at ±j0.9 and a double zero at 0. The ends give |H(1)| = 1/1.81 = 0.55 and |H(−1)| = 0.55, which looks flat. But the pole j0.9 sits at angle π/2, so test z = j: j² = −1, H = −1/(−1 + 0.81) = −1/(−0.19), so |H| = 5.26, a peak, i.e. **band-pass** at Ω = π/2. Geometry check: z = j is 0.1 from j0.9 and 1.9 from −j0.9, and the zeros at 0 are always 1 away on the unit circle, so 1/(0.1×1.9) = 5.26. Rule: the peak is at the angle of a pole near the unit circle (z), or at the imaginary part of a pole near the jω-axis (s). Zeros or poles at z = 0 don't change |H| on the unit circle.
+- **"Laplace answers come out top < bottom, but Z answers come out top = bottom. Is that a rule?" (24S1 Q4(b)).** Yes, as a description of what you get. You never adjust the degrees yourself. Why:
+  - The table building blocks differ. Laplace: 1/(s − p) has top degree 0 and bottom degree 1. Z: z/(z − p) has degree 1 on top and 1 on the bottom. A sum of building blocks has the same pattern.
+  - Z meaning: X(z) = x[0] + x[1]z⁻¹ + … → x[0] as z → ∞. Equal degrees ⇔ x[0] ≠ 0 (the normal case). Top lower ⇔ x[0] = 0. Top higher ⇔ not causal. 24S1 4(b): Y = 2z(z+1)/((z−½)(z−1)), so Y(∞) = 2/1 = 2 = y[0] ✓.
+  - Laplace meaning (initial value theorem x(0⁺) = lim s→∞ of sX(s)): a finite start with no impulse needs top < bottom. Equal degrees leave a constant K, which is K·δ(t), an infinite spike. So equal degrees are rare in Laplace but normal in Z, because δ[n] is just an ordinary sample.
+  - Partial fractions always needs top < bottom, so in Z you split Y/z (one degree lower), then multiply back by z to land on z/(z − p). If the Z top is lower (1/(z − ½)), Y/z gives an extra A/z term, which becomes A·δ[n]: −2δ[n] + 2(½)ⁿu[n] = 0, 1, 0.5, …. Methods for the other cases are in the equal-powers entry above.
+- **"What does kn represent in the DFT?" (24S1 Q4(c)).** n = which sample (time) and k = which frequency (how fast that bin's arrow spins). e^(j2πkn/N) is an arrow that turns k steps of 2π/N per sample, so by sample n it has turned **k·n steps**. For N = 4 one step is 90° = ×j, so e^(j2πkn/4) = j^(kn) = the number of quarter-turns. Only kn mod 4 matters (j⁴ = 1): k = 3, n = 3 gives kn = 9 = 2·4 + 1, so j⁹ = j. Inverse matrix rows (n = 0..3): [1 1 1 1], [1 j −1 −j], [1 −1 1 −1], [1 −j −1 j], times 1/4. The forward DFT uses the same table with −j.
+- **"Why does the forward (analysis) DFT use −j when the inverse uses +j?" (24S1 Q4(c)).** Analysis measures how much of arrow k is in x. Multiplying by the opposite spin (−j)^(kn) **cancels arrow k's spin**: j^(kn)·(−j)^(kn) = (j·(−j))^(kn) = 1^(kn) = 1. So every term becomes 1 and they add to N. Every other arrow is left spinning and sums to 0 (round the circle).
+  - Numbers: x = jⁿ = [1, j, −1, −j] (pure arrow k = 1). Times (−j)ⁿ = [1, −j, −1, j] gives [1, 1, 1, 1], sum 4, so X[1] = 4. With +j instead: jⁿ·jⁿ = j²ⁿ = [1, −1, 1, −1], sum 0, which wrongly says arrow 1 is absent. Full DFT = [0, 4, 0, 0]; synthesis gives ¼·4·jⁿ = jⁿ ✓.
+  - The 1/N appears because the cancelled spin leaves N ones. This course puts it in synthesis.
+  - The same pattern holds in every transform: **analysis has e^(−j…)** (CTFS c_k, CTFT, DTFT, DFT, DTFS) and **synthesis has e^(+j…)**. Swapping both signs would only relabel k as −k; the convention is fixed.

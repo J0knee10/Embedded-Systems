@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SC3102 Final Cheat Sheet</title>
+<style>
+  /* Same layout as Part2_Cheat_Sheet.html: A4 landscape, 3 columns of bordered numbered panels per side,
+     bold-italic Cambria panel titles, centred Cambria Math display formulas, highlighter on key results.
+     Sizes below body are in em so the handwritten copy (make_handwritten.py) scales everything.
+     Fractions: <span class="fr"><span class="n">top</span><span class="d">bottom</span></span>. */
+  @page { size: A4 landscape; margin: 6mm; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  body { font-family: Calibri, "Segoe UI", Arial, sans-serif; font-size: 6.0pt; line-height: 1.09; color: #000; }
+  .side { height: 197mm; overflow: hidden; }
+  .side + .side { break-before: page; page-break-before: always; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr 1fr; column-gap: 2mm; align-items: start; }
+  sup, sub { font-size: 75%; line-height: 0; }
+  sup { vertical-align: 0.3em; } sub { vertical-align: -0.22em; }
+  sup sub, sup sup, sub sub { font-size: 100%; }
+
+  .head { display: flex; justify-content: space-between; align-items: baseline;
+          border-bottom: 1.1pt solid #000; padding: 0 0.5mm 0.4mm; margin-bottom: 1.1mm; }
+  .head h1 { font-family: Cambria, Georgia, serif; font-size: 1.4em; margin: 0; }
+  .head span { font-size: 1em; font-style: italic; }
+
+  .panel { border: 0.7pt solid #000; padding: 0.4mm 1mm 0.5mm; margin: 0 0 1.0mm; }
+  .panel.qa { border-color: #2e5f8c; border-width: 0.9pt; }
+  .panel h2 { font-family: Cambria, "Times New Roman", serif; font-style: italic; font-weight: 700;
+              font-size: 1.14em; text-align: center; margin: 0 0 0.3mm; break-after: avoid; }
+  .panel.qa h2 { color: #1f4870; }
+  h3 { font-size: 1em; font-weight: 700; text-decoration: underline; margin: 0.5mm 0 0.15mm; break-after: avoid; }
+
+  p { margin: 0.2mm 0; }
+  ul, ol { margin: 0.15mm 0 0.2mm; padding-left: 2.6mm; }
+  li { margin: 0.1mm 0; }
+  ol li::marker { font-weight: 700; }
+
+  /* display maths: centred, Cambria Math, no frame */
+  .f { font-family: "Cambria Math", Cambria, serif; font-size: 1em; text-align: center; margin: 0.35mm 0; line-height: 1.3; }
+  .f .gap { display: inline-block; width: 3mm; }
+  .f .lab { font-family: Calibri, sans-serif; font-size: 0.88em; font-style: italic; color: #333; margin-right: 0.8mm; }
+
+  /* stacked fraction: numerator over a rule over denominator, centred on the maths axis */
+  .fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center;
+        font-size: 0.9em; line-height: 0.98; margin: 0 0.07em; }
+  .fr > .n, .fr > .d { display: block; padding: 0 0.12em; white-space: nowrap; }
+  .fr > .d { border-top: 0.5pt solid currentColor; padding-top: 0.03em; }
+  .fr .fr { font-size: 0.95em; }
+  .fr sup, .fr sub { line-height: 1; }
+
+  /* highlighter: a thick underline drawn under the glyphs, i.e. a band inside the line that never bleeds onto
+     neighbouring lines (a background would paint the font's whole 1.2em content area); #ffd84d shows as light grey in mono print */
+  mark { color: inherit; padding: 0; background: none;
+         text-decoration-line: underline; text-decoration-color: #ffd84d; text-decoration-thickness: 0.85em;
+         text-underline-offset: -0.72em; text-decoration-skip-ink: none; }
+  mark .fr { background: #ffd84d; }   /* a fraction inside a highlight gets the whole box, not the band */
+  .opt { color: #444; font-style: italic; }
+  .ref { font-size: 0.85em; font-style: italic; color: #555; }
+  b { font-weight: 700; }
+
+  table { border-collapse: collapse; width: 100%; margin: 0.4mm 0; }
+  th, td { padding: 0.08mm 0.5mm; text-align: left; vertical-align: middle; border-bottom: 0.4pt solid #aaa; }
+  th { border-top: 0.8pt solid #000; border-bottom: 0.7pt solid #000; font-weight: 700; }
+  tr:last-child td { border-bottom: 0.8pt solid #000; }
+  td.c, th.c { text-align: center; }
+  td.sep, th.sep { border-left: 0.7pt solid #000; padding-left: 0.8mm; }
+  table.m td { font-family: Cambria, "Cambria Math", serif; }
+  table.m td.t { font-family: Calibri, sans-serif; }
+  .ex { border-left: 1.4pt solid #000; padding: 0.2mm 0 0.2mm 1.1mm; margin: 0.5mm 0; }
+  p.r { margin: 0.3mm 0; padding-left: 1.8mm; text-indent: -1.8mm; }
+  p.r i { color: #333; }
+  .nw { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<!-- ======================= SIDE 1 ======================= -->
+<div class="side">
+<div class="head"><h1>SC3102 Final Cheat Sheet</h1><span>Side 1 · toolkit, signals, systems, convolution, Fourier series and transform (CT)</span></div>
+<div class="cols">
+<div class="col">
+<div class="panel">
+<h2>1. Trig, Complex and Calculus Toolkit</h2>
+<div class="f">e<sup>±jθ</sup> = cos θ ± j sin θ<span class="gap"></span>cos θ = <span class="fr"><span class="n">e<sup>jθ</sup> + e<sup>−jθ</sup></span><span class="d">2</span></span><span class="gap"></span>sin θ = <span class="fr"><span class="n">e<sup>jθ</sup> − e<sup>−jθ</sup></span><span class="d">2j</span></span></div>
+<ul>
+  <li><b>j:</b> j = e<sup>jπ/2</sup>, −1 = e<sup>jπ</sup>, −j = e<sup>−jπ/2</sup>, j² = −1; <mark><b><span class="fr"><span class="n">1</span><span class="d">j</span></span> = −j</b></mark> (j·(−j) = 1) → <span class="fr"><span class="n">5</span><span class="d">2j</span></span> = −2.5j = 2.5∠−90°; je<sup>jθ</sup> = e<sup>j(θ+π/2)</sup>; −e<sup>jθ</sup> = e<sup>j(θ±π)</sup>; e<sup>j2πk</sup> = 1; e<sup>jπn</sup> = (−1)<sup>n</sup>; j<sup>kn</sup>: kn mod 4.</li>
+  <li><b>Polar:</b> |a+jb| = √(a²+b²); |z|² = zz*; |<span class="fr"><span class="n">p</span><span class="d">q</span></span>| = <span class="fr"><span class="n">|p|</span><span class="d">|q|</span></span>, ∠<span class="fr"><span class="n">p</span><span class="d">q</span></span> = ∠p − ∠q. <mark><b>∠(a+jb) = tan<sup>−1</sup><span class="fr"><span class="n">b</span><span class="d">a</span></span> only if a &gt; 0</b></mark>; a &lt; 0: ±180° (∠(−0.5+2j) = 104°; ∠(−0.65−0.35j) = −152°). ce<sup>jφ</sup> + c*e<sup>−jφ</sup> = 2|c|cos(φ + ∠c); 1 + e<sup>−jθ</sup> = 2cos<span class="fr"><span class="n">θ</span><span class="d">2</span></span>e<sup>−jθ/2</sup>.</li>
+</ul>
+<table>
+  <colgroup><col style="width:19%"><col></colgroup>
+  <tr><td><b>Basic</b></td><td>sin² + cos² = 1; cos(−θ) = cos θ; sin(−θ) = −sin θ</td></tr>
+  <tr><td><b>Sum</b></td><td>cos(A±B) = cosA cosB ∓ sinA sinB; sin(A±B) = sinA cosB ± cosA sinB</td></tr>
+  <tr><td><b>Double</b></td><td>sin 2A = 2 sinA cosA; cos 2A = cos²A − sin²A = 2cos²A − 1 = 1 − 2sin²A</td></tr>
+  <tr><td><b>Powers</b></td><td><mark>cos²A = <span class="fr"><span class="n">1 + cos 2A</span><span class="d">2</span></span>; sin²A = <span class="fr"><span class="n">1 − cos 2A</span><span class="d">2</span></span></mark></td></tr>
+  <tr><td><b>Product→sum</b></td><td>cosA cosB = ½[cos(A−B) + cos(A+B)]; sinA sinB = ½[cos(A−B) − cos(A+B)]<br>sinA cosB = ½[sin(A+B) + sin(A−B)]; cosA sinB = ½[sin(A+B) − sin(A−B)]</td></tr>
+  <tr><td><b>Phase</b></td><td><mark>sin θ = cos(θ − <span class="fr"><span class="n">π</span><span class="d">2</span></span>)</mark>; cos θ = sin(θ + <span class="fr"><span class="n">π</span><span class="d">2</span></span>); −cos θ = cos(θ ± π); −sin θ = cos(θ + <span class="fr"><span class="n">π</span><span class="d">2</span></span>)</td></tr>
+  <tr><td><b>A cos + B sin</b></td><td><mark>A cos θ + B sin θ = R cos(θ − φ)</mark>, R = √(A² + B²), φ = ∠(A + jB): ½cos θ + sin θ = 1.118cos(θ − 63.4°)</td></tr>
+</table>
+<ul>
+  <li><b>Geometric:</b> Σ<sub>n≥0</sub>q<sup>n</sup> = <span class="fr"><span class="n">1</span><span class="d">1 − q</span></span> (|q| &lt; 1); Σ<sub>a</sub><sup>b</sup>q<sup>n</sup> = <span class="fr"><span class="n">q<sup>a</sup> − q<sup>b+1</sup></span><span class="d">1 − q</span></span>; Σ<sub>0</sub><sup>N−1</sup>q<sup>n</sup> = <span class="fr"><span class="n">1 − q<sup>N</sup></span><span class="d">1 − q</span></span> (any q ≠ 1); Σ<sub>n=0</sub><sup>N−1</sup>e<sup>j2πkn/N</sup> = N if k ≡ 0 (mod N), else 0.</li>
+  <li><b>Integrals:</b> ∫e<sup>at</sup>dt = <span class="fr"><span class="n">e<sup>at</sup></span><span class="d">a</span></span>; ∫te<sup>at</sup>dt = e<sup>at</sup>(<span class="fr"><span class="n">t</span><span class="d">a</span></span> − <span class="fr"><span class="n">1</span><span class="d">a²</span></span>); ∫<sub>0</sub><sup>∞</sup>t<sup>n</sup>e<sup>−at</sup>dt = <span class="fr"><span class="n">n!</span><span class="d">a<sup>n+1</sup></span></span>; <mark>∫<sub>0</sub><sup>∞</sup>e<sup>−at</sup>cos bt dt = <span class="fr"><span class="n">a</span><span class="d">a² + b²</span></span>, ∫<sub>0</sub><sup>∞</sup>e<sup>−at</sup>sin bt dt = <span class="fr"><span class="n">b</span><span class="d">a² + b²</span></span></mark> (a &gt; 0); ∫<span class="fr"><span class="n">dx</span><span class="d">a² + x²</span></span> = <span class="fr"><span class="n">1</span><span class="d">a</span></span>tan<sup>−1</sup><span class="fr"><span class="n">x</span><span class="d">a</span></span> (all x: <span class="fr"><span class="n">π</span><span class="d">a</span></span>); ∫e<sup>−a|t|</sup>dt = <span class="fr"><span class="n">2</span><span class="d">a</span></span>; ∫u dv = uv − ∫v du; mean of cos², sin² = ½; ramp 0→a over L: ∫x² = <span class="fr"><span class="n">a²L</span><span class="d">3</span></span>.</li>
+  <li><b>sinc x = <span class="fr"><span class="n">sin πx</span><span class="d">πx</span></span></b>: sinc 0 = 1, zeros at ±1, ±2, …; ∫sinc = ∫sinc² = 1; <span class="fr"><span class="n">sin at</span><span class="d">πt</span></span> = <span class="fr"><span class="n">a</span><span class="d">π</span></span>sinc<span class="fr"><span class="n">at</span><span class="d">π</span></span>. <span class="ref">23S1/23S2 hints print <span class="fr"><span class="n">sin x</span><span class="d">x</span></span>: wrong.</span></li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>2. Signals: Energy, Power, Periodicity, Singularity Key</h2>
+<div class="f">E = ∫|x(t)|²dt<span class="gap"></span>P = lim<sub>T→∞</sub> <span class="fr"><span class="n">1</span><span class="d">T</span></span>∫<sub>−T/2</sub><sup>T/2</sup>|x|²dt<span class="gap"></span>periodic: P = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>∫<sub>T<sub>0</sub></sub>|x|²dt</div>
+<ul>
+  <li>DT: E = Σ|x[n]|²; P = lim <span class="fr"><span class="n">1</span><span class="d">2N + 1</span></span>Σ<sub>−N</sub><sup>N</sup>|x|²; periodic <span class="fr"><span class="n">1</span><span class="d">N<sub>0</sub></span></span>Σ over one period.</li>
+  <li><b>Energy</b> 0 &lt; E &lt; ∞ (P = 0): bounded, finite duration, decaying. <b>Power</b> 0 &lt; P &lt; ∞ (E = ∞): periodic, u(t). <b>Neither:</b> t, e<sup>t</sup>u (P = ∞); t<sup>−¼</sup>u(t−1) (E = ∞, P = 0).</li>
+  <li><b>P:</b> A cos(ω<sub>0</sub>t + θ) → <mark><span class="fr"><span class="n">A²</span><span class="d">2</span></span></mark>; DC c → c²; Ae<sup>jω<sub>0</sub>t</sup> → |A|²; different frequencies add. <mark>c·u(t) → <span class="fr"><span class="n">c²</span><span class="d">2</span></span></mark> (u: ½; 3u(t−4): <span class="fr"><span class="n">9</span><span class="d">2</span></span>).</li>
+  <li><b>CT periodic:</b> x(t+T) = x(t) ∀t; T<sub>0</sub> = <span class="fr"><span class="n">2π</span><span class="d">|ω<sub>0</sub>|</span></span>. Sum: <span class="fr"><span class="n">T<sub>1</sub></span><span class="d">T<sub>2</sub></span></span> = <span class="fr"><span class="n">k</span><span class="d">m</span></span> rational ⇒ T<sub>0</sub> = mT<sub>1</sub> = kT<sub>2</sub>, f<sub>0</sub> = gcd f<sub>i</sub> (gcd(50,120,150) = 10 Hz); irrational ⇒ not periodic. x(at): <span class="fr"><span class="n">T<sub>0</sub></span><span class="d">|a|</span></span>. <mark>Not periodic: e<sup>at</sup>, e<sup>−at</sup>cos(·)u(t), anything × u(t).</mark></li>
+  <li><b>DT periodic:</b> <mark><span class="fr"><span class="n">Ω<sub>0</sub></span><span class="d">2π</span></span> = <span class="fr"><span class="n">m</span><span class="d">N</span></span> in lowest terms ⇒ N<sub>0</sub> = N</mark> (cos<span class="fr"><span class="n">3πn</span><span class="d">10</span></span>: <span class="fr"><span class="n">3</span><span class="d">20</span></span> → 20); sum: LCM; cos n: not periodic.</li>
+  <li><b>Σ<sub>n</sub>g(t − nT):</b> x(t+T) = Σg(t − (n−1)T), m = n − 1 ⇒ x(t); smallest T: unique peak. x(at + b): shift by −b, then scale by <span class="fr"><span class="n">1</span><span class="d">|a|</span></span>.</li>
+</ul>
+<h3>Singularity key</h3>
+<ul>
+  <li>AΠ(<span class="fr"><span class="n">t − a</span><span class="d">b</span></span>): centre a, width b, height A. AΛ(<span class="fr"><span class="n">t − a</span><span class="d">b</span></span>): centre a, half-width b, peak A. A·r(t − b): slope A from t = b. A·u(t − b): jump A at t = b. Aδ(t − a): at a, area A.</li>
+  <li>Jump J at t<sub>0</sub> → J·u(t − t<sub>0</sub>); slope change Δm → Δm·r(t − t<sub>0</sub>). <mark>r(t)u(t − c) = r(t − c) + c·u(t − c)</mark>.</li>
+  <li>∫x(t)δ(t − t<sub>0</sub>)dt = x(t<sub>0</sub>); xδ(t − t<sub>0</sub>) = x(t<sub>0</sub>)δ(t − t<sub>0</sub>); x ∗ δ(t − t<sub>0</sub>) = x(t − t<sub>0</sub>). <mark>δ(at) = <span class="fr"><span class="n">δ(t)</span><span class="d">|a|</span></span></mark>: ∫x(t)δ(at − b)dt = <span class="fr"><span class="n">1</span><span class="d">|a|</span></span>x(<span class="fr"><span class="n">b</span><span class="d">a</span></span>); ∫e<sup>−2t</sup>cos(5πt)u(t)δ(2t − 2)dt = −½e<sup>−2</sup>.</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>3. CTFT: Definition and Derivations</h2>
+<div class="f">X(f) = ∫<sub>−∞</sub><sup>∞</sup>x(t)e<sup>−j2πft</sup>dt<span class="gap"></span>x(t) = ∫<sub>−∞</sub><sup>∞</sup>X(f)e<sup>j2πft</sup>df<br><span class="lab">ω = 2πf</span>X(ω) = ∫x e<sup>−jωt</sup>dt<span class="gap"></span>x(t) = <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫X(ω)e<sup>jωt</sup>dω</div>
+<ul>
+  <li>∫|x| &lt; ∞ (δ's: periodic, 1, u, cos). <mark>X(0) = ∫x dt</mark>; x(0) = ∫X df; real x: |X| even, ∠X odd.</li>
+  <li><b>Gate:</b> ∫<sub>−T/2</sub><sup>T/2</sup>e<sup>−j2πft</sup>dt = <span class="fr"><span class="n">e<sup>−jπfT</sup> − e<sup>jπfT</sup></span><span class="d">−j2πf</span></span> = <span class="fr"><span class="n">sin πfT</span><span class="d">πf</span></span> = <b>T sinc fT</b>.</li>
+  <li><b>One-sided:</b> ∫<sub>0</sub><sup>∞</sup>e<sup>−at</sup>e<sup>−j2πft</sup>dt = [<span class="fr"><span class="n">e<sup>−(a+j2πf)t</sup></span><span class="d">−(a + j2πf)</span></span>]<sub>0</sub><sup>∞</sup> = <b><span class="fr"><span class="n">1</span><span class="d">a + j2πf</span></span></b> (a &gt; 0). e<sup>−a|t|</sup>: <span class="fr"><span class="n">1</span><span class="d">a + j2πf</span></span> + <span class="fr"><span class="n">1</span><span class="d">a − j2πf</span></span> = <span class="fr"><span class="n">2a</span><span class="d">a² + (2πf)²</span></span>.</li>
+  <li>|<span class="fr"><span class="n">1</span><span class="d">a + j2πf</span></span>| = <span class="fr"><span class="n">1</span><span class="d">√(a² + (2πf)²)</span></span>, ∠ = −tan<sup>−1</sup><span class="fr"><span class="n">2πf</span><span class="d">a</span></span>. Partial fractions on an FT: p = j2πf.</li>
+</ul>
+</div>
+
+</div>
+<div class="col">
+<div class="panel">
+<h2>4. System Properties: Tests</h2>
+<table>
+  <colgroup><col style="width:15%"><col style="width:33%"><col style="width:30%"><col></colgroup>
+  <tr><th>Property</th><th>Definition / test</th><th>Fails (killers)</th><th>Does not break it</th></tr>
+  <tr><td><b>Memoryless</b></td><td>y(t) uses x at the same t only</td><td>x(t−1), ∫x, y[n−1]</td><td>2sin x, x², |x|</td></tr>
+  <tr><td><b>Linear</b></td><td>a<sub>1</sub>x<sub>1</sub> + a<sub>2</sub>x<sub>2</sub> ↦ a<sub>1</sub>y<sub>1</sub> + a<sub>2</sub>y<sub>2</sub>; zero in ⇒ zero out</td><td>+K, x², sin x, |x|, x(t)x(t−1)</td><td>(t−1)x(t), g(t)x, x(2t), x(t+2)</td></tr>
+  <tr><td><b>Time-inv.</b></td><td>y<sub>d</sub> = T{x(t−t<sub>0</sub>)} vs y(t−t<sub>0</sub>)</td><td>t, g(t), cos 2t times x; x(2t); x(−t)</td><td>sin x, +K, x(t−2)</td></tr>
+  <tr><td><b>Causal</b></td><td>y(t<sub>0</sub>) uses x(t ≤ t<sub>0</sub>) only</td><td>x(t+2); x(2t) (t &gt; 0); x(−t)</td><td>x(t−1), n·x[n]</td></tr>
+  <tr><td><b>BIBO stable</b></td><td>|x| ≤ M ⇒ |y| ≤ C</td><td>∫x, t·x, <span class="fr"><span class="n">1</span><span class="d">x</span></span></td><td>sin x, bounded gains</td></tr>
+  <tr><td><b>Invertible</b></td><td>distinct x ⇒ distinct y</td><td>x², |x|, cos x</td><td>2x + 1, x(t−1)</td></tr>
+</table>
+<ul>
+  <li><b>LTI:</b> h = T{δ}; causal ⇔ h(t) = 0 for t &lt; 0; <mark>stable ⇔ ∫|h|dt &lt; ∞ (Σ|h[n]| &lt; ∞)</mark>; memoryless ⇔ h = Kδ; cascade h<sub>1</sub> ∗ h<sub>2</sub>, parallel h<sub>1</sub> + h<sub>2</sub>. ΣC<sub>k</sub>x(t − t<sub>k</sub>): LTI, causal ⇔ all t<sub>k</sub> ≥ 0.</li>
+  <li>x = 1 → non-constant y ⇒ time-variant; x vs 2x ⇒ nonlinear. x + 3cos(2t)x(t−2) + 5: not L, not TI; 2sin x: TI, not L; g(t)x + K: L iff K = 0. Write-up: definition → apply → conclude + numbers.</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>5. Convolution</h2>
+<div class="f">y(t) = ∫x(τ)h(t−τ)dτ = ∫h(τ)x(t−τ)dτ<span class="gap"></span>y[n] = Σ<sub>k</sub>x[k]h[n−k]</div>
+<ul>
+  <li>Starts at (start x + start h), ends at (end x + end h); DT length L<sub>x</sub> + L<sub>h</sub> − 1; <mark>area(y) = area(x)·area(h)</mark>; Σy = ΣxΣh.</li>
+  <li><b>δ's:</b> δ(t − t<sub>k</sub>) → copy x(t − t<sub>k</sub>); overlaps add. <b>Algebraic:</b> u(τ)u(t−τ) → ∫<sub>0</sub><sup>t</sup>, × u(t). <b>Graphical:</b> h on [a, b] → h(t−τ) on [t − b, t − a]; overlap [max lower, min upper]; 5 cases: none / entering / inside / leaving / none.</li>
+  <li><b>DT:</b> flip and slide, or product grid + anti-diagonal sums: [1,2,3,2,1] ∗ [1,−1,1] = [1,1,2,1,2,1,1].</li>
+  <li>y<sub>u</sub> = ∫<sub>−∞</sub><sup>t</sup>h; <mark>h = <span class="fr"><span class="n">dy<sub>u</sub></span><span class="d">dt</span></span></mark> (zero-state); h[n] = s[n] − s[n−1]; x = Σc<sub>k</sub>u(t − t<sub>k</sub>) ⇒ y = Σc<sub>k</sub>y<sub>u</sub>(t − t<sub>k</sub>).</li>
+</ul>
+<table>
+  <colgroup><col style="width:44%"><col></colgroup>
+  <tr><th>Standard results (all × u)</th><th>Result</th></tr>
+  <tr><td>u ∗ u; &nbsp;u ∗ r; &nbsp;x ∗ u</td><td>r(t) = tu(t); &nbsp;½t²u(t); &nbsp;∫<sub>−∞</sub><sup>t</sup>x(τ)dτ</td></tr>
+  <tr><td>e<sup>−at</sup>u ∗ u</td><td><span class="fr"><span class="n">1 − e<sup>−at</sup></span><span class="d">a</span></span>u(t)</td></tr>
+  <tr><td>e<sup>−at</sup>u ∗ e<sup>−bt</sup>u (a ≠ b); a = b</td><td><mark><span class="fr"><span class="n">e<sup>−at</sup> − e<sup>−bt</sup></span><span class="d">b − a</span></span>u(t)</mark>; te<sup>−at</sup>u(t)</td></tr>
+  <tr><td>Π(<span class="fr"><span class="n">t</span><span class="d">T</span></span>) ∗ Π(<span class="fr"><span class="n">t</span><span class="d">T</span></span>); r ∗ [u(t−2) − u(t−4)]</td><td>TΛ(<span class="fr"><span class="n">t</span><span class="d">T</span></span>); ½(t−2)²u(t−2) − ½(t−4)²u(t−4)</td></tr>
+  <tr><td>DT: u ∗ u; a<sup>n</sup>u ∗ u; a<sup>n</sup>u ∗ b<sup>n</sup>u</td><td>(n+1)u[n]; <span class="fr"><span class="n">1 − a<sup>n+1</sup></span><span class="d">1 − a</span></span>; <span class="fr"><span class="n">a<sup>n+1</sup> − b<sup>n+1</sup></span><span class="d">a − b</span></span></td></tr>
+</table>
+<p>Commutative, associative, distributive; correlation R<sub>x</sub>(τ) = x(τ) ∗ x(−τ) (no flip).</p>
+</div>
+
+<div class="panel">
+<h2>6. Fourier Series (CTFS) and Line Spectra</h2>
+<div class="f"><span class="lab">synthesis</span>x(t) = Σ<sub>n=−∞</sub><sup>∞</sup>c<sub>n</sub>e<sup>j2πnf<sub>0</sub>t</sup><span class="gap"></span><span class="lab">analysis</span>c<sub>n</sub> = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>∫<sub>T<sub>0</sub></sub>x(t)e<sup>−j2πnf<sub>0</sub>t</sup>dt<span class="gap"></span>f<sub>0</sub> = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>, ω<sub>0</sub> = 2πf<sub>0</sub></div>
+<div class="f"><span class="lab">trig</span>x = a<sub>0</sub> + Σ<sub>n≥1</sub>(a<sub>n</sub>cos nω<sub>0</sub>t + b<sub>n</sub>sin nω<sub>0</sub>t), a<sub>0</sub> = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>∫x, a<sub>n</sub> = <span class="fr"><span class="n">2</span><span class="d">T<sub>0</sub></span></span>∫x cos nω<sub>0</sub>t, b<sub>n</sub> = <span class="fr"><span class="n">2</span><span class="d">T<sub>0</sub></span></span>∫x sin nω<sub>0</sub>t</div>
+<ul>
+  <li>c<sub>0</sub> = a<sub>0</sub> (DC); c<sub>n</sub> = <span class="fr"><span class="n">a<sub>n</sub> − jb<sub>n</sub></span><span class="d">2</span></span>, c<sub>−n</sub> = c<sub>n</sub>* (real x). <mark>x = c<sub>0</sub> + Σ<sub>n≥1</sub>2|c<sub>n</sub>|cos(2πnf<sub>0</sub>t + ∠c<sub>n</sub>)</mark>. Even x → c<sub>n</sub> real; odd → imaginary.</li>
+  <li><b>Parseval:</b> P = Σ|c<sub>n</sub>|² = c<sub>0</sub>² + Σ<sub>n≥1</sub>2|c<sub>n</sub>|². c<sub>n</sub> = <span class="fr"><span class="n">P(nf<sub>0</sub>)</span><span class="d">T<sub>0</sub></span></span> (P = FT of one period; n = 0 separately). Periodic x ↔ Σc<sub>n</sub>δ(f − nf<sub>0</sub>). LTI: c<sub>n</sub>H(nf<sub>0</sub>).</li>
+  <li>Pulse train (width τ, height A): c<sub>n</sub> = <span class="fr"><span class="n">Aτ</span><span class="d">T<sub>0</sub></span></span>sinc<span class="fr"><span class="n">nτ</span><span class="d">T<sub>0</sub></span></span>; impulse train Σδ(t − mT<sub>0</sub>): c<sub>n</sub> = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>; square ±A (odd): <span class="fr"><span class="n">4A</span><span class="d">π</span></span>[sin ω<sub>0</sub>t + ⅓sin 3ω<sub>0</sub>t + …].</li>
+</ul>
+<h3>Spectra recipe (double-sided amplitude / phase / power)</h3>
+<ol>
+  <li>Products, powers → sums (§1); cos²(120πt) → 0 and 120 Hz. <mark>Phase is measured against a cosine:</mark> sin θ = cos(θ − 90°) (sin 6πt: ∓90° at ±3 Hz); minus → ±180°; ×j → +90°.</li>
+  <li>A cos(2πft + φ), A &gt; 0 → <mark><span class="fr"><span class="n">A</span><span class="d">2</span></span>∠+φ at +f, <span class="fr"><span class="n">A</span><span class="d">2</span></span>∠−φ at −f</mark>; DC c at 0; Ae<sup>j(2πft+φ)</sup>: ONE line at +f (8je<sup>j10πt</sup>: 8∠90° at 5 Hz).</li>
+  <li>Power <span class="fr"><span class="n">A²</span><span class="d">4</span></span> per line; single-sided: A at +f; f<sub>0</sub> = gcd; f<sub>s</sub> &gt; 2f<sub>max</sub>.</li>
+</ol>
+</div>
+
+<div class="panel">
+<h2>7. Correlation, ESD, PSD</h2>
+<ul>
+  <li>R<sub>xy</sub>(τ) = ∫x(t)y(t−τ)dt. Energy: R<sub>x</sub> = ∫x(t)x(t−τ)dt, R(0) = E. Periodic: R = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>∫<sub>T<sub>0</sub></sub>x(t)x(t−τ)dt, R(0) = P. <mark>R<sub>x</sub>(τ) = x(τ) ∗ x(−τ) ↔ |X(f)|²</mark>.</li>
+  <li><b>4 properties of a valid autocorrelation:</b> <b>(1) even</b> R(−τ) = R(τ) (complex: R*(τ)); <b>(2) peak at origin</b> |R(τ)| ≤ R(0) = power or energy; <b>(3) Wiener–Khinchin</b> <mark>S(f) = F{R(τ)} ≥ 0 ∀f — the decisive test</mark>; <b>(4) periodic part</b> of x → periodic part of R, same period.</li>
+  <li><b>Shapes:</b> cos → ½[δ(f − f<sub>0</sub>) + δ(f + f<sub>0</sub>)] ✓; e<sup>−α|τ|</sup> → <span class="fr"><span class="n">2α</span><span class="d">α² + (2πf)²</span></span> ✓; sinc f<sub>0</sub>τ → <span class="fr"><span class="n">1</span><span class="d">f<sub>0</sub></span></span>Π(<span class="fr"><span class="n">f</span><span class="d">f<sub>0</sub></span></span>) ✓; Λ → sinc² ✓; constant ✓; <b>Π → sinc &lt; 0 ✗</b>; sin: odd ✗; non-negative sums ✓.</li>
+  <li><b>ESD</b> |X(f)|², E = ∫|X|²df. <b>PSD</b> S = F{R}, <mark>P = ∫S df = R(0)</mark>; band power (real x) 2∫<sub>f<sub>1</sub></sub><sup>f<sub>2</sub></sup>S df; S ≥ 0. Periodic: S = Σ|c<sub>n</sub>|²δ(f − nf<sub>0</sub>) (A cos → <span class="fr"><span class="n">A²</span><span class="d">4</span></span> at ±f<sub>0</sub>). <b>S<sub>y</sub> = |H(f)|²S<sub>x</sub></b>. White noise <span class="fr"><span class="n">N<sub>0</sub></span><span class="d">2</span></span> ↔ R = <span class="fr"><span class="n">N<sub>0</sub></span><span class="d">2</span></span>δ(τ).</li>
+  <li>a + b cos(2πf<sub>0</sub>t + θ) → R = a² + <span class="fr"><span class="n">b²</span><span class="d">2</span></span>cos 2πf<sub>0</sub>τ; e<sup>−at</sup>u → R = <span class="fr"><span class="n">e<sup>−a|τ|</sup></span><span class="d">2a</span></span>.</li>
+</ul>
+</div>
+
+</div>
+<div class="col">
+<div class="panel">
+<h2>8. All Transforms at a Glance</h2>
+<table class="m">
+  <colgroup><col style="width:10%"><col style="width:42%"><col></colgroup>
+  <tr><th></th><th>Analysis</th><th>Synthesis</th></tr>
+  <tr><td class="t"><b>CTFS</b></td><td>c<sub>n</sub> = <span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>∫<sub>T<sub>0</sub></sub>x e<sup>−j2πnf<sub>0</sub>t</sup>dt</td><td>x = Σ<sub>n</sub>c<sub>n</sub>e<sup>j2πnf<sub>0</sub>t</sup> (periodic x)</td></tr>
+  <tr><td class="t"><b>CTFT</b></td><td>X(f) = ∫x e<sup>−j2πft</sup>dt</td><td>x = ∫X e<sup>j2πft</sup>df = <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫X(ω)e<sup>jωt</sup>dω</td></tr>
+  <tr><td class="t"><b>Laplace</b></td><td>X(s) = ∫<sub>−∞</sub><sup>∞</sup>x e<sup>−st</sup>dt; X<sub>+</sub> = ∫<sub>0<sup>−</sup></sub><sup>∞</sup>x e<sup>−st</sup>dt</td><td>x = <span class="fr"><span class="n">1</span><span class="d">2πj</span></span>∫<sub>σ−j∞</sub><sup>σ+j∞</sup>X e<sup>st</sup>ds, σ in ROC (use partial fractions)</td></tr>
+  <tr><td class="t"><b>DFT</b></td><td>X[k] = Σ<sub>n=0</sub><sup>N−1</sup>x[n]e<sup>−j2πkn/N</sup></td><td>x[n] = <span class="fr"><span class="n">1</span><span class="d">N</span></span>Σ<sub>k=0</sub><sup>N−1</sup>X[k]e<sup>j2πkn/N</sup></td></tr>
+  <tr><td class="t"><b>DTFS</b></td><td colspan="2">same as DFT (N = period, valid ∀n); other books a<sub>k</sub> = <span class="fr"><span class="n">X[k]</span><span class="d">N</span></span> (23S1: c = <span class="fr"><span class="n">1</span><span class="d">N</span></span>Wx)</td></tr>
+  <tr><td class="t"><b>DTFT</b></td><td>X(Ω) = Σ<sub>n</sub>x[n]e<sup>−jΩn</sup> (2π-periodic)</td><td>x[n] = <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫<sub>2π</sub>X(Ω)e<sup>jΩn</sup>dΩ</td></tr>
+  <tr><td class="t"><b>Z</b></td><td>X(z) = Σ<sub>n</sub>x[n]z<sup>−n</sup>; X<sub>+</sub> = Σ<sub>n=0</sub><sup>∞</sup>x[n]z<sup>−n</sup></td><td>x[n] = <span class="fr"><span class="n">1</span><span class="d">2πj</span></span>∮X z<sup>n−1</sup>dz = <span class="fr"><span class="n">r<sup>n</sup></span><span class="d">2π</span></span>∫<sub>2π</sub>X(re<sup>jΩ</sup>)e<sup>jΩn</sup>dΩ</td></tr>
+</table>
+<ul>
+  <li>Laplace = CTFT of x e<sup>−σt</sup>; <mark>CTFT = X(s)|<sub>s=j2πf</sub> iff jω-axis ⊂ ROC</mark> (pole on it → δ's). Z = DTFT of x r<sup>−n</sup>; DTFT = X(z)|<sub>z=e<sup>jΩ</sup></sub> iff |z| = 1 ⊂ ROC. FS ⊂ FT; DFT = DTFT at Ω = <span class="fr"><span class="n">2πk</span><span class="d">N</span></span>; z = e<sup>sT</sup>.</li>
+  <li>FS | FT | Laplace | Z | DTFT: derivative ×j2πnf<sub>0</sub> | ×j2πf | ×s (−x(0<sup>−</sup>)); delay ×e<sup>−j2πnf<sub>0</sub>t<sub>0</sub></sup> | ×e<sup>−j2πft<sub>0</sub></sup> | ×e<sup>−st<sub>0</sub></sup> | ×z<sup>−n<sub>0</sub></sup> | ×e<sup>−jΩn<sub>0</sub></sup>; LTI c<sub>n</sub>H(nf<sub>0</sub>) | Y = HX; Parseval P = Σ|c<sub>n</sub>|² | E = ∫|X|²df.</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>9. CTFT Pairs (f in Hz; ω: f = <span class="fr"><span class="n">ω</span><span class="d">2π</span></span>, δ(f) → 2πδ(ω))</h2>
+<table class="m">
+  <colgroup><col style="width:21%"><col style="width:29%"><col style="width:20%"><col></colgroup>
+  <tr><th>x(t)</th><th>X(f)</th><th class="sep">x(t)</th><th>X(f)</th></tr>
+  <tr><td>δ(t)</td><td>1</td><td class="sep">δ(t − t<sub>0</sub>)</td><td>e<sup>−j2πft<sub>0</sub></sup></td></tr>
+  <tr><td>1</td><td>δ(f)</td><td class="sep">e<sup>j2πf<sub>0</sub>t</sup></td><td>δ(f − f<sub>0</sub>)</td></tr>
+  <tr><td>cos 2πf<sub>0</sub>t</td><td>½[δ(f − f<sub>0</sub>) + δ(f + f<sub>0</sub>)]</td><td class="sep">sin 2πf<sub>0</sub>t</td><td><span class="fr"><span class="n">1</span><span class="d">2j</span></span>[δ(f − f<sub>0</sub>) − δ(f + f<sub>0</sub>)]</td></tr>
+  <tr><td>u(t) <span class="ref">(not s = jω)</span></td><td>½δ(f) + <span class="fr"><span class="n">1</span><span class="d">j2πf</span></span></td><td class="sep">sgn t; <span class="fr"><span class="n">1</span><span class="d">πt</span></span></td><td><span class="fr"><span class="n">1</span><span class="d">jπf</span></span>; −j sgn f</td></tr>
+  <tr><td>e<sup>−at</sup>u(t), a &gt; 0</td><td><span class="fr"><span class="n">1</span><span class="d">a + j2πf</span></span></td><td class="sep">e<sup>at</sup>u(−t), a &gt; 0</td><td><span class="fr"><span class="n">1</span><span class="d">a − j2πf</span></span></td></tr>
+  <tr><td>t<sup>n</sup>e<sup>−at</sup>u(t)</td><td><span class="fr"><span class="n">n!</span><span class="d">(a + j2πf)<sup>n+1</sup></span></span></td><td class="sep">e<sup>−a|t|</sup> <span class="ref">(25S1 hint: no a on top, wrong)</span></td><td><span class="fr"><span class="n">2a</span><span class="d">a² + (2πf)²</span></span></td></tr>
+  <tr><td>e<sup>−at</sup>cos(2πf<sub>0</sub>t)u</td><td><span class="fr"><span class="n">a + j2πf</span><span class="d">(a + j2πf)² + (2πf<sub>0</sub>)²</span></span></td><td class="sep">e<sup>−at</sup>sin(2πf<sub>0</sub>t)u</td><td><span class="fr"><span class="n">2πf<sub>0</sub></span><span class="d">(a + j2πf)² + (2πf<sub>0</sub>)²</span></span></td></tr>
+  <tr><td>Π(<span class="fr"><span class="n">t</span><span class="d">T</span></span>) (1 on |t| &lt; <span class="fr"><span class="n">T</span><span class="d">2</span></span>)</td><td><mark>T sinc fT</mark></td><td class="sep">Λ(<span class="fr"><span class="n">t</span><span class="d">T</span></span>) (base 2T)</td><td>T sinc² fT</td></tr>
+  <tr><td>sinc Wt <span class="ref">(25S1 hint Π(<span class="fr"><span class="n">f</span><span class="d">2f<sub>0</sub></span></span>) wrong)</span></td><td><span class="fr"><span class="n">1</span><span class="d">W</span></span>Π(<span class="fr"><span class="n">f</span><span class="d">W</span></span>)</td><td class="sep"><span class="fr"><span class="n">sin 2πBt</span><span class="d">πt</span></span> = 2B sinc 2Bt</td><td>Π(<span class="fr"><span class="n">f</span><span class="d">2B</span></span>) (1 for |f| &lt; B)</td></tr>
+  <tr><td>e<sup>−πt²</sup></td><td>e<sup>−πf²</sup></td><td class="sep"><span class="fr"><span class="n">sin Wt</span><span class="d">πt</span></span></td><td>1 for |ω| &lt; W</td></tr>
+  <tr><td>AΠ(<span class="fr"><span class="n">t</span><span class="d">T</span></span>)cos 2πf<sub>c</sub>t</td><td colspan="3"><span class="fr"><span class="n">AT</span><span class="d">2</span></span>[sinc T(f − f<sub>c</sub>) + sinc T(f + f<sub>c</sub>)]; nulls f<sub>c</sub> ± <span class="fr"><span class="n">k</span><span class="d">T</span></span>, main lobe <span class="fr"><span class="n">2</span><span class="d">T</span></span></td></tr>
+  <tr><td>Π(<span class="fr"><span class="n">t</span><span class="d">4</span></span>)(1 + cos πt)</td><td colspan="3">4sinc 4f + 2sinc(4f − 2) + 2sinc(4f + 2)</td></tr>
+  <tr><td>Σ<sub>m</sub>δ(t − mT<sub>0</sub>)</td><td><span class="fr"><span class="n">1</span><span class="d">T<sub>0</sub></span></span>Σ<sub>n</sub>δ(f − <span class="fr"><span class="n">n</span><span class="d">T<sub>0</sub></span></span>)</td><td class="sep">periodic x</td><td>Σc<sub>n</sub>δ(f − nf<sub>0</sub>)</td></tr>
+</table>
+</div>
+
+<div class="panel">
+<h2>10. CTFT Properties <span class="ref">(papers that tested them)</span></h2>
+<table class="m">
+  <colgroup><col style="width:19%"><col style="width:26%"><col></colgroup>
+  <tr><th>Property</th><th>x(t)</th><th>X(f)</th></tr>
+  <tr><td class="t">Linearity</td><td>ax + by</td><td>aX + bY</td></tr>
+  <tr><td class="t">Time shift</td><td>x(t − t<sub>0</sub>)</td><td><mark>e<sup>−j2πft<sub>0</sub></sup>X(f)</mark> <span class="ref">25S1 2c, 24S2 2c</span></td></tr>
+  <tr><td class="t">Freq. shift</td><td>e<sup>j2πf<sub>0</sub>t</sup>x(t)</td><td>X(f − f<sub>0</sub>) <span class="ref">23S2 2c</span></td></tr>
+  <tr><td class="t">Modulation</td><td>x(t)cos 2πf<sub>c</sub>t</td><td>½[X(f − f<sub>c</sub>) + X(f + f<sub>c</sub>)] <span class="ref">23S2 2c, 23S1 1b</span></td></tr>
+  <tr><td class="t">Scaling</td><td>x(at)</td><td><span class="fr"><span class="n">1</span><span class="d">|a|</span></span>X(<span class="fr"><span class="n">f</span><span class="d">a</span></span>)</td></tr>
+  <tr><td class="t">Reversal; conj.</td><td>x(−t); x*(t)</td><td>X(−f); X*(−f). Real x: X(−f) = X*(f)</td></tr>
+  <tr><td class="t">Duality</td><td>X(t)</td><td>x(−f) <span class="ref">24S1 2b</span></td></tr>
+  <tr><td class="t">Derivative; × t</td><td><span class="fr"><span class="n">d<sup>n</sup>x</span><span class="d">dt<sup>n</sup></span></span>; tx(t)</td><td>(j2πf)<sup>n</sup>X(f); <span class="fr"><span class="n">j</span><span class="d">2π</span></span><span class="fr"><span class="n">dX</span><span class="d">df</span></span></td></tr>
+  <tr><td class="t">Integration</td><td>∫<sub>−∞</sub><sup>t</sup>x(τ)dτ</td><td><span class="fr"><span class="n">X(f)</span><span class="d">j2πf</span></span> + ½X(0)δ(f)</td></tr>
+  <tr><td class="t">Convolution</td><td>x ∗ h</td><td><mark>X·H</mark> <span class="ref">24S1 2b, 25S2 2b, 25S1 2c</span></td></tr>
+  <tr><td class="t">Product</td><td>x·h</td><td>X ∗ H; X ∗ δ(f − f<sub>0</sub>) = X(f − f<sub>0</sub>) <span class="ref">23S1 2c</span></td></tr>
+  <tr><td class="t">Parseval</td><td>∫|x|²dt</td><td>∫|X(f)|²df = <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫|X(ω)|²dω <span class="ref">23S1 1b</span></td></tr>
+</table>
+<ul>
+  <li>x(t − t<sub>0</sub>) + x(t + t<sub>0</sub>) ↔ 2cos(2πft<sub>0</sub>)X(f); advance → e<sup>+j2πft<sub>0</sub></sup>. <b>Not delays:</b> cos(3t + <span class="fr"><span class="n">π</span><span class="d">4</span></span>)u(t), e<sup>j(t+3)</sup>u(t) (u not shifted): expand.</li>
+  <li><b>Convolution theorem:</b> X, H → Y = XH → F<sup>−1</sup> (no case integrals; eigenfunctions; cascades multiply; FFT). Box × box: ∫<span class="fr"><span class="n">sin 2τ</span><span class="d">τ</span></span>·<span class="fr"><span class="n">sin(t − τ)</span><span class="d">t − τ</span></span>dτ = <span class="fr"><span class="n">π sin t</span><span class="d">t</span></span>.</li>
+</ul>
+</div>
+
+</div>
+</div>
+</div>
+
+<!-- ======================= SIDE 2 ======================= -->
+<div class="side">
+<div class="head"><h1>SC3102 Final Cheat Sheet</h1><span>Side 2 · sampling, Laplace and ODEs, partial fractions, DFT / DTFS / DTFT, Z-transform and LCCDEs</span></div>
+<div class="cols">
+<div class="col">
+<div class="panel">
+<h2>11. Sampling and CT Frequency Response</h2>
+<ul>
+  <li>x<sub>s</sub> = xΣδ(t − nT<sub>s</sub>) ↔ f<sub>s</sub>ΣX(f − nf<sub>s</sub>). <mark>f<sub>s</sub> &gt; 2f<sub>max</sub></mark> (strict for a sine at f<sub>max</sub>; slides ≥); T<sub>s</sub> = <span class="fr"><span class="n">1</span><span class="d">f<sub>s</sub></span></span>; f and f + kf<sub>s</sub> alias (150 Hz at 250 → 100 Hz); Ω = ωT<sub>s</sub> = <span class="fr"><span class="n">2πf</span><span class="d">f<sub>s</sub></span></span>.</li>
+  <li><b>Stable LTI:</b> <mark>A cos(ω<sub>0</sub>t + θ) → A|H(jω<sub>0</sub>)|cos(ω<sub>0</sub>t + θ + ∠H(jω<sub>0</sub>))</mark>; DC c → cH(0); per term; H(jω) = H(s)|<sub>s=jω</sub>, ω in rad/s. 23S1 2b: H = <span class="fr"><span class="n">1</span><span class="d">3 + jω</span></span>: cos 4t → 0.2cos(4t − 53.1°), sin 8t → 0.117sin(8t − 69.4°).</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>12. Laplace Pairs (σ = Re s)</h2>
+<table class="m">
+  <colgroup><col style="width:19%"><col style="width:14%"><col style="width:13%"><col style="width:20%"><col style="width:16%"><col></colgroup>
+  <tr><th>x(t)</th><th>X(s)</th><th>ROC</th><th class="sep">x(t)</th><th>X(s)</th><th>ROC</th></tr>
+  <tr><td>δ(t)</td><td>1</td><td class="t">all s</td><td class="sep">δ(t − t<sub>0</sub>)</td><td>e<sup>−st<sub>0</sub></sup></td><td class="t">all s</td></tr>
+  <tr><td>u(t)</td><td><span class="fr"><span class="n">1</span><span class="d">s</span></span></td><td>σ &gt; 0</td><td class="sep">−u(−t)</td><td><span class="fr"><span class="n">1</span><span class="d">s</span></span></td><td>σ &lt; 0</td></tr>
+  <tr><td>u(t − t<sub>0</sub>)</td><td><span class="fr"><span class="n">e<sup>−st<sub>0</sub></sup></span><span class="d">s</span></span></td><td>σ &gt; 0</td><td class="sep">u(t) − u(t − T)</td><td><span class="fr"><span class="n">1 − e<sup>−sT</sup></span><span class="d">s</span></span></td><td class="t">all s</td></tr>
+  <tr><td>tu(t)</td><td><span class="fr"><span class="n">1</span><span class="d">s²</span></span></td><td>σ &gt; 0</td><td class="sep">t<sup>n</sup>u(t)</td><td><span class="fr"><span class="n">n!</span><span class="d">s<sup>n+1</sup></span></span></td><td>σ &gt; 0</td></tr>
+  <tr><td>e<sup>at</sup>u(t)</td><td><span class="fr"><span class="n">1</span><span class="d">s − a</span></span></td><td>σ &gt; Re a</td><td class="sep">−e<sup>at</sup>u(−t)</td><td><span class="fr"><span class="n">1</span><span class="d">s − a</span></span></td><td>σ &lt; Re a</td></tr>
+  <tr><td>te<sup>at</sup>u(t)</td><td><span class="fr"><span class="n">1</span><span class="d">(s − a)²</span></span></td><td>σ &gt; Re a</td><td class="sep">−te<sup>at</sup>u(−t)</td><td><span class="fr"><span class="n">1</span><span class="d">(s − a)²</span></span></td><td>σ &lt; Re a</td></tr>
+  <tr><td><span class="fr"><span class="n">t<sup>m−1</sup>e<sup>at</sup></span><span class="d">(m − 1)!</span></span>u(t)</td><td><span class="fr"><span class="n">1</span><span class="d">(s − a)<sup>m</sup></span></span></td><td>σ &gt; Re a</td><td class="sep">e<sup>−a|t|</sup>, a &gt; 0</td><td><span class="fr"><span class="n">2a</span><span class="d">a² − s²</span></span></td><td>|σ| &lt; a</td></tr>
+  <tr><td>cos βt·u(t)</td><td><span class="fr"><span class="n">s</span><span class="d">s² + β²</span></span></td><td>σ &gt; 0</td><td class="sep">sin βt·u(t)</td><td><span class="fr"><span class="n">β</span><span class="d">s² + β²</span></span></td><td>σ &gt; 0</td></tr>
+  <tr><td>e<sup>αt</sup>cos βt·u(t)</td><td><span class="fr"><span class="n">s − α</span><span class="d">(s − α)² + β²</span></span></td><td>σ &gt; α</td><td class="sep">e<sup>αt</sup>sin βt·u(t)</td><td><span class="fr"><span class="n">β</span><span class="d">(s − α)² + β²</span></span></td><td>σ &gt; α</td></tr>
+  <tr><td>re<sup>αt</sup>cos(βt + θ)u</td><td colspan="4"><span class="fr"><span class="n">r[(s − α)cos θ − β sin θ]</span><span class="d">(s − α)² + β²</span></span></td><td>σ &gt; α</td></tr>
+</table>
+<p>a may be complex (e<sup>jt</sup>u ↔ <span class="fr"><span class="n">1</span><span class="d">s − j</span></span>). <b>Not shifts:</b> e<sup>j(t+3)</sup>u = e<sup>j3</sup>e<sup>jt</sup>u ↔ <span class="fr"><span class="n">e<sup>j3</sup></span><span class="d">s − j</span></span> <span class="ref">25S1 3b</span>; 2cos(3t + <span class="fr"><span class="n">π</span><span class="d">4</span></span>)u = √2(cos 3t − sin 3t)u ↔ <span class="fr"><span class="n">√2(s − 3)</span><span class="d">s² + 9</span></span> <span class="ref">24S1 3c</span>.</p>
+</div>
+
+<div class="panel">
+<h2>13. Laplace Properties</h2>
+<table class="m">
+  <colgroup><col style="width:20%"><col></colgroup>
+  <tr><td class="t">Linearity</td><td>ax + by ↔ aX + bY, ROC ⊇ R<sub>x</sub> ∩ R<sub>y</sub> (empty → no transform)</td></tr>
+  <tr><td class="t">Time shift</td><td>x(t − t<sub>0</sub>) ↔ e<sup>−st<sub>0</sub></sup>X(s) (u shifted too)</td></tr>
+  <tr><td class="t">s-shift</td><td>e<sup>at</sup>x(t) ↔ X(s − a) <span class="ref">25S1 3a</span></td></tr>
+  <tr><td class="t">Scaling; × t</td><td>x(at) ↔ <span class="fr"><span class="n">1</span><span class="d">|a|</span></span>X(<span class="fr"><span class="n">s</span><span class="d">a</span></span>); tx(t) ↔ −<span class="fr"><span class="n">dX</span><span class="d">ds</span></span></td></tr>
+  <tr><td class="t">Derivative</td><td>bilateral x′ ↔ sX. <mark>Unilateral: x′ ↔ sX<sub>+</sub> − x(0<sup>−</sup>); x″ ↔ s²X<sub>+</sub> − sx(0<sup>−</sup>) − x′(0<sup>−</sup>)</mark> <span class="ref">23S1 3a, 25S1 3c, 25S2 4b</span></td></tr>
+  <tr><td class="t">Integration</td><td>∫<sub>0<sup>−</sup></sub><sup>t</sup>x(τ)dτ ↔ <span class="fr"><span class="n">X(s)</span><span class="d">s</span></span></td></tr>
+  <tr><td class="t">Convolution</td><td>x ∗ h ↔ X·H, ROC ⊇ overlap</td></tr>
+  <tr><td class="t">IVT</td><td>x(0<sup>+</sup>) = lim<sub>s→∞</sub> sX(s) (X strictly proper) <span class="ref">23S1 3b</span></td></tr>
+  <tr><td class="t">FVT</td><td><mark>x(∞) = lim<sub>s→0</sub> sX(s) only if all poles of X are in σ &lt; 0, except at most one simple pole at 0</mark>. Fails: e<sup>t</sup>u, cos t·u, tu, <span class="fr"><span class="n">1</span><span class="d">s(s − 1)</span></span> <span class="ref">25S2 4b, 24S2 4b</span></td></tr>
+</table>
+</div>
+
+<div class="panel">
+<h2>14. ODEs with Laplace; H(s)</h2>
+<ol>
+  <li><b>Transform</b> (unilateral rules with the ICs; u → <span class="fr"><span class="n">1</span><span class="d">s</span></span>, δ → 1, e<sup>−at</sup>u → <span class="fr"><span class="n">1</span><span class="d">s + a</span></span>).</li>
+  <li><b>Collect:</b> A(s)Y = B(s)X + C(s); a<sub>2</sub>y″ + a<sub>1</sub>y′ + a<sub>0</sub>y: C = a<sub>2</sub>y(0)s + a<sub>2</sub>y′(0) + a<sub>1</sub>y(0). <mark>Y = <span class="fr"><span class="n">B</span><span class="d">A</span></span>X (zero-state) + <span class="fr"><span class="n">C</span><span class="d">A</span></span> (zero-input)</mark>.</li>
+  <li><b>Partial fractions</b> (§15) → right-sided pairs (t ≥ 0). <b>Check</b> y(0), y′(0); FVT.</li>
+</ol>
+<ul>
+  <li><b>H = <span class="fr"><span class="n">Y</span><span class="d">X</span></span></b> (zero ICs): x-side → zeros, y-side → poles; causal ⇒ ROC right of rightmost pole; h = <span class="fr"><span class="n">d</span><span class="d">dt</span></span>(zero-state step response); step response L<sup>−1</sup>{<span class="fr"><span class="n">H</span><span class="d">s</span></span>}; δ in ⇒ h(0<sup>+</sup>) = <span class="fr"><span class="n">1</span><span class="d">a<sub>1</sub></span></span> (1st order), y′(0<sup>+</sup>) = <span class="fr"><span class="n">1</span><span class="d">a<sub>2</sub></span></span> (2nd).</li>
+  <li>Zero-input + zero-state; natural (H poles) + forced (X poles); transient + steady (stable + persistent input: transient = natural). Pole at 0 (3y′ = x): its constant is the steady state.</li>
+  <li>Modes: p → e<sup>pt</sup>; σ ± jω → e<sup>σt</sup>cos(ωt + θ); double → te<sup>pt</sup>. <mark>Causal + stable ⇔ all Re p &lt; 0</mark> (H proper); unstable → no steady state. RHP zero → wrong-way start; zero at 0 cancels a step.</li>
+  <li>RLC: v<sub>R</sub> = Ri, v<sub>L</sub> = L<span class="fr"><span class="n">di</span><span class="d">dt</span></span>, i<sub>C</sub> = C<span class="fr"><span class="n">dv</span><span class="d">dt</span></span> (R, sL, <span class="fr"><span class="n">1</span><span class="d">sC</span></span>); series, y = v<sub>C</sub>: LCy″ + RCy′ + y = x.</li>
+</ul>
+</div>
+
+<div class="panel qa">
+<h2>R. Question-type Recipes <span class="ref">(past papers)</span></h2>
+<p class="r"><b>Spectra</b> <i>23S1 1b, 24S1 1a, 25S2 1b</i>: §6 → f | |c| | ∠c → Parseval. <b>Energy/power</b> <i>all</i>: sketch → ∫|x|². <b>Periodic</b> <i>23S1 1a, 25S1 1a, 24S2 1b</i>: definition, smallest T. <b>Autocorr.</b> <i>23S2 1c, 25S1 1b</i>: §7. <b>L/TI/causal</b> <i>23S1 1c, 23S2 2a, 24S1 2a, 25S2 2a, 24S2 2a</i>: §4. <b>Convolution</b> <i>23S1 2a, 23S2 2b, 25S2 2b, 24S2 2b</i>: §5. <b>FT by properties</b> <i>23S1 2c, 23S2 2c, 25S1 2c, 24S2 2c</i>: §9 + §10, X(0) check.</p>
+<p class="r"><b>Laplace ODE / H(s)</b> <i>every Q3, 25S2 4b, 24S2 4b</i>: §14 → P-Z, ROC, stable → L<sup>−1</sup>{<span class="fr"><span class="n">H</span><span class="d">s</span></span>} → steady state → FVT check. <b>LCCDE</b> <i>every Q4</i>: §18 → h → Y = HX → recursion check. <b>4-pt IDFT</b> <i>23S2 4b, 24S1 4c, 25S1 4b, 25S2 3a, 24S2 3a</i>: §16. <b>Discuss</b> <i>23S2 3c/4a, 24S1 2b/3a/4a, 25S2 3b/4a, 24S2 4c</i>: §21, §10, §16 + sketch.</p>
+</div>
+
+</div>
+<div class="col">
+<div class="panel">
+<h2>15. Partial Fractions</h2>
+<ul>
+  <li><b>Divide first</b> if deg top ≥ deg bottom (or K = ratio of leading coefficients + cover-up on the original). <mark>Laplace: K ↔ Kδ(t)</mark>: <span class="fr"><span class="n">2s</span><span class="d">s + 1.5</span></span> = 2 − <span class="fr"><span class="n">3</span><span class="d">s + 1.5</span></span> → 2δ(t) − 3e<sup>−1.5t</sup>u.</li>
+  <li><b>Z: expand <span class="fr"><span class="n">X(z)</span><span class="d">z</span></span></b> → terms c<span class="fr"><span class="n">z</span><span class="d">z − p</span></span> ↔ cp<sup>n</sup>; <span class="fr"><span class="n">c</span><span class="d">z</span></span> → cδ[n]: <span class="fr"><span class="n">H</span><span class="d">z</span></span> = <span class="fr"><span class="n">z + 0.5</span><span class="d">z(z − 0.1)</span></span> = −<span class="fr"><span class="n">5</span><span class="d">z</span></span> + <span class="fr"><span class="n">6</span><span class="d">z − 0.1</span></span> → <b>−5δ[n] + 6(0.1)<sup>n</sup>u[n]</b>.</li>
+  <li><b>Distinct (cover-up):</b> <mark>A<sub>i</sub> = [(s − p<sub>i</sub>)F(s)]<sub>s=p<sub>i</sub></sub></mark>; monic first: <span class="fr"><span class="n">1</span><span class="d">2s + 1</span></span> = ½·<span class="fr"><span class="n">1</span><span class="d">s + ½</span></span>.</li>
+  <li><b>Repeated (s − p)<sup>m</sup>:</b> <span class="fr"><span class="n">A<sub>1</sub></span><span class="d">s − p</span></span> + … + <span class="fr"><span class="n">A<sub>m</sub></span><span class="d">(s − p)<sup>m</sup></span></span>; A<sub>m</sub> by cover-up; A<sub>m−k</sub> = <span class="fr"><span class="n">1</span><span class="d">k!</span></span><span class="fr"><span class="n">d<sup>k</sup></span><span class="d">ds<sup>k</sup></span></span>[(s − p)<sup>m</sup>F]<sub>s=p</sub>, or plug in s = 0 / match top power: <span class="fr"><span class="n">1</span><span class="d">s(s − 1)²</span></span> = <span class="fr"><span class="n">1</span><span class="d">s</span></span> − <span class="fr"><span class="n">1</span><span class="d">s − 1</span></span> + <span class="fr"><span class="n">1</span><span class="d">(s − 1)²</span></span>.</li>
+  <li><b>Quadratic</b> <span class="fr"><span class="n">Qs + R</span><span class="d">s² + cs + d</span></span>: <mark>complete the square</mark> (s + α)² + β², α = <span class="fr"><span class="n">c</span><span class="d">2</span></span>, β² = d − α²; Qs + R = Q(s + α) + (R − Qα) → Qe<sup>−αt</sup>cos βt + <span class="fr"><span class="n">R − Qα</span><span class="d">β</span></span>e<sup>−αt</sup>sin βt. <span class="ref">T04 Q3c</span>: <span class="fr"><span class="n">5</span><span class="d">(s + 3)(s² + 2s + 2)</span></span> = <span class="fr"><span class="n">1</span><span class="d">s + 3</span></span> − <span class="fr"><span class="n">s + 1</span><span class="d">(s + 1)² + 1</span></span> + <span class="fr"><span class="n">2</span><span class="d">(s + 1)² + 1</span></span> → <b>e<sup>−3t</sup> − e<sup>−t</sup>cos t + 2e<sup>−t</sup>sin t</b>.</li>
+  <li><b>Z quadratic</b> <span class="fr"><span class="n">Cz + D</span><span class="d">z² − 2ρz cos Ω<sub>0</sub> + ρ²</span></span> in <span class="fr"><span class="n">X</span><span class="d">z</span></span>: ρ² = constant, cos Ω<sub>0</sub> = −<span class="fr"><span class="n">middle</span><span class="d">2ρ</span></span> → <mark>x = ρ<sup>n</sup>[C cos Ω<sub>0</sub>n + K sin Ω<sub>0</sub>n]u[n], K = <span class="fr"><span class="n">D + Cρ cos Ω<sub>0</sub></span><span class="d">ρ sin Ω<sub>0</sub></span></span></mark>. Only z² → w = z². <span class="fr"><span class="n">z</span><span class="d">(z − p)²</span></span> ↔ np<sup>n−1</sup>u[n].</li>
+  <li><b>Check:</b> test value (s = 1, z = 2) in both forms; y(0<sup>+</sup>) = lim sY.</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>16. DFT and DTFS</h2>
+<ul>
+  <li>Bin k ↔ Ω<sub>k</sub> = <span class="fr"><span class="n">2πk</span><span class="d">N</span></span> ↔ <mark>f<sub>k</sub> = <span class="fr"><span class="n">kf<sub>s</sub></span><span class="d">N</span></span></mark> (k &gt; <span class="fr"><span class="n">N</span><span class="d">2</span></span>: negative); resolution <span class="fr"><span class="n">f<sub>s</sub></span><span class="d">N</span></span>; n = 0…N−1; W<sub>kn</sub> = e<sup>−j2πkn/N</sup> = 1∠(−<span class="fr"><span class="n">360°·kn</span><span class="d">N</span></span>) (N = 5: −72°kn), row N − k = (row k)*.</li>
+</ul>
+<div class="f"><span class="lab">N = 4: X[k] = Σx[n](−j)<sup>kn</sup>, rows k = 0…3</span>[1, 1, 1, 1] · [1, −j, −1, j] · [1, −1, 1, −1] · [1, j, −1, −j]<br><span class="lab">synthesis</span>x[n] = ¼ΣX[k]j<sup>kn</sup>: same rows with j ↔ −j, then ÷4</div>
+<ul>
+  <li><b>Real x:</b> <mark>X[N−k] = X[k]*</mark>. <mark>N = 4: x[n] = ¼[X<sub>0</sub> + X<sub>2</sub>(−1)<sup>n</sup> + 2Re{X<sub>1</sub>j<sup>n</sup>}]</mark>; even N: x[n] = <span class="fr"><span class="n">1</span><span class="d">N</span></span>[X<sub>0</sub> + X<sub>N/2</sub>(−1)<sup>n</sup> + 2Σ<sub>k=1</sub><sup>N/2−1</sup>|X<sub>k</sub>|cos(<span class="fr"><span class="n">2πkn</span><span class="d">N</span></span> + ∠X<sub>k</sub>)]. 24S1: [12, 8+4j, 0, 8−4j] → [7, 1, −1, 5].</li>
+  <li>X[0] = Σx; x[0] = <span class="fr"><span class="n">1</span><span class="d">N</span></span>ΣX; X<sub>N/2</sub> = Σ(−1)<sup>n</sup>x. Circular shift x[(n−m)<sub>N</sub>] ↔ e<sup>−j2πkm/N</sup>X; e<sup>j2πmn/N</sup>x ↔ X[(k−m)<sub>N</sub>]; x[(−n)<sub>N</sub>] ↔ X[(−k)<sub>N</sub>]; x* ↔ X*[(−k)<sub>N</sub>]; x ⊛ h ↔ XH; xh ↔ <span class="fr"><span class="n">1</span><span class="d">N</span></span>X ⊛ H; <b>Σ|x|² = <span class="fr"><span class="n">1</span><span class="d">N</span></span>Σ|X|²</b>. <mark>P periods: X<sub>NP</sub>[Pk] = P·X<sub>N</sub>[k], others 0</mark> (zero-pad N → 2N: even bins X<sub>N</sub>[k], odd ≠ 0).</li>
+  <li><b>DTFS by inspection:</b> X[k] = N × weight of e<sup>j2πkn/N</sup>, −k → N − k: cos<span class="fr"><span class="n">2πmn</span><span class="d">N</span></span> → X[m] = X[N−m] = <span class="fr"><span class="n">N</span><span class="d">2</span></span>; sin → ∓<span class="fr"><span class="n">jN</span><span class="d">2</span></span>; C → X[0] = NC.</li>
+  <li><b>Circular:</b> Σ<sub>m</sub>x[m]h[(n−m)<sub>N</sub>] = L[n] + L[n + N]; <mark>= linear iff N ≥ L<sub>x</sub> + L<sub>h</sub> − 1</mark>: pad both → DFT → × → IDFT (147 → 256); [1,2,3] ⊛<sub>3</sub> [1,1] = [4,3,5].</li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>17. DTFT Pairs and Properties (Ω rad/sample)</h2>
+<table class="m">
+  <colgroup><col style="width:21%"><col style="width:29%"><col style="width:20%"><col></colgroup>
+  <tr><td>δ[n]</td><td>1</td><td class="sep">δ[n − k]</td><td>e<sup>−jΩk</sup></td></tr>
+  <tr><td colspan="2">a<sup>n</sup>u[n] (|a| &lt; 1); −a<sup>n</sup>u[−n−1] (|a| &gt; 1) ↔ <span class="fr"><span class="n">1</span><span class="d">1 − ae<sup>−jΩ</sup></span></span></td><td class="sep">a<sup>|n|</sup> (|a| &lt; 1)</td><td><span class="fr"><span class="n">1 − a²</span><span class="d">1 − 2a cos Ω + a²</span></span></td></tr>
+  <tr><td>na<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">ae<sup>−jΩ</sup></span><span class="d">(1 − ae<sup>−jΩ</sup>)²</span></span></td><td class="sep">(n+1)a<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">1</span><span class="d">(1 − ae<sup>−jΩ</sup>)²</span></span></td></tr>
+  <tr><td>1 for |n| ≤ N<sub>1</sub></td><td><span class="fr"><span class="n">sin Ω(N<sub>1</sub> + ½)</span><span class="d">sin <span class="fr"><span class="n">Ω</span><span class="d">2</span></span></span></span></td><td class="sep"><span class="fr"><span class="n">sin Wn</span><span class="d">πn</span></span>, W &lt; π</td><td>1 for |Ω| &lt; W</td></tr>
+  <tr><td>1</td><td>2πΣ<sub>k</sub>δ(Ω − 2πk)</td><td class="sep">e<sup>jΩ<sub>0</sub>n</sup></td><td>2πΣ<sub>k</sub>δ(Ω − Ω<sub>0</sub> − 2πk)</td></tr>
+  <tr><td>cos Ω<sub>0</sub>n</td><td colspan="3">πΣ<sub>k</sub>[δ(Ω − Ω<sub>0</sub> − 2πk) + δ(Ω + Ω<sub>0</sub> − 2πk)]; sin Ω<sub>0</sub>n: <span class="fr"><span class="n">π</span><span class="d">j</span></span>Σ<sub>k</sub>[δ(Ω − Ω<sub>0</sub> − 2πk) − δ(Ω + Ω<sub>0</sub> − 2πk)]</td></tr>
+  <tr><td>periodic, DTFS X[k]</td><td colspan="3"><span class="fr"><span class="n">2π</span><span class="d">N</span></span>Σ<sub>k</sub>X[k]δ(Ω − <span class="fr"><span class="n">2πk</span><span class="d">N</span></span>); u[n], 2<sup>n</sup>u: no (ordinary) DTFT</td></tr>
+</table>
+<p>x[n−n<sub>0</sub>] ↔ e<sup>−jΩn<sub>0</sub></sup>X; e<sup>jΩ<sub>0</sub>n</sup>x ↔ X(Ω − Ω<sub>0</sub>); x[−n] ↔ X(−Ω); x* ↔ X*(−Ω); x ∗ h ↔ XH; xh ↔ <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫<sub>2π</sub>X(θ)H(Ω−θ)dθ; nx ↔ j<span class="fr"><span class="n">dX</span><span class="d">dΩ</span></span>; x[n] − x[n−1] ↔ (1 − e<sup>−jΩ</sup>)X; Σ|x|² = <span class="fr"><span class="n">1</span><span class="d">2π</span></span>∫<sub>2π</sub>|X|²dΩ; X(0) = Σx.</p>
+</div>
+
+<div class="panel">
+<h2>18. Difference Equations (LCCDE) and H(z)</h2>
+<ul>
+  <li><b>H(z)</b> (zero ICs): y[n−k] → z<sup>−k</sup>Y, x[n−k] → z<sup>−k</sup>X; <mark>H = <span class="fr"><span class="n">b<sub>0</sub> + b<sub>1</sub>z<sup>−1</sup> + …</span><span class="d">1 + a<sub>1</sub>z<sup>−1</sup> + …</span></span></mark> (y-terms moved left flip sign); × z<sup>N</sup> → poles (y-side), zeros (x-side): y = x + 0.5x[n−1] + 0.1y[n−1] → <span class="fr"><span class="n">z + 0.5</span><span class="d">z − 0.1</span></span>; <span class="fr"><span class="n">z + 2</span><span class="d">z − 0.8</span></span> → y = x + 2x[n−1] + 0.8y[n−1] (Direct Form I); x[n+1] → not causal. h: ÷z (§15), check by recursion: 1, 0.6, 0.06.</li>
+  <li><b>Y = HX</b> → partial fractions on <span class="fr"><span class="n">Y</span><span class="d">z</span></span>; <mark>H poles → transient, X poles → steady state</mark> (stable, persistent input); X = A<span class="fr"><span class="n">z</span><span class="d">z − p</span></span> gives coefficient A·H(p): 25S1 y = <span class="fr"><span class="n">6</span><span class="d">11</span></span>(0.1)<sup>n</sup> + <span class="fr"><span class="n">5</span><span class="d">11</span></span>(−1)<sup>n</sup>. 3u[n−2]: solve 3u[n], then n → n − 2. Step: y[∞] = H(1).</li>
+  <li><b>ICs:</b> A(z<sup>−1</sup>)Y<sub>+</sub> = BX<sub>+</sub> + IC terms → zero-input = <span class="fr"><span class="n">IC terms</span><span class="d">A</span></span>, zero-state = HX<sub>+</sub>; y − ½y[n−1] = u, y[−1] = 1 → y = 2 − (½)<sup>n+1</sup>. No transient ⇔ y[−1], y[−2] = y<sub>ss</sub> values.</li>
+  <li><b>Steady state:</b> <mark>A cos(Ω<sub>0</sub>n + θ) → A|H(e<sup>jΩ<sub>0</sub></sup>)|cos(Ω<sub>0</sub>n + θ + ∠H)</mark>; DC: H(1); (−1)<sup>n</sup>: H(−1).</li>
+  <li><b>FIR</b> (no y[n−k]): h = coefficients, poles at 0, stable; <b>IIR</b>: stable iff all |p| &lt; 1.</li>
+</ul>
+</div>
+
+</div>
+<div class="col">
+<div class="panel">
+<h2>19. Z-transform Pairs (full table)</h2>
+<table class="m">
+  <colgroup><col style="width:17%"><col style="width:17%"><col style="width:12%"><col style="width:19%"><col style="width:17%"><col></colgroup>
+  <tr><th>x[n]</th><th>X(z)</th><th>ROC</th><th class="sep">x[n]</th><th>X(z)</th><th>ROC</th></tr>
+  <tr><td>δ[n]</td><td>1</td><td class="t">all z</td><td class="sep">δ[n − k]</td><td>z<sup>−k</sup></td><td class="t">all z exc. 0 or ∞</td></tr>
+  <tr><td>u[n]</td><td><span class="fr"><span class="n">z</span><span class="d">z − 1</span></span></td><td>|z| &gt; 1</td><td class="sep">−u[−n−1]</td><td><span class="fr"><span class="n">z</span><span class="d">z − 1</span></span></td><td>|z| &lt; 1</td></tr>
+  <tr><td>γ<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">z</span><span class="d">z − γ</span></span> = <span class="fr"><span class="n">1</span><span class="d">1 − γz<sup>−1</sup></span></span></td><td>|z| &gt; |γ|</td><td class="sep">−γ<sup>n</sup>u[−n−1]</td><td><span class="fr"><span class="n">z</span><span class="d">z − γ</span></span></td><td>|z| &lt; |γ|</td></tr>
+  <tr><td>γ<sup>n−1</sup>u[n−1]</td><td><span class="fr"><span class="n">1</span><span class="d">z − γ</span></span></td><td>|z| &gt; |γ|</td><td class="sep">−γ<sup>n−1</sup>u[−n]</td><td><span class="fr"><span class="n">1</span><span class="d">z − γ</span></span></td><td>|z| &lt; |γ|</td></tr>
+  <tr><td>nγ<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">γz</span><span class="d">(z − γ)²</span></span></td><td>|z| &gt; |γ|</td><td class="sep">−nγ<sup>n</sup>u[−n−1]</td><td><span class="fr"><span class="n">γz</span><span class="d">(z − γ)²</span></span></td><td>|z| &lt; |γ|</td></tr>
+  <tr><td>(n+1)γ<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">z²</span><span class="d">(z − γ)²</span></span></td><td>|z| &gt; |γ|</td><td class="sep">nγ<sup>n−1</sup>u[n]</td><td><span class="fr"><span class="n">z</span><span class="d">(z − γ)²</span></span></td><td>|z| &gt; |γ|</td></tr>
+  <tr><td>n²γ<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">γz(z + γ)</span><span class="d">(z − γ)³</span></span></td><td>|z| &gt; |γ|</td><td class="sep">C(n,m)γ<sup>n−m</sup>u[n−m]</td><td><span class="fr"><span class="n">z</span><span class="d">(z − γ)<sup>m+1</sup></span></span></td><td>|z| &gt; |γ|</td></tr>
+  <tr><td>nu[n]</td><td><span class="fr"><span class="n">z</span><span class="d">(z − 1)²</span></span></td><td>|z| &gt; 1</td><td class="sep">(−1)<sup>n</sup>u[n]</td><td><span class="fr"><span class="n">z</span><span class="d">z + 1</span></span></td><td>|z| &gt; 1</td></tr>
+  <tr><td>ρ<sup>n</sup>cos(βn)u[n]</td><td colspan="2"><span class="fr"><span class="n">z(z − ρ cos β)</span><span class="d">z² − 2ρz cos β + ρ²</span></span></td><td class="sep">ρ<sup>n</sup>sin(βn)u[n]</td><td colspan="2"><span class="fr"><span class="n">ρz sin β</span><span class="d">z² − 2ρz cos β + ρ²</span></span></td></tr>
+  <tr><td>rρ<sup>n</sup>cos(βn + θ)u</td><td colspan="4"><span class="fr"><span class="n">rz[z cos θ − ρ cos(β − θ)]</span><span class="d">z² − 2ρz cos β + ρ²</span></span></td><td>|z| &gt; ρ</td></tr>
+  <tr><td>ρ<sup>n</sup>cos<span class="fr"><span class="n">πn</span><span class="d">2</span></span>u</td><td colspan="2"><span class="fr"><span class="n">z²</span><span class="d">z² + ρ²</span></span></td><td class="sep">ρ<sup>n</sup>sin<span class="fr"><span class="n">πn</span><span class="d">2</span></span>u</td><td colspan="2"><span class="fr"><span class="n">ρz</span><span class="d">z² + ρ²</span></span></td></tr>
+  <tr><td>u[n] − u[n − N]</td><td><span class="fr"><span class="n">1 − z<sup>−N</sup></span><span class="d">1 − z<sup>−1</sup></span></span></td><td>z ≠ 0</td><td class="sep">a<sup>|n|</sup>, |a| &lt; 1</td><td><span class="fr"><span class="n">z</span><span class="d">z − a</span></span> − <span class="fr"><span class="n">z</span><span class="d">z − <span class="fr"><span class="n">1</span><span class="d">a</span></span></span></span></td><td>|a| &lt; |z| &lt; <span class="fr"><span class="n">1</span><span class="d">|a|</span></span></td></tr>
+</table>
+<p>ρ<sup>n</sup> rows: |z| &gt; ρ (ρ = 1: cos βn·u, sin βn·u). C(n, m) = <span class="fr"><span class="n">n!</span><span class="d">(n − m)!m!</span></span>.</p>
+</div>
+
+<div class="panel">
+<h2>20. Z Properties, ROC, Poles</h2>
+<table class="m">
+  <colgroup><col style="width:22%"><col></colgroup>
+  <tr><td class="t">Linearity</td><td>ax + by ↔ aX + bY, ROC ⊇ R<sub>x</sub> ∩ R<sub>y</sub></td></tr>
+  <tr><td class="t">Delay (bilateral)</td><td><mark>x[n − k] ↔ z<sup>−k</sup>X(z)</mark> (ROC same, except 0 or ∞) <span class="ref">23S1 4b</span></td></tr>
+  <tr><td class="t">Unilateral delay</td><td><mark>x[n−1] ↔ z<sup>−1</sup>X<sub>+</sub> + x[−1]; x[n−2] ↔ z<sup>−2</sup>X<sub>+</sub> + z<sup>−1</sup>x[−1] + x[−2]</mark></td></tr>
+  <tr><td class="t">Advance; weighting</td><td>x[n+1] ↔ zX<sub>+</sub> − zx[0] (unilateral); a<sup>n</sup>x[n] ↔ X(<span class="fr"><span class="n">z</span><span class="d">a</span></span>), ROC |a|R<sub>x</sub></td></tr>
+  <tr><td class="t">Reversal; × n</td><td>x[−n] ↔ X(<span class="fr"><span class="n">1</span><span class="d">z</span></span>), ROC <span class="fr"><span class="n">1</span><span class="d">r<sub>2</sub></span></span> &lt; |z| &lt; <span class="fr"><span class="n">1</span><span class="d">r<sub>1</sub></span></span>; nx[n] ↔ −z<span class="fr"><span class="n">dX</span><span class="d">dz</span></span>; x* ↔ X*(z*)</td></tr>
+  <tr><td class="t">Convolution</td><td>x ∗ h ↔ X·H, ROC ⊇ overlap</td></tr>
+  <tr><td class="t">Accumulate; diff.</td><td>Σ<sub>k≤n</sub>x[k] ↔ X·<span class="fr"><span class="n">z</span><span class="d">z − 1</span></span>; x[n] − x[n−1] ↔ (1 − z<sup>−1</sup>)X</td></tr>
+  <tr><td class="t">Sums; IVT</td><td>Σx[n] = X(1) (|z| = 1 in ROC; DC gain H(1)); x[0] = lim<sub>z→∞</sub>X(z) (causal)</td></tr>
+  <tr><td class="t">FVT</td><td><mark>y[∞] = lim<sub>z→1</sub>(1 − z<sup>−1</sup>)Y<sub>+</sub> = lim<sub>z→1</sub>(z − 1)Y<sub>+</sub></mark>, only if all poles inside |z| = 1 except at most one simple pole at 1; fails: 2<sup>n</sup>u, (−1)<sup>n</sup>u, (n+1)u <span class="ref">24S1 4b, 24S2 4a</span></td></tr>
+</table>
+<ul>
+  <li><b>Inverse Z:</b> table; partial fractions on <span class="fr"><span class="n">X</span><span class="d">z</span></span> (§15); long division in z<sup>−1</sup> (right-sided) or z (left-sided), x[n] = coefficient of z<sup>−n</sup>: <span class="fr"><span class="n">1 + z<sup>−1</sup></span><span class="d">1 − ½z<sup>−1</sup></span></span> = 1 + 1.5z<sup>−1</sup> + 0.75z<sup>−2</sup> + …</li>
+  <li><b>Poles/zeros</b> in +powers of z (1 + 0.5z<sup>−1</sup> hides a zero at −0.5; 1 − 0.1z<sup>−1</sup> → pole 0.1); pole p ⇔ p<sup>n</sup> (p &lt; 0 alternates). <b>ROC:</b> ring, no poles: right-sided → |z| &gt; outermost; left → |z| &lt; innermost; two-sided → ring (maybe empty: 2<sup>|n|</sup>); finite → all z exc. 0, ∞. Pole inside ring → p<sup>n</sup>u[n], outside → −p<sup>n</sup>u[−n−1]. <mark>Causal ⇔ outside outermost pole (top degree ≤ bottom); stable ⇔ |z| = 1 ⊂ ROC; causal + stable ⇔ all |p| &lt; 1.</mark></li>
+</ul>
+</div>
+
+<div class="panel">
+<h2>21. s-plane vs z-plane; "Discuss" Answers</h2>
+<table>
+  <colgroup><col style="width:20%"><col style="width:38%"><col></colgroup>
+  <tr><th></th><th>Laplace, s = σ + jω: strips</th><th>Z, z = re<sup>jΩ</sup>: rings</th></tr>
+  <tr><td><b>Causal ROC</b></td><td>right of rightmost pole</td><td>outside outermost pole</td></tr>
+  <tr><td><b>Stable ⇔</b></td><td>jω-axis ⊂ ROC; causal: Re p &lt; 0</td><td>|z| = 1 ⊂ ROC; causal: |p| &lt; 1</td></tr>
+  <tr><td><b>Freq. resp.</b></td><td>H(jω) on axis; DC at s = 0</td><td>H(e<sup>jΩ</sup>), 2π-periodic; DC z = 1, Ω = π at z = −1</td></tr>
+</table>
+<ul>
+  <li><b>z = e<sup>sT</sup></b> (T = 1): σ &lt; 0 ↔ |z| &lt; 1, axis ↔ circle; Ω = ωT; pole p → e<sup>pT</sup>; ω + <span class="fr"><span class="n">2π</span><span class="d">T</span></span> → same z; <span class="fr"><span class="n">1 − z<sup>−1</sup></span><span class="d">T</span></span> ≈ s. <mark>Same formula in s and z ≠ same system</mark> (poles near z = −1: high-pass; in s: low-pass); <span class="fr"><span class="n">s + a</span><span class="d">s + b</span></span> stable ⇔ b &gt; 0, <span class="fr"><span class="n">z + a</span><span class="d">z + b</span></span> ⇔ |b| &lt; 1.</li>
+  <li><b>Roles:</b> zeros block/shape, no effect on ROC/stability; poles = modes, ROC edges, stability. |H| = K<span class="fr"><span class="n">Π dist to zeros</span><span class="d">Π dist to poles</span></span>, ∠H = Σ∠zeros − Σ∠poles. Valid only if axis/circle ⊂ ROC (<span class="fr"><span class="n">s + 2</span><span class="d">s − 1</span></span>, step → −2 + 3e<sup>t</sup>).</li>
+  <li><b>DTFT → DTFS</b> <span class="ref">25S2 3b</span>: periodic, N = LCM → Ω<sub>k</sub> = <span class="fr"><span class="n">2πk</span><span class="d">N</span></span> → finite sums (<span class="fr"><span class="n">1</span><span class="d">N</span></span> for <span class="fr"><span class="n">1</span><span class="d">2π</span></span>) → impulses <span class="fr"><span class="n">2πX[k]</span><span class="d">N</span></span> → lines X[k]; k = <span class="fr"><span class="n">NΩ</span><span class="d">2π</span></span>.</li>
+  <li><b>CTFT vs Laplace:</b> integrals → Laplace = CTFT of xe<sup>−σt</sup> → growth OK (e<sup>2t</sup>u: <span class="fr"><span class="n">1</span><span class="d">s − 2</span></span>, no CTFT) → causal ROC right of rightmost pole → CTFT = X(jω) iff axis ⊂ ROC → LHP decays, RHP grows → ICs → Z twin.</li>
+</ul>
+</div>
+
+</div>
+</div>
+</div>
+
+
+</body>
+</html>
