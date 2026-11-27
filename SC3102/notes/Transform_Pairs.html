@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Transform Pairs Table</title>
+<!--
+  SC3102 Signals & Systems: table of CTFT / Laplace / Z-transform / DTFT pairs.
+  Math is typeset by KaTeX (inline $...$ via auto-render), glyphs in Times.
+  \fr{a}{b} is a full-size but compact fraction (text-style spacing, text-size
+  numerator and denominator), defined in the render script at the bottom.
+  Print to A4: continuous time on page 1, discrete time + notes on page 2.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/contrib/auto-render.min.js"></script>
+<style>
+  @page { size: A4; margin: 10mm 15mm 9mm 15mm; }
+  :root { --rule-thick: 1.3pt; --rule-thin: 0.6pt;
+          --times: "Times New Roman", Times, "Nimbus Roman", "Liberation Serif", serif;
+          --times-math: "Times New Roman", Times, KaTeX_Main, serif; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; background: #fff; color: #000; font-family: var(--times); font-size: 10pt; line-height: 1.2; }
+  .page-wrap { max-width: 180mm; margin: 0 auto; }
+  h1 { font-size: 12.5pt; font-weight: bold; margin: 0 0 3.5mm 0; }
+
+  /* ---- booktabs-style table: thick top/bottom rules, thin rule under the header, nothing else ---- */
+  table.pairs { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; }
+  col.c1 { width: 24%; } col.c2 { width: 29%; } col.c3 { width: 26%; } col.c4 { width: 21%; }
+  .pairs th, .pairs td { text-align: left; vertical-align: middle; padding: 0.92mm 2mm; }
+  .pairs tr { break-inside: avoid; page-break-inside: avoid; }
+  thead { display: table-header-group; }
+  thead th { font-size: 10.5pt; font-weight: bold; padding-top: 1.5mm; padding-bottom: 1.5mm;
+             border-top: var(--rule-thick) solid #000; border-bottom: var(--rule-thin) solid #000; }
+  tr.sub th { font-weight: normal; padding-top: 1.3mm; padding-bottom: 1mm; }
+  .sect { font-weight: bold; font-style: italic; }
+  tr.first td { padding-top: 1mm; }
+  tr.gs td { padding-top: 2.2mm; }                    /* small gap between row groups */
+  tr.last td { border-bottom: var(--rule-thick) solid #000; padding-bottom: 1.4mm; }
+  tbody.dt td { padding-top: 1.05mm; padding-bottom: 1.05mm; }   /* page 2 has a little more room */
+  tbody.dt tr.first td { padding-top: 1.2mm; }
+  tbody.dt tr.gs td { padding-top: 2.6mm; }
+  tbody.dt tr.last td { padding-bottom: 1.6mm; }
+  tbody.dt tr.sub { break-before: page; page-break-before: always; }
+
+  /* "formula, condition": the condition sits beside the formula, aligned like a sub-column */
+  .f { display: inline-block; min-width: 31mm; margin-right: 0.6em; }
+  .x { font-family: "Segoe UI Symbol", "DejaVu Sans", sans-serif; font-size: 0.95em; }   /* does not exist */
+  .small { font-size: 0.93em; }
+
+  /* ---- KaTeX: keep its layout engine, but draw the glyphs in Times (as in the reference table) ---- */
+  .katex { font-size: 1em; font-family: var(--times-math); }
+  .katex .mathnormal, .katex .mathit, .katex .boldsymbol { font-family: var(--times-math); font-style: italic; }
+  .katex .mathrm, .katex .textrm, .katex .mop, .katex .mord.text, .katex .mbin, .katex .mrel { font-family: var(--times-math); }
+  /* \fr uses text-style fraction spacing (compact); open it up a little so nothing touches the bar.
+     KaTeX's fraction vlist children are [denominator, bar, numerator]. */
+  .katex .mfrac > .vlist-t > .vlist-r > .vlist > span:first-child { transform: translateY(0.08em); }
+  .katex .mfrac > .vlist-t > .vlist-r > .vlist > span:last-child  { transform: translateY(-0.08em); }
+
+  /* ---- Notes block (reference style: label, then aligned "term = definition" lines) ---- */
+  .notes { margin-top: 4mm; display: grid; grid-template-columns: auto auto auto auto 1fr; column-gap: 2.2mm; row-gap: 0.8mm;
+           break-inside: avoid; page-break-inside: avoid; font-size: 10pt; }
+  .notes .lab { grid-column: 1; grid-row: 1; }
+  .notes .k  { grid-column: 2; white-space: nowrap; }
+  .notes .v  { grid-column: 3; padding-right: 7mm; }
+  .notes .k2 { grid-column: 4; white-space: nowrap; }
+  .notes .v2 { grid-column: 5; }
+  .notes .vw { grid-column: 3 / span 3; }
+  .notes .w  { grid-column: 2 / span 4; }
+  .notes .gap { margin-top: 1.4mm; }
+
+  @media screen {
+    body { padding: 10mm 0; background: #eee; }
+    .page-wrap { background: #fff; padding: 11mm 15mm; box-shadow: 0 1px 4px rgba(0,0,0,.25); }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+<h1>Table of Fourier, Laplace and Z-transform pairs</h1>
+
+<table class="pairs">
+<colgroup><col class="c1"><col class="c2"><col class="c3"><col class="c4"></colgroup>
+<thead>
+<tr><th>Time function</th><th>Fourier transform</th><th>Laplace / Z transform</th><th>ROC</th></tr>
+</thead>
+
+<!-- ======================= CONTINUOUS TIME ======================= -->
+<tbody class="ct">
+<tr class="sub"><th><span class="sect">Continuous time:</span>&ensp;$x(t)$</th><th>$X(f)$</th><th>$X(s)$</th><th>ROC ($\sigma=\operatorname{Re}s$)</th></tr>
+
+<!-- impulse / step / ramp -->
+<tr class="first"><td>$\delta(t)$</td><td>$1$</td><td>$1$</td><td>all $s$</td></tr>
+<tr><td>$\delta(t-t_0)$</td><td>$e^{-j2\pi f t_0}$</td><td>$e^{-st_0}$</td><td>all $s$</td></tr>
+<tr><td>$u(t)$</td><td>$\fr{1}{2}\,\delta(f)+\fr{1}{j2\pi f}$</td><td>$\fr{1}{s}$</td><td>$\sigma\gt 0$</td></tr>
+<tr><td>$u(t-t_0)$</td><td>—</td><td>$\fr{e^{-st_0}}{s}$</td><td>$\sigma\gt 0$</td></tr>
+<tr><td>$t\,u(t)$</td><td>—</td><td>$\fr{1}{s^2}$</td><td>$\sigma\gt 0$</td></tr>
+<tr><td>$\fr{t^{m-1}}{(m-1)!}\,u(t)$</td><td>—</td><td>$\fr{1}{s^m}$</td><td>$\sigma\gt 0$</td></tr>
+
+<!-- one-sided exponentials, repeated poles -->
+<tr class="gs"><td>$e^{-at}u(t)$</td><td><span class="f">$\fr{1}{a+j2\pi f}$,</span>$a\gt 0$</td><td>$\fr{1}{s+a}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$-e^{-at}u(-t)$</td><td><span class="f">$\fr{1}{a+j2\pi f}$,</span>$a\lt 0$</td><td>$\fr{1}{s+a}$</td><td>$\sigma\lt -a$</td></tr>
+<tr><td>$e^{-a(t-t_0)}u(t-t_0)$</td><td><span class="f">$\fr{e^{-j2\pi f t_0}}{a+j2\pi f}$,</span>$a\gt 0$</td><td>$\fr{e^{-st_0}}{s+a}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$t\,e^{-at}u(t)$</td><td><span class="f">$\fr{1}{(a+j2\pi f)^2}$,</span>$a\gt 0$</td><td>$\fr{1}{(s+a)^2}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$-t\,e^{-at}u(-t)$</td><td><span class="f">$\fr{1}{(a+j2\pi f)^2}$,</span>$a\lt 0$</td><td>$\fr{1}{(s+a)^2}$</td><td>$\sigma\lt -a$</td></tr>
+<tr><td>$t^2e^{-at}u(t)$</td><td><span class="f">$\fr{2}{(a+j2\pi f)^3}$,</span>$a\gt 0$</td><td>$\fr{2}{(s+a)^3}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$\fr{t^{m-1}}{(m-1)!}\,e^{-at}u(t)$</td><td><span class="f">$\fr{1}{(a+j2\pi f)^m}$,</span>$a\gt 0$</td><td>$\fr{1}{(s+a)^m}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$e^{-a|t|},\quad a\gt 0$</td><td>$\fr{2a}{a^2+(2\pi f)^2}$</td><td>$\fr{2a}{a^2-s^2}$</td><td>$-a\lt\sigma\lt a$</td></tr>
+
+<!-- sinusoids -->
+<tr class="gs"><td>$\cos(\beta t)\,u(t)$</td><td>—</td><td>$\fr{s}{s^2+\beta^2}$</td><td>$\sigma\gt 0$</td></tr>
+<tr><td>$\sin(\beta t)\,u(t)$</td><td>—</td><td>$\fr{\beta}{s^2+\beta^2}$</td><td>$\sigma\gt 0$</td></tr>
+<tr><td>$e^{-at}\cos(\beta t)\,u(t)$</td><td><span class="f">$\fr{a+j2\pi f}{(a+j2\pi f)^2+\beta^2}$,</span>$a\gt 0$</td><td>$\fr{s+a}{(s+a)^2+\beta^2}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$e^{-at}\sin(\beta t)\,u(t)$</td><td><span class="f">$\fr{\beta}{(a+j2\pi f)^2+\beta^2}$,</span>$a\gt 0$</td><td>$\fr{\beta}{(s+a)^2+\beta^2}$</td><td>$\sigma\gt -a$</td></tr>
+<tr><td>$r\,e^{-at}\cos(\beta t+\theta)\,u(t)$</td><td><span class="f">put $s=j2\pi f$,</span>$a\gt 0$</td><td>$\fr{r\big[(s+a)\cos\theta-\beta\sin\theta\big]}{(s+a)^2+\beta^2}$</td><td>$\sigma\gt -a$</td></tr>
+
+<!-- Fourier-only (generalized) pairs -->
+<tr class="gs"><td>$\operatorname{rect}\!\left(\fr{t}{T}\right)$</td><td>$T\operatorname{sinc}(fT)$</td><td>—</td><td>all $s$</td></tr>
+<tr><td>$\begin{cases} 1-\fr{|t|}{T}, &amp; |t|\lt T\\[1pt] 0, &amp; |t|\ge T\end{cases}$</td><td>$T\operatorname{sinc}^2(fT)$</td><td>—</td><td>all $s$</td></tr>
+<tr><td>$\operatorname{sinc}(2Wt)$</td><td>$\fr{1}{2W}\operatorname{rect}\!\left(\fr{f}{2W}\right)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\exp(-\pi t^2)$</td><td>$\exp(-\pi f^2)$</td><td>—</td><td>all $s$</td></tr>
+<tr><td>$1$</td><td>$\delta(f)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\exp(j2\pi f_c t)$</td><td>$\delta(f-f_c)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\cos(2\pi f_c t)$</td><td>$\fr{1}{2}\big[\delta(f-f_c)+\delta(f+f_c)\big]$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\sin(2\pi f_c t)$</td><td>$\fr{1}{2j}\big[\delta(f-f_c)-\delta(f+f_c)\big]$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\operatorname{sgn}(t)$</td><td>$\fr{1}{j\pi f}$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\fr{1}{\pi t}$</td><td>$-j\operatorname{sgn}(f)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr class="last"><td>$\displaystyle\sum_{i=-\infty}^{\infty}\delta(t-iT_0)$</td><td>$\fr{1}{T_0}\displaystyle\sum_{n=-\infty}^{\infty}\delta\!\left(f-\fr{n}{T_0}\right)$</td><td><span class="x">✗</span></td><td></td></tr>
+</tbody>
+
+<!-- ======================== DISCRETE TIME ======================== -->
+<tbody class="dt">
+<tr class="sub"><th><span class="sect">Discrete time:</span>&ensp;$x[n]$</th><th>$X(\Omega)$</th><th>$X(z)$</th><th>ROC</th></tr>
+
+<!-- impulse / step / ramp -->
+<tr class="first"><td>$\delta[n]$</td><td>$1$</td><td>$1$</td><td>all $z$</td></tr>
+<tr><td>$\delta[n-k]$</td><td>$e^{-j\Omega k}$</td><td>$z^{-k}$</td><td>all $z$ except $0$ $(k\gt 0)$<br>or $\infty$ $(k\lt 0)$</td></tr>
+<tr><td>$u[n]$</td><td>— &nbsp;<span class="small">(pole on $|z|=1$)</span></td><td>$\fr{z}{z-1}$</td><td>$|z|\gt 1$</td></tr>
+<tr><td>$n\,u[n]$</td><td>—</td><td>$\fr{z}{(z-1)^2}$</td><td>$|z|\gt 1$</td></tr>
+
+<!-- one-sided exponentials, repeated poles -->
+<tr class="gs"><td>$p^n u[n]$</td><td><span class="f">$\fr{1}{1-pe^{-j\Omega}}$,</span>$|p|\lt 1$</td><td>$\fr{z}{z-p}=\fr{1}{1-pz^{-1}}$</td><td>$|z|\gt |p|$</td></tr>
+<tr><td>$-p^n u[-n-1]$</td><td><span class="f">$\fr{1}{1-pe^{-j\Omega}}$,</span>$|p|\gt 1$</td><td>$\fr{z}{z-p}$</td><td>$|z|\lt |p|$</td></tr>
+<tr><td>$p^{n-1}u[n-1]$</td><td><span class="f">$\fr{e^{-j\Omega}}{1-pe^{-j\Omega}}$,</span>$|p|\lt 1$</td><td>$\fr{1}{z-p}$</td><td>$|z|\gt |p|$</td></tr>
+<tr><td>$-p^{n-1}u[-n]$</td><td><span class="f">$\fr{e^{-j\Omega}}{1-pe^{-j\Omega}}$,</span>$|p|\gt 1$</td><td>$\fr{1}{z-p}$</td><td>$|z|\lt |p|$</td></tr>
+<tr><td>$n\,p^n u[n]$</td><td><span class="f">$\fr{pe^{-j\Omega}}{(1-pe^{-j\Omega})^2}$,</span>$|p|\lt 1$</td><td>$\fr{pz}{(z-p)^2}$</td><td>$|z|\gt |p|$</td></tr>
+<tr><td>$-n\,p^n u[-n-1]$</td><td><span class="f">$\fr{pe^{-j\Omega}}{(1-pe^{-j\Omega})^2}$,</span>$|p|\gt 1$</td><td>$\fr{pz}{(z-p)^2}$</td><td>$|z|\lt |p|$</td></tr>
+<tr><td>$(n+1)\,p^n u[n]$</td><td><span class="f">$\fr{1}{(1-pe^{-j\Omega})^2}$,</span>$|p|\lt 1$</td><td>$\fr{z^2}{(z-p)^2}$</td><td>$|z|\gt |p|$</td></tr>
+
+<!-- damped sinusoids -->
+<tr class="gs"><td>$\rho^n\cos(\Omega_0 n)\,u[n]$</td><td><span class="f">put $z=e^{j\Omega}$,</span>$\rho\lt 1$</td><td>$\fr{z\,(z-\rho\cos\Omega_0)}{z^2-2\rho\cos\Omega_0\,z+\rho^2}$</td><td>$|z|\gt \rho$</td></tr>
+<tr><td>$\rho^n\sin(\Omega_0 n)\,u[n]$</td><td><span class="f">put $z=e^{j\Omega}$,</span>$\rho\lt 1$</td><td>$\fr{\rho\sin\Omega_0\,z}{z^2-2\rho\cos\Omega_0\,z+\rho^2}$</td><td>$|z|\gt \rho$</td></tr>
+<tr><td>$\rho^n\cos(\pi n/2)\,u[n]$</td><td><span class="f">put $z=e^{j\Omega}$,</span>$\rho\lt 1$</td><td>$\fr{z^2}{z^2+\rho^2}$</td><td>$|z|\gt \rho$</td></tr>
+<tr><td>$\rho^n\sin(\pi n/2)\,u[n]$</td><td><span class="f">put $z=e^{j\Omega}$,</span>$\rho\lt 1$</td><td>$\fr{\rho z}{z^2+\rho^2}$</td><td>$|z|\gt \rho$</td></tr>
+
+<!-- finite pulse, then DTFT-only (generalized) pairs -->
+<tr class="gs"><td>$x[n]=\begin{cases} 1, &amp; |n|\le N_1\\ 0, &amp; |n|\gt N_1\end{cases}$</td><td>$\fr{\sin\!\big(\Omega(N_1+\frac{1}{2})\big)}{\sin(\Omega/2)}$</td><td>$\displaystyle\sum_{n=-N_1}^{N_1} z^{-n}$</td><td>all $z$ except $0,\ \infty$<br>$(N_1\ge 1)$</td></tr>
+<tr><td>$1$ &nbsp;(all $n$)</td><td>$2\pi\displaystyle\sum_{k}\delta(\Omega-2\pi k)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$e^{j\Omega_0 n}$</td><td>$2\pi\displaystyle\sum_{k}\delta(\Omega-\Omega_0-2\pi k)$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr><td>$\cos(\Omega_0 n)$</td><td>$\begin{aligned}\pi\textstyle\sum_{k}\big[&amp;\delta(\Omega-\Omega_0-2\pi k)\\ +\,&amp;\delta(\Omega+\Omega_0-2\pi k)\big]\end{aligned}$</td><td><span class="x">✗</span></td><td></td></tr>
+<tr class="last"><td>$\sin(\Omega_0 n)$</td><td>$\begin{aligned}\fr{\pi}{j}\textstyle\sum_{k}\big[&amp;\delta(\Omega-\Omega_0-2\pi k)\\ -\,&amp;\delta(\Omega+\Omega_0-2\pi k)\big]\end{aligned}$</td><td><span class="x">✗</span></td><td></td></tr>
+</tbody>
+</table>
+
+<div class="notes">
+  <div class="lab">Notes:</div>
+  <div class="k">$u(t),\ u[n]$</div><div class="v">= unit step function</div>
+  <div class="k2">$\operatorname{rect}(t)$</div><div class="v2">= rectangular function: $1$ for $|t|\lt\frac{1}{2}$, else $0$</div>
+  <div class="k">$\delta(t)$</div><div class="v">= Dirac delta function</div>
+  <div class="k2">$\operatorname{sgn}(t)$</div><div class="v2">= signum function</div>
+  <div class="k">$\delta[n]$</div><div class="v">= unit impulse ($1$ at $n=0$, else $0$)</div>
+  <div class="k2">$\operatorname{sinc}(x)$</div><div class="v2">= $\sin(\pi x)/(\pi x)$</div>
+  <div class="k">$\sigma$</div><div class="v">= $\operatorname{Re}(s)$</div>
+  <div class="k2">$\Omega$</div><div class="v2">= frequency in rad/sample; $X(\Omega)$ has period $2\pi$</div>
+  <div class="k"><span class="x">✗</span></div><div class="vw">= does not exist (no ROC / no transform)</div>
+  <div class="k">—</div><div class="vw">= not needed in SC3102 (exists, often only as a generalized function)</div>
+  <div class="w gap">Laplace → CTFT: &nbsp;$X(f)=X(s)\big|_{s=j2\pi f}$, valid when the ROC contains the $j\omega$-axis ($\sigma=0$).</div>
+  <div class="w">Z → DTFT: &nbsp;$X(\Omega)=X(z)\big|_{z=e^{j\Omega}}$, valid when the ROC contains the unit circle $|z|=1$.</div>
+  <div class="w">The lecture slides write $e^{at}u(t)\leftrightarrow \frac{1}{s-a}$, $\sigma\gt a$. That is the same pair with $a\to -a$.</div>
+  <div class="w">Same formula, different ROC, different signal: the ROC decides right-sided vs left-sided.</div>
+</div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof renderMathInElement !== 'function') {          // KaTeX did not load (offline)
+      document.body.setAttribute('data-katex', 'missing');
+      var msg = document.createElement('p');
+      msg.style.cssText = 'font:10pt sans-serif;color:#a00;margin:0 0 3mm';
+      msg.textContent = 'KaTeX could not load (it comes from cdnjs, so this page needs a network connection). Use Transform_Pairs.pdf for the typeset table.';
+      document.querySelector('.page-wrap').prepend(msg);
+      return;
+    }
+    renderMathInElement(document.body, {
+      delimiters: [{ left: '$', right: '$', display: false }],
+      macros: { '\\fr': '{\\frac{\\textstyle #1}{\\textstyle #2}}' },
+      throwOnError: false,
+      strict: 'ignore'
+    });
+    document.body.setAttribute('data-katex', 'ok');
+  });
+</script>
+</body>
+</html>
