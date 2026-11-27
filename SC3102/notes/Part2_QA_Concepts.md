@@ -241,3 +241,14 @@ The full version with rendered maths is Steps 14–16 of `Part2_Discrete_Time_Gu
   - y[n] = n·x[n]: kicking at n = 0 gives 0, kicking at n = 1 gives δ[n−1]. The response depends on *when* you kick, so there's no single h.
 - **LCCDE with initial conditions → yes, Z/Laplace still work.** The unilateral transform gives Y₊ = (initial-condition terms)/A + H·X₊ = zero-input + zero-state. The zero-state part is pure LTI; the "non-LTI" part is just an added term from the stored memory, not real nonlinearity.
 - In all five past papers, non-LTI systems appear only in "test linear / time-invariant / causal" questions. Every convolution or transform question is about an LTI system (or an LCCDE with initial conditions).
+
+## Complex-number tricks (past papers)
+
+**Why 1/j = −j (24S1 Q1(a)(ii)).** 1/j means "the number that gives 1 when multiplied by j". Check: j·(−j) = −j² = −(−1) = 1 ✓.
+- Algebra: multiply top and bottom by j, so 1/j = j/j² = j/(−1) = −j.
+- Angles: j = 1∠90°, and dividing subtracts angles, so 1/j = 1∠(0° − 90°) = 1∠−90° = −j (straight down on the complex plane).
+- Use: 5/(2j) = 2.5·(−j) = −2.5j = 2.5∠−90°, the +3 Hz line of 5 sin(6πt). It matches sin θ = cos(θ − 90°): a sine is a cosine 90° late. This is already on the cheat sheet (Euler line).
+
+**"sin(6πt) has no offset, so why are the ±3 Hz phases ∓90°?" (24S1 Q1(a)(ii)).** The 6πt part gives only the frequency (3 Hz). The spectrum's phase is the offset measured against a **cosine**, the zero-phase reference (cos = ½e^{jθ} + ½e^{−jθ}, both phasors starting at angle 0). sin(6πt) = cos(6πt − 90°), so φ = −90°.
+- Rule: A cos(2πft + φ) gives lines of A/2 at +f (phase +φ) and at −f (phase −φ). A sine: convert first. A single phasor A·e^{j(2πft+φ)}: one line at +f with phase φ, read straight off.
+- Number check: if both phases were 0, the pair ½e^{j6πt} + ½e^{−j6πt} at t = 0 gives 1 (that's cos). With −½j and +½j it gives 0 = sin 0 ✓. At t = 1/12 (6πt = π/2), it gives −½j·j + ½j·(−j) = ½ + ½ = 1 = sin(π/2) ✓.

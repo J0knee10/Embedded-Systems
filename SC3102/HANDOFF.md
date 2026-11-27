@@ -1,13 +1,14 @@
 # SC3102 Handoff
 
-Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-24.
+Where I am in this course, so I (or Claude) can pick up on another device. Last updated 2026-11-27.
 
 ## Where I am
 
 - **Final exam: Mon 30 Nov 2026, 09:00–11:00.** It has 4 compulsory questions of 25 marks each, and one double-sided A4 sheet is allowed. **It covers the whole course, including Laplace and differential equations.** The "NOT tested" note below applied only to the Part 2 term test; every past final has a Laplace question.
-- **Resume here (2026-11-24): doing the past papers.**
+- **Resume here (2026-11-27): doing the past papers.**
   - Worked solutions for all five papers, plus a whole-course topic map, are in `PYP/Solutions/` (start with `00_Exam_Guide.md`). Each file has a collapsed answer key for self-marking.
-  - **Started 25S1.** Q1(a)(i) (why the decaying pulse train is periodic, and how to read Σ f(t−4n)e^(−α|t−4n|)) has been explained. **Next: 25S1 Q1(a)(ii) onwards**, then 25S2.
+  - **2026-11-27: switched to 24S1.** Q1(a)(i)–(ii) explained (periodicity of a sum, double-sided spectra of a complex signal), and Q1(b) (u/r piecewise, energy vs power). **Next: 24S1 Q1(c)**, then the rest of 24S1 in order. 25S1 is paused after Q1(a)(i), which explained why the decaying pulse train is periodic and how to read Σ f(t−4n)e^(−α|t−4n|); 25S2 hasn't been started.
+  - Concepts explained on 2026-11-27 are in `notes/Part2_QA_Concepts.md` under "Complex-number tricks": why 1/j = −j, and why sin(6πt) has ∓90° phase lines even though it has no offset in the bracket (phase is measured against a cosine). Both were already on the cheat sheet, so it wasn't changed.
   - Concepts explained on 2026-11-24 are all in `notes/Part2_QA_Concepts.md`:
     - discrete LCCDE → Laplace → differential equations, now Steps 14–16 of the guide;
     - an LCCDE is a description of a system, not a new kind of system: LCCDE at rest ⊂ LTI, and Y = H·X needs LTI;
